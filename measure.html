@@ -1,0 +1,28 @@
+<!-- ======================= measure.html ======================= -->
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Measure Roof</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<header class="header"><div class="container"><h1 class="logo">RoofMeasure<span>Pro</span></h1><nav>
+<a href="index.html">Home</a><a href="services.html">Services</a><a href="measure.html">Measure</a><a href="about.html">About</a><a href="contact.html">Contact</a></nav></div></header>
+
+
+<section class="container page">
+<h2>Enter Property Address</h2>
+<input id="address" type="text" placeholder="Start typing address..." />
+<div id="map"></div>
+<a class="cta" href="sample-report.pdf" download>Download Sample PDF Report</a>
+</section>
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap" async defer></script>
+<script>
+function initMap(){
+const input=document.getElementById('address');
+new google.maps.places.Autocomplete(input);
+const map=new google.maps.Map(document.getElementById('map'),{zoom:18,center:{lat:14.6,lng:121}});
+}
+</script>
+<footer>© 2025 Roof Measure Pro</footer>
+</body></html>
