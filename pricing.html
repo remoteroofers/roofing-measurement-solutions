@@ -7,10 +7,9 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 
-
 <body>
 
-  <header>
+<header>
   <div class="logo">Remote Roofers Measurement Solutions</div>
   <nav>
     <a href="index.html">Home</a>
@@ -20,16 +19,16 @@
     <a href="#contact">Contact</a>
   </nav>
 </header>
-  
-<section id="pricing" class="hero">
+<section id="pricing" class="pricing">
   <h2>Pricing</h2>
-  <div class="price-cards">  
+  <div class="price-cards">
+
     <div class="card">
       <h3>Bronze</h3>
       <p class="price">$15 / roof</p>
       <ul>
         <li>Total Area</li>
-        <li>Roof Pitch</li>  
+        <li>Roof Pitch</li>
         <li>PDF Report</li>
       </ul>
       <button onclick="openOrder()">Order Bronze</button>
@@ -57,11 +56,24 @@
       <button onclick="openOrder()">Order Gold</button>
     </div>
 
- 
-
-
+  </div>
 </section>
-   <div id="orderModal" class="modal">
+
+
+
+
+
+
+
+
+
+
+<footer>
+  <p align="center">© 2026 Remote Roofers  Measurements Solutions. All Rights Reserved.</p>
+</footer>
+
+<!-- ORDER MODAL -->
+<div id="orderModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeOrder()">×</span>
     <h2>Place Your Order</h2>
@@ -94,7 +106,8 @@
 
     </form>
   </div>
-  </div>
-  <script src="script.js"></script>
-</body>  
+</div>
+
+<script src="script.js"></script>
+</body>
 </html>
