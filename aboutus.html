@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Remote Roofers Measurement Solutions | Fast & Accurate Roof Reports</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<header>
+  <div class="logo">Remote Roofers Measurement Solutions</div>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="#about">About Us</a>
+    <a href="#faq">FAQ</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section id="home" class="hero">
+  <h1>Accurate Roof Measurements for US Contractors</h1>
+  <p>Fast • Reliable • Confident Roof Reports without the High Cost</p>
+  <button class="primary-btn" onclick="openOrder()">ORDER NOW</button>
+</section>
+
+<section class="features">
+  <div>
+    <h3>📐 Precise Measurements</h3>
+    <p>Roof area, pitch, ridges, valleys, hips & Gutters.</p>
+  </div>
+  <div>
+    <h3>⚡ Fast Turnaround</h3>
+    <p>Standard: 6–12 hrs • Rush: 2–4 hrs</p>
+  </div>
+  <div>
+    <h3>US Contractor-Ready</h3> 
+    <p>Optimized for US roofing contractors and estimators.</p>
+  </div>
+</section>
+
+
+<section id="about" class="about">
+  <h2>About Us</h2>
+  <p>
+    Sonido Roof Measurements provides affordable, accurate roof reports
+    tailored for US-based contractors. Our mission is to deliver fast,
+    dependable measurements without the premium pricing of large platforms.
+  </p>
+</section>
+
+<section id="faq" class="faq">
+  <h2>Frequently Asked Questions</h2>
+  <details>
+    <summary>What format do you deliver?</summary>
+    <p>PDF & image-based reports ready for estimating software.</p>
+  </details>
+  <details>
+    <summary>Do you support bulk orders?</summary>
+    <p>Yes, monthly contractor plans available.</p>
+  </details>
+  <details>
+    <summary>Is payment secure?</summary>
+    <p>Payments processed via Stripe or PayPal.</p>
+  </details>
+</section>
+
+<section id="contact" class="contact">
+  <h2>Contact Us</h2>
+  <p>Email: sonido.roof@gmail.com</p>
+</section>
+
+<footer>
+  <p align="center">© 2026 Remote Roofers  Measurements Solutions. All Rights Reserved.</p>
+</footer>
+
+<!-- ORDER MODAL -->
+<div id="orderModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeOrder()">×</span>
+    <h2>Place Your Order</h2>
+
+    <!-- GOOGLE SHEET FORM CONNECTION -->
+    <form action="https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse" method="POST" target="_blank">
+
+      <input name="entry.111111" type="text" placeholder="Contractor Name" required>
+      <input name="entry.222222" type="email" placeholder="Email" required>
+      <input name="entry.333333" type="text" placeholder="Property Address" required>
+
+      <select name="entry.444444">
+        <option>Bronze</option>
+        <option>Silver</option>
+        <option>Gold</option>
+      </select>
+
+      <select name="entry.555555">
+        <option>Standard (6–12 hrs)</option>
+        <option>Rush (2–4 hrs)</option>
+      </select>
+
+      <button type="submit" class="primary-btn">
+        Proceed to Payment
+      </button>
+
+      <p class="note">
+        After submitting, you will be redirected to payment verification.
+      </p>
+
+    </form>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
