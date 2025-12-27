@@ -56,7 +56,40 @@
       </ul>
       <button onclick="openOrder()">Order Gold</button>
     </div>
+<div id="orderModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeOrder()">×</span>
+    <h2>Place Your Order</h2>
 
+    <!-- GOOGLE SHEET FORM CONNECTION -->
+    <form action="https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse" method="POST" target="_blank">
+
+      <input name="entry.111111" type="text" placeholder="Contractor Name" required>
+      <input name="entry.222222" type="email" placeholder="Email" required>
+      <input name="entry.333333" type="text" placeholder="Property Address" required>
+
+      <select name="entry.444444">
+        <option>Bronze</option>
+        <option>Silver</option>
+        <option>Gold</option>
+      </select>
+
+      <select name="entry.555555">
+        <option>Standard (6–12 hrs)</option>
+        <option>Rush (2–4 hrs)</option>
+      </select>
+
+      <button type="submit" class="primary-btn">
+        Proceed to Payment
+      </button>
+
+      <p class="note">
+        After submitting, you will be redirected to payment verification.
+      </p>
+
+    </form>
+  </div>
+</div>
   </div>
 </section>
 </body>  
