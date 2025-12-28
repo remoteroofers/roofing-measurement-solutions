@@ -250,5 +250,74 @@
     </div>
   </div>
 <script type="module" src="auth.js"></script>
+  <script>
+  const password = document.getElementById("password");
+  const confirmPassword = document.getElementById("confirmPassword");
+  const signupBtn = document.getElementById("signupBtn");
+  const matchMessage = document.getElementById("matchMessage");
+
+  const rules = {
+    length: document.getElementById("length"),
+    uppercase: document.getElementById("uppercase"),
+    number: document.getElementById("number"),
+    special: document.getElementById("special"),
+  };
+
+  function validatePassword() {
+    const value = password.value;
+
+    const validations = {
+      length: value.length >= 14,
+      uppercase: /[A-Z]/.test(value),
+      number: /[0-9]/.test(value),
+      special: /[^A-Za-z0-9]/.test(value),
+    };
+
+    for (const rule in validations) {
+      rules[rule].classList.toggle("valid", validations[rule]);
+      rules[rule].classList.toggle("invalid", !validations[rule]);
+    }
+
+    validateMatch();
+    toggleButton();
+  }
+
+  function validateMatch() {
+    if (!confirmPassword.value) {
+      matchMessage.textContent = "";
+      matchMessage.className = "match-message";
+      return false;
+    }
+
+    if (password.value === confirmPassword.value) {
+      matchMessage.textContent = "✔ Passwords match";
+      matchMessage.className = "match-message success";
+      return true;
+    } else {
+      matchMessage.textContent = "✖ Passwords do not match";
+      matchMessage.className = "match-message error";
+      return false;
+    }
+  }
+
+  function toggleButton() {
+    const allValid =
+      Object.values(rules).every(r => r.classList.contains("valid")) &&
+      password.value === confirmPassword.value &&
+      password.value.length > 0;
+
+    signupBtn.disabled = !allValid;
+  }
+
+  function togglePassword(id, el) {
+    const input = document.getElementById(id);
+    input.type = input.type === "password" ? "text" : "password";
+    el.textContent = input.type === "password" ? "👁" : "🙈";
+  }
+
+  password.addEventListener("input", validatePassword);
+  confirmPassword.addEventListener("input", validatePassword);
+</script>
+
 </body>
 </html>
