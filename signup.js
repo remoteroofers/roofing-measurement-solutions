@@ -8,7 +8,7 @@ import { getFirestore, doc, setDoc } from
 const firebaseConfig = {
   apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
   authDomain: "remoteroofers-51826.firebaseapp.com",
-  databaseURL: "https://remoteroofers-51826-default-rtdb.asia-southeast1.firebasedatabase.app",
+  
   projectId: "remoteroofers-51826",
   storageBucket: "remoteroofers-51826.firebasestorage.app",
   messagingSenderId: "901240361996",
