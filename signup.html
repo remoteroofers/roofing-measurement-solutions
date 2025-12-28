@@ -2,34 +2,157 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Remote Roofers Measurement Solutions | Fast & Accurate Roof Reports</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up | Remote Roofers</title>
+
+  <style>
+    /* Basic reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background: #f7f8fc;
+      color: #333;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      padding: 20px;
+    }
+
+    .signup-box {
+      background: #fff;
+      width: 100%;
+      max-width: 450px;
+      padding: 35px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border-radius: 8px;
+    }
+
+    .signup-box h1 {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+      text-align: center;
+      color: #222;
+    }
+
+    .rules {
+      margin: 10px 0 15px;
+      font-size: 0.9rem;
+      color: #444;
+      background: #eef2f7;
+      padding: 10px;
+      border-radius: 5px;
+      line-height: 1.4;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-size: 0.9rem;
+      color: #444;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 12px;
+      font-size: 1rem;
+    }
+
+    .signup-btn {
+      width: 100%;
+      background: #0066cc;
+      border: none;
+      padding: 12px;
+      color: white;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    .signup-btn:hover {
+      background: #005bb5;
+    }
+
+    .signin-link {
+      text-align: center;
+      margin-top: 14px;
+      font-size: 0.95rem;
+    }
+    .signin-link a {
+      color: #0066cc;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: 25px;
+    }
+    .footer a {
+      color: #0066cc;
+      text-decoration: none;
+      margin: 0 6px;
+    }
+  </style>
 </head>
 <body>
-  <header>
-  <div class="logo">Remote Roofers Measurement Solutions</div>
-  <nav>
-    <a href="index.html">Home</a>
-    
-  </nav>
-</header>
-<div align="center">
-<h2>Create Account</h2>
 
-<input id="email" type="email" placeholder="Email">
-<br><br>
-<input id="password" type="password" placeholder="Password">
-<br><br>
+  <div class="container">
+    <div class="signup-box">
 
-<button id="signupBtn" type="button">Sign Up</button>
+      <h1>Let’s set up your account</h1>
 
-<p>
-  Already have an account? <a href="login.html">Login</a>
-</p>
-</div>
-<!-- ✅ ONLY THIS SCRIPT -->
+      <div class="rules">
+        Your password must contain:
+        <ul>
+          <li>At least 14 characters</li>
+          <li>At least one uppercase letter</li>
+          <li>At least one number</li>
+          <li>At least one special character</li>
+        </ul>
+      </div>
+
+      <form action="#" method="POST">
+        <label for="firstName">First Name</label>
+        <input type="text" id="firstName" required placeholder="Enter your first name">
+
+        <label for="lastName">Last Name</label>
+        <input type="text" id="lastName" required placeholder="Enter your last name">
+
+        <label for="email">Email</label>
+        <input type="email" id="email" required placeholder="Enter your email">
+
+        <label for="password">Password</label>
+        <input type="password" id="password" required placeholder="Create a password">
+
+        <button type="submit" class="signup-btn" id="signupBtn">Create Account</button>
+      </form>
+
+      <div class="signin-link">
+        Already have an account? <a href="login.html">Sign in</a>
+      </div>
+
+      <div class="footer">
+        © Ridge Top Aerial Technologies
+      </div>
+
+    </div>
+  </div>
 <script type="module" src="auth.js"></script>
-
 </body>
 </html>
