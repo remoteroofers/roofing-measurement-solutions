@@ -117,15 +117,6 @@
 
       <h1>Let’s set up your account</h1>
 
-      <div class="rules">
-        Your password must contain:
-        <ul>
-          <li>At least 14 characters</li>
-          <li>At least one uppercase letter</li>
-          <li>At least one number</li>
-          <li>At least one special character</li>
-        </ul>
-      </div>
 
       <form action="#" method="POST">
         <label for="firstName">First Name</label>
@@ -139,7 +130,45 @@
 
         <label for="password">Password</label>
         <input type="password" id="password" required placeholder="Create a password">
+        
 
+<label>Password</label>
+<div class="password-wrapper">
+  <input type="password" id="password" placeholder="Create password" />
+  <span class="toggle" onclick="togglePassword('password', this)">👁</span>
+</div>
+
+<label>Confirm Password</label>
+<div class="password-wrapper">
+  <input type="password" id="confirmPassword" placeholder="Confirm password" />
+  <span class="toggle" onclick="togglePassword('confirmPassword', this)">👁</span>
+</div>
+
+<div id="matchMessage" class="match-message"></div>
+
+<div class="password-rules">
+  <p>Your password must contain:</p>
+  <ul>
+    <li id="length" class="invalid">At least 14 characters</li>
+    <li id="uppercase" class="invalid">At least one uppercase letter</li>
+    <li id="number" class="invalid">At least one number</li>
+    <li id="special" class="invalid">At least one special character</li>
+  </ul>
+</div>
+
+
+
+
+
+
+        
+
+
+
+
+
+
+        
         <button type="button" class="signup-btn" id="signupBtn">Create Account</button>
       </form>
 
