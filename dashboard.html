@@ -1,103 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Dashboard | Sonido App</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <style>
-    body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; }
-    header { background: #0066ff; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-    .container { padding: 20px; }
-    .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,.1); margin-bottom: 20px; }
-    .admin { border-left: 5px solid red; display: none; }
-    button { padding: 10px 15px; background: #ff3b3b; color: white; border: none; border-radius: 5px; cursor: pointer; }
-  </style>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="dashboard.js" defer></script>
 </head>
-
 <body>
-
-<header>
-  <h3>Sonido Dashboard</h3>
-  <button onclick="logout()">Logout</button>
-</header>
-
-<div class="container">
-
-  <div class="card">
-    <h3>Welcome</h3>
-    <p id="userEmail">Loading...</p>
-    <p id="userRole"></p>
-  </div>
-
-  <div id="adminPanel" class="card admin">
+<h2>Dashboard</h2>
+<p id="welcome"></p>
+<div id="admin-panel" style="display:none;">
     <h3>Admin Panel</h3>
-    <p>You have administrator access.</p>
-    <ul>
-      <li>✔ Manage Users</li>
-      <li>✔ View Orders</li>
-      <li>✔ Google Sheets sync</li>
-      <li>✔ Payments</li>
-    </ul>
-    <button onclick="goToAdminUsers()">Manage Users</button>
-  </div>
-
+    <a href="admin-user.html">Manage Users</a>
 </div>
-
-<script type="module">
-import { auth, db } from "./firebase.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-const userEmail = document.getElementById("userEmail");
-const userRole = document.getElementById("userRole");
-const adminPanel = document.getElementById("adminPanel");
-
-onAuthStateChanged(auth, (user) => {
-  if (!user || !user.emailVerified) {
-    window.location.href = "login.html";
-    return;
-  }
-
-  // Display user email immediately
-  userEmail.textContent = `Email: ${user.email}`;
-
-  // Reference to user's Firestore document
-  const userRef = doc(db, "users", user.uid);
-
-  // Listen for real-time updates
-  onSnapshot(userRef, (snap) => {
-    if (!snap.exists()) {
-      alert("User document missing in Firestore");
-      return;
-    }
-
-    const data = snap.data();
-    const role = (data.role || "user").toLowerCase();
-
-    // Display role
-    userRole.textContent = `Role: ${role}`;
-
-    // Show/hide admin panel
-    if (role === "admin") {
-      adminPanel.style.display = "block";
-    } else {
-      adminPanel.style.display = "none";
-    }
-  });
-});
-
-// Logout function
-window.logout = async function() {
-  await signOut(auth);
-  window.location.href = "login.html";
-};
-
-// Navigate to admin users page
-window.goToAdminUsers = function() {
-  window.location.href = "admin-users.html";
-};
-</script>
-
+<button id="logout">Logout</button>
 </body>
 </html>
