@@ -1,66 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Admin | User Management</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      margin: 0;
-    }
-
-    header {
-      background: #222;
-      color: white;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .container {
-      padding: 20px;
-    }
-
-    table {
-      width: 100%;
-      background: white;
-      border-collapse: collapse;
-      box-shadow: 0 5px 15px rgba(0,0,0,.1);
-    }
-
-    th, td {
-      padding: 12px;
-      border-bottom: 1px solid #eee;
-      text-align: left;
-    }
-
-    th {
-      background: #f0f0f0;
-    }
-
-    button {
-      padding: 6px 10px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .admin {
-      background: #ff3b3b;
-      color: white;
-    }
-
-    .user {
-      background: #0066ff;
-      color: white;
-    }
+    body { font-family: Arial, sans-serif; background: #f4f6f8; margin:0; }
+    header { background:#222; color:white; padding:15px 20px; display:flex; justify-content:space-between; align-items:center; }
+    .container { padding:20px; }
+    table { width:100%; border-collapse:collapse; background:white; box-shadow:0 5px 15px rgba(0,0,0,.1); }
+    th, td { padding:12px; border-bottom:1px solid #eee; text-align:left; }
+    th { background:#f0f0f0; }
+    button { padding:6px 10px; border:none; border-radius:4px; cursor:pointer; }
+    .admin-btn { background:#ff3b3b; color:white; }
+    .user-btn { background:#0066ff; color:white; }
   </style>
 </head>
-
 <body>
 
 <header>
@@ -85,81 +40,72 @@
 </div>
 
 <script type="module">
-  import { auth, db } from "./firebase.js";
-  import {
-    onAuthStateChanged,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { auth, db } from "./firebase.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  import {
-    collection,
-    getDocs,
-    doc,
-    updateDoc
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+const table = document.getElementById("userTable");
 
-  const table = document.getElementById("userTable");
+// Auth state & admin check
+onAuthStateChanged(auth, async (user) => {
+  if (!user || !user.emailVerified) {
+    window.location.href = "login.html";
+    return;
+  }
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user || !user.emailVerified) {
-      location.href = "login.html";
-      return;
-    }
+  const userRef = doc(db, "users", user.uid);
+  const snapshot = await userRef.get();
+  const data = snapshot.data();
 
-    // Check admin role
-    const adminSnap = await getDocs(collection(db, "users"));
-    const adminDoc = adminSnap.docs.find(d => d.id === user.uid);
+  if (!data || data.role.toLowerCase() !== "admin") {
+    alert("Admins only");
+    window.location.href = "dashboard.html";
+    return;
+  }
 
-    if (!adminDoc || adminDoc.data().role !== "admin") {
-      alert("Admins only");
-      location.href = "dashboard.html";
-      return;
-    }
+  loadUsersRealTime();
+});
 
-    loadUsers();
-  });
+// Real-time load all users
+function loadUsersRealTime() {
+  const usersCol = collection(db, "users");
 
-  async function loadUsers() {
-    const snap = await getDocs(collection(db, "users"));
+  onSnapshot(usersCol, (snap) => {
     table.innerHTML = "";
-
-    snap.forEach(docSnap => {
+    snap.forEach((docSnap) => {
       const u = docSnap.data();
+      const uid = docSnap.id;
+      const role = (u.role || "user").toLowerCase();
+      const btnClass = role === "admin" ? "admin-btn" : "user-btn";
+      const btnText = role === "admin" ? "Demote" : "Make Admin";
 
       table.innerHTML += `
         <tr>
           <td>${u.email}</td>
           <td>${u.firstName} ${u.lastName}</td>
-          <td>${u.phone}</td>
+          <td>${u.phone || ""}</td>
           <td>${u.emailVerified ? "Yes" : "No"}</td>
-          <td>${u.role}</td>
-          <td>
-            <button class="${u.role === "admin" ? "admin" : "user"}"
-              onclick="toggleRole('${docSnap.id}', '${u.role}')">
-              ${u.role === "admin" ? "Demote" : "Make Admin"}
-            </button>
-          </td>
+          <td>${role}</td>
+          <td><button class="${btnClass}" onclick="toggleRole('${uid}', '${role}')">${btnText}</button></td>
         </tr>
       `;
     });
-  }
+  });
+}
 
-  window.toggleRole = async function (uid, currentRole) {
-    const newRole = currentRole === "admin" ? "user" : "admin";
+// Toggle role (admin <-> user)
+window.toggleRole = async function(uid, currentRole) {
+  const newRole = currentRole === "admin" ? "user" : "admin";
+  if (!confirm(`Change role to ${newRole}?`)) return;
 
-    if (!confirm(`Change role to ${newRole}?`)) return;
+  await updateDoc(doc(db, "users", uid), { role: newRole });
+};
 
-    await updateDoc(doc(db, "users", uid), {
-      role: newRole
-    });
-
-    loadUsers();
-  };
-
-  window.logout = async function () {
-    await signOut(auth);
-    location.href = "login.html";
-  };
+// Logout
+window.logout = async function() {
+  await signOut(auth);
+  window.location.href = "login.html";
+};
 </script>
 
 </body>
