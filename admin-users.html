@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin | User Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+    }
+
+    header {
+      background: #222;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    table {
+      width: 100%;
+      background: white;
+      border-collapse: collapse;
+      box-shadow: 0 5px 15px rgba(0,0,0,.1);
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+
+    th {
+      background: #f0f0f0;
+    }
+
+    button {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .admin {
+      background: #ff3b3b;
+      color: white;
+    }
+
+    .user {
+      background: #0066ff;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h3>Admin – User Management</h3>
+  <button onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+  <table>
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Verified</th>
+        <th>Role</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="userTable"></tbody>
+  </table>
+</div>
+
+<script type="module">
+  import { auth, db } from "./firebase.js";
+  import {
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+  import {
+    collection,
+    getDocs,
+    doc,
+    updateDoc
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const table = document.getElementById("userTable");
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user || !user.emailVerified) {
+      location.href = "login.html";
+      return;
+    }
+
+    // Check admin role
+    const adminSnap = await getDocs(collection(db, "users"));
+    const adminDoc = adminSnap.docs.find(d => d.id === user.uid);
+
+    if (!adminDoc || adminDoc.data().role !== "admin") {
+      alert("Admins only");
+      location.href = "dashboard.html";
+      return;
+    }
+
+    loadUsers();
+  });
+
+  async function loadUsers() {
+    const snap = await getDocs(collection(db, "users"));
+    table.innerHTML = "";
+
+    snap.forEach(docSnap => {
+      const u = docSnap.data();
+
+      table.innerHTML += `
+        <tr>
+          <td>${u.email}</td>
+          <td>${u.firstName} ${u.lastName}</td>
+          <td>${u.phone}</td>
+          <td>${u.emailVerified ? "Yes" : "No"}</td>
+          <td>${u.role}</td>
+          <td>
+            <button class="${u.role === "admin" ? "admin" : "user"}"
+              onclick="toggleRole('${docSnap.id}', '${u.role}')">
+              ${u.role === "admin" ? "Demote" : "Make Admin"}
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+  }
+
+  window.toggleRole = async function (uid, currentRole) {
+    const newRole = currentRole === "admin" ? "user" : "admin";
+
+    if (!confirm(`Change role to ${newRole}?`)) return;
+
+    await updateDoc(doc(db, "users", uid), {
+      role: newRole
+    });
+
+    loadUsers();
+  };
+
+  window.logout = async function () {
+    await signOut(auth);
+    location.href = "login.html";
+  };
+</script>
+
+</body>
+</html>
