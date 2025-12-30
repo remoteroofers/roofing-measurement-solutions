@@ -1,29 +1,36 @@
-import { auth } from "./firebase.js";
-import {
-  signInWithEmailAndPassword,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
+  authDomain: "remoteroofers-51826.firebaseapp.com",
+  projectId: "remoteroofers-51826",
+  storageBucket: "remoteroofers-51826.firebasestorage.app",
+  messagingSenderId: "901240361996",
+  appId: "1:901240361996:web:2a209986f74f15618aca29"
+};
 
-async function loginUser() {
-  const email = loginEmail.value;
-  const password = loginPassword.value;
-  const note = document.getElementById("note");
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-  try {
-    const cred = await signInWithEmailAndPassword(auth, email, password);
-    const user = cred.user;
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const message = document.getElementById('message');
 
-    if (!user.emailVerified) {
-      note.textContent = "Please verify your email before logging in.";
-      await signOut(auth);
-      return;
+    try {
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        if(!user.emailVerified){
+            message.textContent = "Please verify your email before login.";
+            await auth.signOut();
+            return;
+        }
+
+        // Redirect to dashboard
+        window.location.href = 'dashboard.html';
+    } catch (err) {
+        message.textContent = err.message;
     }
-
-    window.location.href = "dashboard.html";
-
-  } catch (err) {
-    note.textContent = err.message;
-  }
-}
-
-window.loginUser = loginUser;
+});
