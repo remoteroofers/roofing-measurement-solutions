@@ -1,140 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Create Account</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <title>Signup | Sonido App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background:#f4f6f8;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-}
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-.card {
-  background:#fff;
-  padding:30px;
-  width:380px;
-  border-radius:8px;
-  box-shadow:0 10px 25px rgba(0,0,0,.1);
-}
+    .signup-box {
+      background: #fff;
+      padding: 30px;
+      width: 360px;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.1);
+    }
 
-input {
-  width:100%;
-  padding:10px;
-  margin-bottom:10px;
-}
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
-.password-rules {
-  font-size:12px;
-  margin-bottom:10px;
-}
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
 
-.valid { color:green }
-.invalid { color:red }
+    .password-row {
+      position: relative;
+    }
 
-button {
-  width:100%;
-  padding:12px;
-  background:#0a66c2;
-  color:#fff;
-  border:none;
-  border-radius:5px;
-  font-size:16px;
-}
+    .toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 14px;
+      color: #555;
+    }
 
-button:disabled {
-  background:#aaa;
-}
-</style>
+    .strength {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .strength.weak { color: red; }
+    .strength.medium { color: orange; }
+    .strength.strong { color: green; }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #0066ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      margin-top: 15px;
+      cursor: pointer;
+      opacity: .6;
+    }
+
+    button.enabled {
+      opacity: 1;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="signup-box">
   <h2>Create Account</h2>
 
-  <input id="firstName" placeholder="First Name">
-  <input id="lastName" placeholder="Last Name">
-  <input id="email" placeholder="Email">
+  <input type="text" id="firstName" placeholder="First Name" required />
+  <input type="text" id="lastName" placeholder="Last Name" required />
+  <input type="email" id="email" placeholder="Email" required />
+  <input type="tel" id="phone" placeholder="Phone Number" required />
 
-  <input id="phone" placeholder="Phone Number">
-
-  <input id="password" type="password" placeholder="Password">
-  <input id="confirmPassword" type="password" placeholder="Confirm Password">
-
-  <label>
-    <input type="checkbox" id="showPass"> Show Password
-  </label>
-
-  <div class="password-rules">
-    <div id="length" class="invalid">• At least 8 characters</div>
-    <div id="upper" class="invalid">• Uppercase letter</div>
-    <div id="number" class="invalid">• Number</div>
-    <div id="match" class="invalid">• Passwords match</div>
+  <div class="password-row">
+    <input type="password" id="password" placeholder="Password" />
+    <span class="toggle" onclick="togglePassword()">👁</span>
   </div>
 
-  <button id="signupBtn" disabled>Create Account</button>
-  <p id="msg"></p>
+  <input type="password" id="confirmPassword" placeholder="Confirm Password" />
+
+  <div id="strengthText" class="strength"></div>
+
+  <button id="signupBtn" onclick="signupUser()" disabled>
+    Sign Up
+  </button>
+
+  <div class="login-link">
+    Already have an account?
+    <a href="login.html">Login</a>
+  </div>
 </div>
 
+<!-- Signup Logic -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import "./signup.js";
 
-const firebaseConfig = { /* YOUR CONFIG */ };
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+  const password = document.getElementById("password");
+  const confirmPassword = document.getElementById("confirmPassword");
+  const strengthText = document.getElementById("strengthText");
+  const signupBtn = document.getElementById("signupBtn");
 
-const password = document.getElementById("password");
-const confirm = document.getElementById("confirmPassword");
-const signupBtn = document.getElementById("signupBtn");
+  function checkStrength() {
+    const val = password.value;
+    let strength = "weak";
 
-function validate() {
-  let pass = password.value;
-  let ok = true;
+    if (val.length >= 8 && /[A-Z]/.test(val) && /\d/.test(val)) {
+      strength = "strong";
+    } else if (val.length >= 6) {
+      strength = "medium";
+    }
 
-  document.getElementById("length").className = pass.length >= 8 ? "valid":"invalid";
-  document.getElementById("upper").className = /[A-Z]/.test(pass) ? "valid":"invalid";
-  document.getElementById("number").className = /\d/.test(pass) ? "valid":"invalid";
-  document.getElementById("match").className = pass === confirm.value && pass !== "" ? "valid":"invalid";
+    strengthText.textContent = `Password strength: ${strength}`;
+    strengthText.className = `strength ${strength}`;
 
-  ok = pass.length>=8 && /[A-Z]/.test(pass) && /\d/.test(pass) && pass===confirm.value;
-  signupBtn.disabled = !ok;
-}
+    const valid =
+      strength === "strong" &&
+      password.value === confirmPassword.value;
 
-password.oninput = confirm.oninput = validate;
+    signupBtn.disabled = !valid;
+    signupBtn.classList.toggle("enabled", valid);
+  }
 
-document.getElementById("showPass").onchange = e => {
-  password.type = confirm.type = e.target.checked ? "text" : "password";
-};
+  password.addEventListener("input", checkStrength);
+  confirmPassword.addEventListener("input", checkStrength);
 
-signupBtn.onclick = async () => {
-  try {
-    const email = email.value;
-    const pass = password.value;
-
-    const userCred = await createUserWithEmailAndPassword(auth, email, pass);
-    await sendEmailVerification(userCred.user);
-
-    await setDoc(doc(db,"users",userCred.user.uid),{
-      firstName:firstName.value,
-      lastName:lastName.value,
-      email,
-      phone:phone.value,
-      role:"user",
-      created:new Date()
-    });
-
-    msg.innerHTML="✅ Verify your email to continue";
-  } catch(e){ msg.innerHTML=e.message }
-};
+  window.togglePassword = function () {
+    password.type =
+      password.type === "password" ? "text" : "password";
+  };
 </script>
+
 </body>
 </html>
