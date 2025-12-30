@@ -16,6 +16,6 @@ onAuthStateChanged(auth, async (user) => {
 
   if (snap.data().role !== "admin") {
     alert("Admins only");
-    location.href = "dashboard.html";
+    location.href = "admin-users.html";
   }
 });
