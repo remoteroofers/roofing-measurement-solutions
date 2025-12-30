@@ -1,21 +1,33 @@
-import { auth, db } from "./firebase.js";
-import {
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import {
-  doc, getDoc
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
+  authDomain: "remoteroofers-51826.firebaseapp.com",
+  projectId: "remoteroofers-51826",
+  storageBucket: "remoteroofers-51826.firebasestorage.app",
+  messagingSenderId: "901240361996",
+  appId: "1:901240361996:web:2a209986f74f15618aca29"
+};
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user || !user.emailVerified) {
-    location.href = "login.html";
-    return;
-  }
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-  const snap = await getDoc(doc(db, "users", user.uid));
+auth.onAuthStateChanged(async (user) => {
+    if(user){
+        const doc = await db.collection('users').doc(user.uid).get();
+        if(doc.exists){
+            const data = doc.data();
+            document.getElementById('welcome').textContent = `Welcome, ${data.firstname} ${data.lastname}!`;
 
-  if (snap.data().role !== "admin") {
-    alert("Admins only");
-    location.href = "admin-users.html";
-  }
+            if(data.role === 'admin'){
+                document.getElementById('admin-panel').style.display = 'block';
+            }
+        }
+    } else {
+        window.location.href = 'login.html';
+    }
+});
+
+document.getElementById('logout').addEventListener('click', () => {
+    auth.signOut().then(() => window.location.href = 'login.html');
 });
