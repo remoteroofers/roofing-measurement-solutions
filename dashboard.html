@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard | Sonido App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+    }
+
+    header {
+      background: #0066ff;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,.1);
+      margin-bottom: 20px;
+    }
+
+    .admin {
+      border-left: 5px solid red;
+    }
+
+    button {
+      padding: 10px 15px;
+      background: #ff3b3b;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h3>Sonido Dashboard</h3>
+  <button onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h3>Welcome</h3>
+    <p id="userEmail">Loading...</p>
+    <p id="userRole"></p>
+  </div>
+
+  <div id="adminPanel" class="card admin" style="display:none;">
+    <h3>Admin Panel</h3>
+    <p>You have administrator access.</p>
+    <ul>
+      <li>✔ View all users</li>
+      <li>✔ Manage orders</li>
+      <li>✔ Google Sheets sync</li>
+      <li>✔ Stripe / PayPal payments</li>
+    </ul>
+  </div>
+
+</div>
+
+<script type="module">
+  import { auth, db } from "./firebase.js";
+  import {
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+  import {
+    doc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const userEmail = document.getElementById("userEmail");
+  const userRole = document.getElementById("userRole");
+  const adminPanel = document.getElementById("adminPanel");
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user || !user.emailVerified) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    userEmail.textContent = `Email: ${user.email}`;
+
+    const snap = await getDoc(doc(db, "users", user.uid));
+    const data = snap.data();
+
+    userRole.textContent = `Role: ${data.role}`;
+
+    if (data.role === "admin") {
+      adminPanel.style.display = "block";
+    }
+  });
+
+  window.logout = async function () {
+    await signOut(auth);
+    window.location.href = "login.html";
+  };
+</script>
+
+</body>
+</html>
