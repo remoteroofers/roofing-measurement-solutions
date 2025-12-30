@@ -1,148 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
 <title>Create Account</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body {
   font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  background:#f4f6f8;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
 }
 
-.container {
-  background: #fff;
-  padding: 30px;
-  width: 360px;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0,0,0,.1);
-}
-
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
+.card {
+  background:#fff;
+  padding:30px;
+  width:380px;
+  border-radius:8px;
+  box-shadow:0 10px 25px rgba(0,0,0,.1);
 }
 
 input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 12px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
 }
 
+.password-rules {
+  font-size:12px;
+  margin-bottom:10px;
+}
+
+.valid { color:green }
+.invalid { color:red }
+
 button {
-  width: 100%;
-  padding: 12px;
-  background: #0a66c2;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
+  width:100%;
+  padding:12px;
+  background:#0a66c2;
+  color:#fff;
+  border:none;
+  border-radius:5px;
+  font-size:16px;
 }
 
 button:disabled {
-  background: #aaa;
-  cursor: not-allowed;
-}
-
-.success {
-  color: green;
-  text-align: center;
-  margin-top: 15px;
-}
-
-.error {
-  color: red;
-  text-align: center;
-  margin-top: 10px;
+  background:#aaa;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="card">
   <h2>Create Account</h2>
 
-  <input type="text" id="firstName" placeholder="First Name" required />
-  <input type="text" id="lastName" placeholder="Last Name" required />
-  <input type="email" id="email" placeholder="Email Address" required />
-  <input type="tel" id="phone" placeholder="Phone Number" required />
-  <input type="password" id="password" placeholder="Password" required />
+  <input id="firstName" placeholder="First Name">
+  <input id="lastName" placeholder="Last Name">
+  <input id="email" placeholder="Email">
 
-  <button id="signupBtn">Create Account</button>
+  <input id="phone" placeholder="Phone Number">
 
-  <div id="message"></div>
+  <input id="password" type="password" placeholder="Password">
+  <input id="confirmPassword" type="password" placeholder="Confirm Password">
+
+  <label>
+    <input type="checkbox" id="showPass"> Show Password
+  </label>
+
+  <div class="password-rules">
+    <div id="length" class="invalid">• At least 8 characters</div>
+    <div id="upper" class="invalid">• Uppercase letter</div>
+    <div id="number" class="invalid">• Number</div>
+    <div id="match" class="invalid">• Passwords match</div>
+  </div>
+
+  <button id="signupBtn" disabled>Create Account</button>
+  <p id="msg"></p>
 </div>
 
-<!-- Firebase SDK -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // 🔥 REPLACE WITH YOUR FIREBASE CONFIG
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "XXXX",
-    appId: "XXXX"
-  };
+const firebaseConfig = { /* YOUR CONFIG */ };
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+const password = document.getElementById("password");
+const confirm = document.getElementById("confirmPassword");
+const signupBtn = document.getElementById("signupBtn");
 
-  const signupBtn = document.getElementById("signupBtn");
-  const message = document.getElementById("message");
+function validate() {
+  let pass = password.value;
+  let ok = true;
 
-  signupBtn.addEventListener("click", async () => {
-    const firstName = document.getElementById("firstName").value.trim();
-    const lastName = document.getElementById("lastName").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const phone = document.getElementById("phone").value.trim();
-    const password = document.getElementById("password").value;
+  document.getElementById("length").className = pass.length >= 8 ? "valid":"invalid";
+  document.getElementById("upper").className = /[A-Z]/.test(pass) ? "valid":"invalid";
+  document.getElementById("number").className = /\d/.test(pass) ? "valid":"invalid";
+  document.getElementById("match").className = pass === confirm.value && pass !== "" ? "valid":"invalid";
 
-    message.innerHTML = "";
+  ok = pass.length>=8 && /[A-Z]/.test(pass) && /\d/.test(pass) && pass===confirm.value;
+  signupBtn.disabled = !ok;
+}
 
-    if (!firstName || !lastName || !email || !phone || !password) {
-      message.innerHTML = `<div class="error">All fields are required</div>`;
-      return;
-    }
+password.oninput = confirm.oninput = validate;
 
-    try {
-      // 🔐 Create Auth User
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+document.getElementById("showPass").onchange = e => {
+  password.type = confirm.type = e.target.checked ? "text" : "password";
+};
 
-      // 📦 Store User Data in Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        firstName,
-        lastName,
-        email,
-        phone,
-        createdAt: new Date()
-      });
+signupBtn.onclick = async () => {
+  try {
+    const email = email.value;
+    const pass = password.value;
 
-      message.innerHTML = `<div class="success">✅ Account created successfully!</div>`;
+    const userCred = await createUserWithEmailAndPassword(auth, email, pass);
+    await sendEmailVerification(userCred.user);
 
-      // Optional Redirect
-      // window.location.href = "login.html";
+    await setDoc(doc(db,"users",userCred.user.uid),{
+      firstName:firstName.value,
+      lastName:lastName.value,
+      email,
+      phone:phone.value,
+      role:"user",
+      created:new Date()
+    });
 
-    } catch (error) {
-      message.innerHTML = `<div class="error">${error.message}</div>`;
-    }
-  });
+    msg.innerHTML="✅ Verify your email to continue";
+  } catch(e){ msg.innerHTML=e.message }
+};
 </script>
-
 </body>
 </html>
