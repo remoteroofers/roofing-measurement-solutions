@@ -1,101 +1,31 @@
-* {
-  box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
+:root {
+--primary: #0d3b66;
+--accent: #f4d35e;
+--bg: #f9f9f9;
 }
+
 
 body {
-  margin: 0;
-  background: #f5f7fa;
-  color: #222;
+font-family: Arial, sans-serif;
+background: var(--bg);
 }
 
-header {
-  background: #0d1b2a;
-  color: #fff;
-  padding: 15px 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 
-nav a {
-  color: #fff;
-  margin-left: 20px;
-  text-decoration: none;
-  font-weight: 500;
-}
+.logo { height: 60px; }
+
 
 .hero {
-  background: linear-gradient(to right, #1b263b, #415a77);
-  color: #fff;
-  padding: 80px 20px;
-  text-align: center;
+text-align: center;
+padding: 100px;
+background: linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.6)), url('../assets/roof.jpg');
+color: white;
 }
 
-.primary-btn {
-  background: #ff7a00;
-  color: #fff;
-  padding: 15px 30px;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  border-radius: 5px;
-}
 
-.features {
-  display: flex;
-  justify-content: space-around;
-  padding: 50px 20px;
-  background: #fff;
-}
-
-.pricing {
-  padding: 60px 20px;
-  text-align: center;
-}
-
-.price-cards {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.card {
-  background: #fff;
-  padding: 30px;
-  width: 260px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.card.highlight {
-  border: 2px solid #ff7a00;
-}
-
-.modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-}
-
-.modal-content {
-  background: #fff;
-  width: 90%;
-  max-width: 450px;
-  margin: 80px auto;
-  padding: 30px;
-  border-radius: 8px;
-}
-
-.modal input, .modal select {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-}
-
-.close {
-  float: right;
-  cursor: pointer;
-  font-size: 20px;
+.btn {
+background: var(--accent);
+padding: 15px 25px;
+color: black;
+text-decoration: none;
+border-radius: 5px;
 }
