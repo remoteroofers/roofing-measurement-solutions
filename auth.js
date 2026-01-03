@@ -1,43 +1,20 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { auth, db } from './firebase.js';
+import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
-  authDomain: "remoteroofers-51826.firebaseapp.com",
-  projectId: "remoteroofers-51826"
-};
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+signupForm.addEventListener('submit', async e => {
+e.preventDefault();
+const user = await createUserWithEmailAndPassword(auth, email.value, password.value);
 
-// SIGN UP
-const signupBtn = document.getElementById("signupBtn");
-if (signupBtn) {
-  signupBtn.onclick = () => {
-    createUserWithEmailAndPassword(
-      auth,
-      email.value,
-      password.value
-    )
-    .then(() => window.location.href = "order.html")
-    .catch(e => alert(e.message));
-  };
-}
 
-// LOGIN
-const loginBtn = document.getElementById("loginBtn");
-if (loginBtn) {
-  loginBtn.onclick = () => {
-    signInWithEmailAndPassword(
-      auth,
-      email.value,
-      password.value
-    )
-    .then(() => window.location.href = "order.html")
-    .catch(e => alert(e.message));
-  };
-}
+await setDoc(doc(db, "users", user.user.uid), {
+name: name.value,
+address: address.value,
+phone: phone.value,
+role: "user"
+});
+
+
+location.href = 'dashboard.html';
+});
