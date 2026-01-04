@@ -7,7 +7,7 @@ orderForm.onsubmit = async (e) => {
     const data = Object.fromEntries(formData.entries());
     data.timestamp = new Date().toLocaleString();
 
-    const GOOGLE_SCRIPT_URL = 'YOUR_DEPLOYED_URL_HERE'; // Replace with your actual URL
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0WgSZk3RHRj8Mqn8DunDfvi5EfniHdY_PIDk8z3-yEFZRldKq7Q0Q9E_L32bvQwmW/exec'; // Replace with your actual URL
 
     try {
         // We use 'method: POST' and 'mode: no-cors' for Google Apps Script
