@@ -1,4 +1,4 @@
-const SCRIPT_URL = 'YOUR_APPS_SCRIPT_WEB_URL_HERE'; // Paste your Apps Script URL
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnNUsUmhDo7HuTJyqa7WbENa9xua6Dq8zLunFnVIc-4jZWxGe6UcPrhe4ylSYVtG0v/exec'; // Paste your Apps Script URL
 
 // Signup
 const signupForm = document.getElementById('signupForm');
