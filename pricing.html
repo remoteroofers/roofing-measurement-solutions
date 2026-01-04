@@ -880,67 +880,67 @@
         });
 
         // Pricing Calculator
-        const calcRoofSize = document.getElementById('calcRoofSize');
-        const calcPropertyType = document.getElementById('calcPropertyType');
-        const calcTurnaround = document.getElementById('calcTurnaround');
-        const calcVolume = document.getElementById('calcVolume');
-        const calculatedPrice = document.getElementById('calculatedPrice');
-        const monthlyEstimate = document.getElementById('monthlyEstimate');
-        const annualSavings = document.getElementById('annualSavings');
+      //  const calcRoofSize = document.getElementById('calcRoofSize');
+      //  const calcPropertyType = document.getElementById('calcPropertyType');
+       // const calcTurnaround = document.getElementById('calcTurnaround');
+       // const calcVolume = document.getElementById('calcVolume');
+       // const calculatedPrice = document.getElementById('calculatedPrice');
+       // const monthlyEstimate = document.getElementById('monthlyEstimate');
+        //const annualSavings = document.getElementById('annualSavings');
 
-        function updatePricing() {
-            const roofSize = parseInt(calcRoofSize.value) || 2500;
-            const propertyType = calcPropertyType.value;
-            const turnaround = calcTurnaround.value;
-            const volume = calcVolume.value;
+        //function updatePricing() {
+          //  const roofSize = parseInt(calcRoofSize.value) || 2500;
+          //  const propertyType = calcPropertyType.value;
+          //  const turnaround = calcTurnaround.value;
+          //  const volume = calcVolume.value;
 
             // Base price calculation
-            let basePrice = Math.ceil(roofSize / 1000) * 50;
+            //let basePrice = Math.ceil(roofSize / 1000) * 50;
 
             // Property type multiplier
-            if (propertyType === 'commercial') {
-                basePrice *= 1.2;
-            } else if (propertyType === 'industrial') {
-                basePrice *= 1.4;
-            }
+          //  if (propertyType === 'commercial') {
+           //     basePrice *= 1.2;
+          //  } else if (propertyType === 'industrial') {
+           //     basePrice *= 1.4;
+          //  }
 
-            // Turnaround multiplier
-            if (turnaround === 'express') {
-                basePrice *= 1.5;
-            } else if (turnaround === 'rush') {
-                basePrice *= 2;
-            }
+           // // Turnaround multiplier
+          //  if (turnaround === 'express') {
+         //       basePrice *= 1.5;
+        //    } else if (turnaround === 'rush') {
+        //        basePrice *= 2;
+        //    }
 
             // Volume discount
-            let discount = 1;
-            let monthlyVolume = 10;
-            if (volume === '11-25') {
-                discount = 0.9;
-                monthlyVolume = 18;
-            } else if (volume === '26-50') {
-                discount = 0.85;
-                monthlyVolume = 38;
-            } else if (volume === '51+') {
-                discount = 0.8;
-                monthlyVolume = 60;
-            }
+         //   let discount = 1;
+        //    let monthlyVolume = 10;
+         //   if (volume === '11-25') {
+          //      discount = 0.9;
+         //       monthlyVolume = 18;
+         //   } else if (volume === '26-50') {
+         //       discount = 0.85;
+        //        monthlyVolume = 38;
+        //    } else if (volume === '51+') {
+         //       discount = 0.8;
+        //        monthlyVolume = 60;
+        //    }
 
-            const finalPrice = Math.round(basePrice * discount);
-            const monthly = finalPrice * monthlyVolume;
-            const savings = Math.round((basePrice * 1.5 - finalPrice) * monthlyVolume * 12);
+         //   const finalPrice = Math.round(basePrice * discount);
+         //   const monthly = finalPrice * monthlyVolume;
+          //  const savings = Math.round((basePrice * 1.5 - finalPrice) * monthlyVolume * 12);
 
-            calculatedPrice.textContent = finalPrice.toLocaleString();
-            monthlyEstimate.textContent = monthly.toLocaleString();
-            annualSavings.textContent = savings.toLocaleString();
-        }
+        //    calculatedPrice.textContent = finalPrice.toLocaleString();
+        //    monthlyEstimate.textContent = monthly.toLocaleString();
+        //    annualSavings.textContent = savings.toLocaleString();
+      //  }
 
-        calcRoofSize.addEventListener('input', updatePricing);
-        calcPropertyType.addEventListener('change', updatePricing);
-        calcTurnaround.addEventListener('change', updatePricing);
-        calcVolume.addEventListener('change', updatePricing);
+      //  calcRoofSize.addEventListener('input', updatePricing);
+      //  calcPropertyType.addEventListener('change', updatePricing);
+      //  calcTurnaround.addEventListener('change', updatePricing);
+      //  calcVolume.addEventListener('change', updatePricing);
 
         // Initialize pricing
-        updatePricing();
+      //  updatePricing();
 
         // FAQ Accordion
         const faqQuestions = document.querySelectorAll('.faq-question');
