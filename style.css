@@ -1,0 +1,62 @@
+/* CSS Variables for easy theme changes */
+:root {
+    --primary-color: #007bff; /* Blue */
+    --secondary-color: #6c757d; /* Gray */
+    --background-color: #f8f9fa; /* Light gray */
+    --text-color: #333;
+    --font-family: Arial, sans-serif;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    background: var(--primary-color);
+    color: white;
+    padding: 10px;
+}
+
+nav a {
+    margin: 10px;
+    color: white;
+    text-decoration: none;
+}
+
+form {
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+label {
+    display: block;
+    margin: 10px 0;
+}
+
+input, select, textarea, button {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+}
+
+#logo {
+    width: 200px; /* Adjust size */
+    /* To change background: body { background-image: url('background.jpg'); } */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid var(--secondary-color);
+    padding: 8px;
+}
+
+/* To change theme: Edit --variables above, or add background-image to body */
