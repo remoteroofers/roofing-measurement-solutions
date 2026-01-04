@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Order professional roof measurements with RoofMetrics Pro. Fast, accurate, and secure ordering process with real-time tracking.">
+    <title>Order Portal - Remote Roofers</title>
+    <link rel="stylesheet" href="../css/main.css">
+  
+  <script type="module" async src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Froofmetric3026back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.12"></script>
+  <script type="module" defer src="https://static.rocket.new/rocket-shot.js?v=0.0.2"></script>
+  </head>
+<body class="antialiased">
+    <!-- Header Navigation -->
+    <header class="bg-white shadow-card sticky top-0 z-50">
+        <nav class="container-custom">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center space-x-3 group">
+                    <svg class="w-10 h-10 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="40" height="40" rx="8" fill="#1E3A5F"/>
+                        <path d="M20 8L32 16V28L20 36L8 28V16L20 8Z" fill="#FF6B35"/>
+                        <path d="M20 12L28 17V27L20 32L12 27V17L20 12Z" fill="#2D5A87"/>
+                        <circle cx="20" cy="20" r="3" fill="white"/>
+                    </svg>
+                    <span class="text-2xl font-headline font-bold text-primary">Remote<span class="text-accent">Roofers</span></span>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="index.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Home</a>
+                    <a href="pricing.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Pricing</a>
+                    <a href="order_portal.html" class="text-primary font-semibold border-b-2 border-accent py-2 transition-colors duration-200">Order Now</a>
+                    <a href="about_us.html" class="text-text-secondary hover:text-primary transition-colors duration-200">About Us</a>
+                    <a href="dashboard.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Dashboard</a>
+                </div>
+
+                <!-- CTA Buttons -->
+                <div class="hidden lg:flex items-center space-x-4">
+                    <a href="login.html" class="text-primary font-semibold hover:text-secondary transition-colors duration-200">Login</a>
+                    <a href="dashboard.html" class="btn-primary">My Account</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="lg:hidden p-2 rounded-lg hover:bg-surface transition-colors duration-200" aria-label="Toggle mobile menu">
+                    <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="hidden lg:hidden pb-6 pt-2">
+                <div class="flex flex-col space-y-4">
+                    <a href="index.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Home</a>
+                    <a href="pricing.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Pricing</a>
+                    <a href="order_portal.html" class="text-primary font-semibold py-2 border-l-4 border-accent pl-4">Order Now</a>
+                    <a href="about_us.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">About Us</a>
+                    <a href="dashboard.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Dashboard</a>
+                    <div class="flex flex-col space-y-3 pt-4 border-t border-border-light">
+                        <a href="login.html" class="btn-outline text-center">Login</a>
+                        <a href="dashboard.html" class="btn-primary text-center">My Account</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Progress Indicator -->
+    <section class="bg-surface py-6 border-b border-border-light">
+        <div class="container-custom">
+            <div class="flex items-center justify-between max-w-4xl mx-auto">
+                <div class="flex items-center space-x-3 flex-1">
+                    <div id="step1Indicator" class="flex items-center justify-center w-10 h-10 rounded-full bg-accent text-white font-bold transition-all duration-300">
+                        1
+                    </div>
+                    <div class="hidden sm:block">
+                        <div class="text-sm font-semibold text-primary">Property Details</div>
+                        <div class="text-xs text-text-secondary">Address & Type</div>
+                    </div>
+                </div>
+                <div class="flex-1 h-1 bg-border mx-2">
+                    <div id="progress1" class="h-full bg-accent transition-all duration-300" style="width: 0%"></div>
+                </div>
+                
+                <div class="flex items-center space-x-3 flex-1">
+                    <div id="step2Indicator" class="flex items-center justify-center w-10 h-10 rounded-full bg-border text-text-secondary font-bold transition-all duration-300">
+                        2
+                    </div>
+                    <div class="hidden sm:block">
+                        <div class="text-sm font-semibold text-text-secondary">Service Selection</div>
+                        <div class="text-xs text-text-secondary">Choose Plan</div>
+                    </div>
+                </div>
+                <div class="flex-1 h-1 bg-border mx-2">
+                    <div id="progress2" class="h-full bg-accent transition-all duration-300" style="width: 0%"></div>
+                </div>
+                
+                <div class="flex items-center space-x-3 flex-1">
+                    <div id="step3Indicator" class="flex items-center justify-center w-10 h-10 rounded-full bg-border text-text-secondary font-bold transition-all duration-300">
+                        3
+                    </div>
+                    <div class="hidden sm:block">
+                        <div class="text-sm font-semibold text-text-secondary">Upload & Review</div>
+                        <div class="text-xs text-text-secondary">Property Images</div>
+                    </div>
+                </div>
+                <div class="flex-1 h-1 bg-border mx-2">
+                    <div id="progress3" class="h-full bg-accent transition-all duration-300" style="width: 0%"></div>
+                </div>
+                
+                <div class="flex items-center space-x-3 flex-1">
+                    <div id="step4Indicator" class="flex items-center justify-center w-10 h-10 rounded-full bg-border text-text-secondary font-bold transition-all duration-300">
+                        4
+                    </div>
+                    <div class="hidden sm:block">
+                        <div class="text-sm font-semibold text-text-secondary">Payment</div>
+                        <div class="text-xs text-text-secondary">Secure Checkout</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Form Section -->
+    <section class="section bg-white">
+        <div class="container-custom">
+            <div class="max-w-4xl mx-auto">
+                <!-- Step 1: Property Details -->
+                <div id="step1" class="animate-fade-in">
+                    <div class="text-center mb-12">
+                        <h1 class="text-4xl font-headline font-bold text-primary mb-4">Start Your Measurement Order</h1>
+                        <p class="text-xl text-text-secondary">Enter your property details to get started</p>
+                    </div>
+
+                    <div class="card p-8 lg:p-12">
+                        <form id="propertyForm" class="space-y-6">
+                            <div>
+                                <label for="propertyAddress" class="block text-sm font-semibold text-primary mb-2">
+                                    Property Address *
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="propertyAddress" 
+                                    class="input" 
+                                    placeholder="123 Main Street, Austin, TX 78701" 
+                                    required
+                                    autocomplete="street-address"
+                                >
+                                <p class="text-xs text-text-secondary mt-2">We'll use this to locate your property for aerial measurements</p>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="propertyType" class="block text-sm font-semibold text-primary mb-2">
+                                        Property Type *
+                                    </label>
+                                    <select id="propertyType" class="input" required>
+                                        <option value="">Select property type</option>
+                                        <option value="residential-single">Residential - Single Family</option>
+                                        <option value="residential-multi">Residential - Multi-Family</option>
+                                        <option value="commercial-small">Commercial - Small (Under 10,000 sq ft)</option>
+                                        <option value="commercial-large">Commercial - Large (Over 10,000 sq ft)</option>
+                                        <option value="industrial">Industrial</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label for="estimatedSize" class="block text-sm font-semibold text-primary mb-2">
+                                        Estimated Roof Size (sq ft)
+                                    </label>
+                                    <input 
+                                        type="number" 
+                                        id="estimatedSize" 
+                                        class="input" 
+                                        placeholder="2500" 
+                                        min="100"
+                                    >
+                                    <p class="text-xs text-text-secondary mt-2">Optional - helps us provide accurate pricing</p>
+                                </div>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="contactName" class="block text-sm font-semibold text-primary mb-2">
+                                        Contact Name *
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="contactName" 
+                                        class="input" 
+                                        placeholder="John Smith" 
+                                        required
+                                        autocomplete="name"
+                                    >
+                                </div>
+
+                                <div>
+                                    <label for="contactEmail" class="block text-sm font-semibold text-primary mb-2">
+                                        Email Address *
+                                    </label>
+                                    <input 
+                                        type="email" 
+                                        id="contactEmail" 
+                                        class="input" 
+                                        placeholder="contractor@example.com" 
+                                        required
+                                        autocomplete="email"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="contactPhone" class="block text-sm font-semibold text-primary mb-2">
+                                        Phone Number *
+                                    </label>
+                                    <input 
+                                        type="tel" 
+                                        id="contactPhone" 
+                                        class="input" 
+                                        placeholder="(555) 123-4567" 
+                                        required
+                                        autocomplete="tel"
+                                    >
+                                </div>
+
+                                <div>
+                                    <label for="companyName" class="block text-sm font-semibold text-primary mb-2">
+                                        Company Name
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="companyName" 
+                                        class="input" 
+                                        placeholder="ABC Roofing Co."
+                                        autocomplete="organization"
+                                    >
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="projectNotes" class="block text-sm font-semibold text-primary mb-2">
+                                    Project Notes (Optional)
+                                </label>
+                                <textarea 
+                                    id="projectNotes" 
+                                    class="input" 
+                                    rows="4" 
+                                    placeholder="Any specific requirements or details about this project..."
+                                ></textarea>
+                            </div>
+
+                            <div class="flex justify-end pt-6">
+                                <button type="submit" class="btn-primary">
+                                    Continue to Service Selection
+                                    <svg class="inline-block w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Step 2: Service Selection -->
+                <div id="step2" class="hidden">
+                    <div class="text-center mb-12">
+                        <h2 class="text-4xl font-headline font-bold text-primary mb-4">Choose Your Service Tier</h2>
+                        <p class="text-xl text-text-secondary">Select the turnaround time that fits your project needs</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-6 mb-8">
+                        <!-- Standard Service -->
+                        <div class="card-interactive p-6 cursor-pointer border-2 border-transparent hover:border-primary transition-all duration-300 service-option" data-service="standard" data-price="149">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-headline font-bold text-primary">Standard</h3>
+                                <div class="w-6 h-6 rounded-full border-2 border-border flex items-center justify-center service-radio">
+                                    <div class="w-3 h-3 rounded-full bg-accent hidden"></div>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-bold text-accent mb-2">$149</div>
+                            <div class="text-sm text-text-secondary mb-6">24-48 hour delivery</div>
+                            <ul class="space-y-3 text-sm">
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-success mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Complete roof measurements</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-success mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>3D visualization</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-success mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Material calculations</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-success mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>PDF & CAD formats</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Express Service -->
+                        <div class="card-interactive p-6 cursor-pointer border-2 border-transparent hover:border-primary transition-all duration-300 service-option relative" data-service="express" data-price="224">
+                            <div class="absolute -top-3 right-4 bg-accent text-white px-3 py-1 rounded-full text-xs font-bold">
+                                POPULAR
+                            </div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-headline font-bold text-primary">Express</h3>
+                                <div class="w-6 h-6 rounded-full border-2 border-border flex items-center justify-center service-radio">
+                                    <div class="w-3 h-3 rounded-full bg-accent hidden"></div>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-bold text-accent mb-2">$224</div>
+                            <div class="text-sm text-text-secondary mb-6">12-24 hour delivery</div>
+                            <ul class="space-y-3 text-sm">
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-success mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Everything in Standard</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-success mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Priority processing</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-success mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Enhanced 3D models</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-success mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Dedicated support</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Rush Service -->
+                        <div class="card-interactive p-6 cursor-pointer border-2 border-transparent hover:border-primary transition-all duration-300 service-option" data-service="rush" data-price="298">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-headline font-bold text-primary">Rush</h3>
+                                <div class="w-6 h-6 rounded-full border-2 border-border flex items-center justify-center service-radio">
+                                    <div class="w-3 h-3 rounded-full bg-accent hidden"></div>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-bold text-accent mb-2">$298</div>
+                            <div class="text-sm text-text-secondary mb-6">6-12 hour delivery</div>
+                            <ul class="space-y-3 text-sm">
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-success mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Everything in Express</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-success mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Immediate processing</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-success mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Premium 3D models</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-success mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>24/7 priority support</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-accent-50 border-l-4 border-accent p-6 rounded-lg mb-8">
+                        <div class="flex items-start space-x-4">
+                            <svg class="w-6 h-6 text-accent flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                            </svg>
+                            <div>
+                                <h4 class="font-semibold text-primary mb-1">Selected Service: <span id="selectedServiceName">None</span></h4>
+                                <p class="text-sm text-text-secondary mb-2">Estimated delivery: <span id="selectedServiceDelivery">-</span></p>
+                                <p class="text-2xl font-bold text-accent">Total: $<span id="selectedServicePrice">0</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between pt-6">
+                        <button type="button" id="backToStep1" class="btn-outline">
+                            <svg class="inline-block w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
+                            </svg>
+                            Back to Property Details
+                        </button>
+                        <button type="button" id="continueToStep3" class="btn-primary" disabled>
+                            Continue to Upload
+                            <svg class="inline-block w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Upload & Review -->
+                <div id="step3" class="hidden">
+                    <div class="text-center mb-12">
+                        <h2 class="text-4xl font-headline font-bold text-primary mb-4">Upload Property Images</h2>
+                        <p class="text-xl text-text-secondary">Add photos to help us provide accurate measurements</p>
+                    </div>
+
+                    <div class="card p-8 lg:p-12 mb-8">
+                        <div class="mb-8">
+                            <label class="block text-sm font-semibold text-primary mb-4">
+                                Property Images (Optional but Recommended)
+                            </label>
+                            <div id="dropZone" class="border-2 border-dashed border-border rounded-lg p-12 text-center hover:border-accent transition-colors duration-300 cursor-pointer">
+                                <svg class="w-16 h-16 text-text-secondary mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                </svg>
+                                <p class="text-lg font-semibold text-primary mb-2">Drop images here or click to browse</p>
+                                <p class="text-sm text-text-secondary mb-4">Supported formats: JPG, PNG, HEIC (Max 10MB per file)</p>
+                                <input type="file" id="fileInput" class="hidden" multiple accept="image/*">
+                                <button type="button" id="browseBtn" class="btn-outline">
+                                    Browse Files
+                                </button>
+                            </div>
+                            <div id="fileList" class="mt-6 space-y-3"></div>
+                        </div>
+
+                        <div class="bg-surface rounded-lg p-6">
+                            <h3 class="text-lg font-headline font-bold text-primary mb-4">Order Summary</h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">Property Address:</span>
+                                    <span class="font-semibold text-primary" id="summaryAddress">-</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">Property Type:</span>
+                                    <span class="font-semibold text-primary" id="summaryType">-</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">Service Tier:</span>
+                                    <span class="font-semibold text-primary" id="summaryService">-</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">Delivery Time:</span>
+                                    <span class="font-semibold text-primary" id="summaryDelivery">-</span>
+                                </div>
+                                <div class="border-t border-border pt-3 mt-3">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-lg font-bold text-primary">Total Amount:</span>
+                                        <span class="text-2xl font-bold text-accent">$<span id="summaryTotal">0</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between pt-6">
+                        <button type="button" id="backToStep2" class="btn-outline">
+                            <svg class="inline-block w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
+                            </svg>
+                            Back to Service Selection
+                        </button>
+                        <button type="button" id="continueToStep4" class="btn-primary">
+                            Continue to Payment
+                            <svg class="inline-block w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Payment -->
+                <div id="step4" class="hidden">
+                    <div class="text-center mb-12">
+                        <h2 class="text-4xl font-headline font-bold text-primary mb-4">Secure Payment</h2>
+                        <p class="text-xl text-text-secondary">Complete your order with our secure checkout</p>
+                    </div>
+
+                    <div class="grid lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-2">
+                            <div class="card p-8">
+                                <form id="paymentForm" class="space-y-6">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-primary mb-4">
+                                            Payment Method
+                                        </label>
+                                        <div class="grid grid-cols-2 gap-4 mb-6">
+                                            <div class="border-2 border-accent rounded-lg p-4 cursor-pointer payment-method" data-method="card">
+                                                <div class="flex items-center justify-between mb-2">
+                                                    <span class="font-semibold text-primary">Credit Card</span>
+                                                    <div class="w-5 h-5 rounded-full border-2 border-accent flex items-center justify-center">
+                                                        <div class="w-3 h-3 rounded-full bg-accent"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="flex space-x-2">
+                                                    <img src="https://img.rocket.new/generatedImages/rocket_gen_img_145d26019-1767539924933.png" alt="Visa card logo" class="h-6" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;">
+                                                    <img src="https://img.rocket.new/generatedImages/rocket_gen_img_14dc8133b-1767539925862.png" alt="Mastercard logo" class="h-6" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;">
+                                                    <img src="https://img.rocket.new/generatedImages/rocket_gen_img_12661e911-1767539923172.png" alt="American Express logo" class="h-6" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;">
+                                                </div>
+                                            </div>
+                                            <div class="border-2 border-border rounded-lg p-4 cursor-pointer payment-method hover:border-primary transition-colors duration-200" data-method="ach">
+                                                <div class="flex items-center justify-between mb-2">
+                                                    <span class="font-semibold text-primary">ACH Transfer</span>
+                                                    <div class="w-5 h-5 rounded-full border-2 border-border flex items-center justify-center">
+                                                        <div class="w-3 h-3 rounded-full bg-accent hidden"></div>
+                                                    </div>
+                                                </div>
+                                                <p class="text-xs text-text-secondary">Bank account</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div id="cardPaymentFields">
+                                        <div>
+                                            <label for="cardNumber" class="block text-sm font-semibold text-primary mb-2">
+                                                Card Number *
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                id="cardNumber" 
+                                                class="input" 
+                                                placeholder="1234 5678 9012 3456" 
+                                                required
+                                                maxlength="19"
+                                            >
+                                        </div>
+
+                                        <div class="grid grid-cols-2 gap-6">
+                                            <div>
+                                                <label for="cardExpiry" class="block text-sm font-semibold text-primary mb-2">
+                                                    Expiry Date *
+                                                </label>
+                                                <input 
+                                                    type="text" 
+                                                    id="cardExpiry" 
+                                                    class="input" 
+                                                    placeholder="MM/YY" 
+                                                    required
+                                                    maxlength="5"
+                                                >
+                                            </div>
+                                            <div>
+                                                <label for="cardCvv" class="block text-sm font-semibold text-primary mb-2">
+                                                    CVV *
+                                                </label>
+                                                <input 
+                                                    type="text" 
+                                                    id="cardCvv" 
+                                                    class="input" 
+                                                    placeholder="123" 
+                                                    required
+                                                    maxlength="4"
+                                                >
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label for="cardName" class="block text-sm font-semibold text-primary mb-2">
+                                                Cardholder Name *
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                id="cardName" 
+                                                class="input" 
+                                                placeholder="John Smith" 
+                                                required
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div id="achPaymentFields" class="hidden">
+                                        <div>
+                                            <label for="routingNumber" class="block text-sm font-semibold text-primary mb-2">
+                                                Routing Number *
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                id="routingNumber" 
+                                                class="input" 
+                                                placeholder="123456789" 
+                                                maxlength="9"
+                                            >
+                                        </div>
+
+                                        <div>
+                                            <label for="accountNumber" class="block text-sm font-semibold text-primary mb-2">
+                                                Account Number *
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                id="accountNumber" 
+                                                class="input" 
+                                                placeholder="1234567890"
+                                            >
+                                        </div>
+
+                                        <div>
+                                            <label for="accountName" class="block text-sm font-semibold text-primary mb-2">
+                                                Account Holder Name *
+                                            </label>
+                                            <input 
+                                                type="text" 
+                                                id="accountName" 
+                                                class="input" 
+                                                placeholder="John Smith"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-surface rounded-lg p-4">
+                                        <label class="flex items-start cursor-pointer">
+                                            <input type="checkbox" id="savePayment" class="mt-1 mr-3">
+                                            <span class="text-sm text-text-secondary">Save payment method for future orders</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="bg-surface rounded-lg p-4">
+                                        <label class="flex items-start cursor-pointer">
+                                            <input type="checkbox" id="agreeTerms" class="mt-1 mr-3" required>
+                                            <span class="text-sm text-text-secondary">I agree to the <a href="javascript:void(0)" class="text-accent hover:underline">Terms of Service</a> and <a href="javascript:void(0)" class="text-accent hover:underline">Privacy Policy</a></span>
+                                        </label>
+                                    </div>
+
+                                    <div class="flex items-center justify-center space-x-4 pt-4 border-t border-border">
+                                        <svg class="w-8 h-8 text-text-secondary" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                        </svg>
+                                        <p class="text-sm text-text-secondary">Secured by 256-bit SSL encryption</p>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-1">
+                            <div class="card p-6 sticky top-24">
+                                <h3 class="text-lg font-headline font-bold text-primary mb-4">Order Summary</h3>
+                                <div class="space-y-3 text-sm mb-6">
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary">Service:</span>
+                                        <span class="font-semibold text-primary" id="checkoutService">-</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary">Subtotal:</span>
+                                        <span class="font-semibold text-primary">$<span id="checkoutSubtotal">0</span></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary">Processing Fee:</span>
+                                        <span class="font-semibold text-primary">$<span id="checkoutFee">0</span></span>
+                                    </div>
+                                    <div class="border-t border-border pt-3">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-lg font-bold text-primary">Total:</span>
+                                            <span class="text-2xl font-bold text-accent">$<span id="checkoutTotal">0</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" form="paymentForm" class="btn-primary w-full mb-4">
+                                    <svg class="inline-block w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                    </svg>
+                                    Complete Secure Payment
+                                </button>
+
+                                <button type="button" id="backToStep3" class="btn-outline w-full">
+                                    <svg class="inline-block w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
+                                    </svg>
+                                    Back to Review
+                                </button>
+
+                                <div class="mt-6 pt-6 border-t border-border">
+                                    <p class="text-xs text-text-secondary text-center">
+                                        Your payment information is encrypted and secure. We never store your full card details.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Confirmation (Hidden by default) -->
+                <div id="successConfirmation" class="hidden">
+                    <div class="text-center py-12">
+                        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-success-100 mb-6">
+                            <svg class="w-10 h-10 text-success" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-4xl font-headline font-bold text-primary mb-4">Order Confirmed!</h2>
+                        <p class="text-xl text-text-secondary mb-8">Your measurement order has been successfully placed</p>
+                        
+                        <div class="card p-8 max-w-2xl mx-auto mb-8">
+                            <div class="bg-accent-50 border-l-4 border-accent p-6 rounded-lg mb-6">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-semibold text-primary">Order Number:</span>
+                                    <span class="text-lg font-bold text-accent" id="orderNumber">RM-2026-0001</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-semibold text-primary">Estimated Delivery:</span>
+                                    <span class="text-lg font-bold text-primary" id="orderDelivery">January 6, 2026</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4 text-left">
+                                <div class="flex items-start space-x-3">
+                                    <svg class="w-6 h-6 text-success flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <div>
+                                        <h4 class="font-semibold text-primary">Confirmation Email Sent</h4>
+                                        <p class="text-sm text-text-secondary">Check your inbox for order details and tracking information</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <svg class="w-6 h-6 text-success flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <div>
+                                        <h4 class="font-semibold text-primary">Processing Started</h4>
+                                        <p class="text-sm text-text-secondary">Our team is already working on your measurement request</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <svg class="w-6 h-6 text-success flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <div>
+                                        <h4 class="font-semibold text-primary">Real-Time Tracking</h4>
+                                        <p class="text-sm text-text-secondary">Monitor your order progress in your dashboard</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <a href="dashboard.html" class="btn-primary">
+                                View Order Status
+                                <svg class="inline-block w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                </svg>
+                            </a>
+                            <a href="order_portal.html" class="btn-outline">
+                                Place Another Order
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Badges Section -->
+    <section class="section-sm bg-surface">
+        <div class="container-custom">
+            <div class="max-w-4xl mx-auto">
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="flex flex-col items-center">
+                        <div class="bg-success-100 rounded-full p-4 mb-4">
+                            <svg class="w-8 h-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-headline font-bold text-primary mb-2">Secure Payment</h3>
+                        <p class="text-sm text-text-secondary">256-bit SSL encryption protects your data</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="bg-accent-100 rounded-full p-4 mb-4">
+                            <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-headline font-bold text-primary mb-2">99.8% Accuracy</h3>
+                        <p class="text-sm text-text-secondary">Industry-leading measurement precision</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="bg-primary-100 rounded-full p-4 mb-4">
+                            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-headline font-bold text-primary mb-2">24/7 Support</h3>
+                        <p class="text-sm text-text-secondary">Expert assistance whenever you need it</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-primary-800 text-white">
+        <div class="container-custom py-16">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+                <!-- Company Info -->
+                <div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <svg class="w-10 h-10" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="40" height="40" rx="8" fill="#FF6B35"/>
+                            <path d="M20 8L32 16V28L20 36L8 28V16L20 8Z" fill="white"/>
+                        </svg>
+                        <span class="text-2xl font-headline font-bold">RoofMetrics<span class="text-accent">Pro</span></span>
+                    </div>
+                    <p class="text-white/70 leading-relaxed mb-4">Professional roof measurement and aerial analytics for contractors who demand precision.</p>
+                    <div class="flex space-x-4">
+                        <a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200" aria-label="Facebook">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </a>
+                        <a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200" aria-label="Twitter">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                        </a>
+                        <a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200" aria-label="LinkedIn">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Services -->
+                <div>
+                    <h4 class="text-lg font-headline font-bold mb-6">Services</h4>
+                    <ul class="space-y-3">
+                        <li><a href="order_portal.html" class="text-white/70 hover:text-accent transition-colors duration-200">Roof Measurements</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Aerial Analytics</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">3D Modeling</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Material Calculations</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Express Service</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company -->
+                <div>
+                    <h4 class="text-lg font-headline font-bold mb-6">Company</h4>
+                    <ul class="space-y-3">
+                        <li><a href="about_us.html" class="text-white/70 hover:text-accent transition-colors duration-200">About Us</a></li>
+                        <li><a href="pricing.html" class="text-white/70 hover:text-accent transition-colors duration-200">Pricing</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Case Studies</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Blog</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Careers</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div>
+                    <h4 class="text-lg font-headline font-bold mb-6">Support</h4>
+                    <ul class="space-y-3">
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Help Center</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Contact Us</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">API Documentation</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Privacy Policy</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                    <p class="text-white/60 text-sm">© 2026 RoofMetrics Pro. All Rights Reserved.</p>
+                    <div class="flex items-center space-x-6 text-sm text-white/60">
+                        <a href="javascript:void(0)" class="hover:text-accent transition-colors duration-200">Privacy</a>
+                        <a href="javascript:void(0)" class="hover:text-accent transition-colors duration-200">Terms</a>
+                        <a href="javascript:void(0)" class="hover:text-accent transition-colors duration-200">Cookies</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Multi-step Form Logic
+        let currentStep = 1;
+        let orderData = {
+            property: {},
+            service: {},
+            files: [],
+            payment: {}
+        };
+
+        // Step Navigation Functions
+        function showStep(stepNumber) {
+            // Hide all steps
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`step${i}`).classList.add('hidden');
+            }
+            
+            // Show current step
+            document.getElementById(`step${stepNumber}`).classList.remove('hidden');
+            
+            // Update progress indicators
+            updateProgressIndicators(stepNumber);
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            currentStep = stepNumber;
+        }
+
+        function updateProgressIndicators(stepNumber) {
+            for (let i = 1; i <= 4; i++) {
+                const indicator = document.getElementById(`step${i}Indicator`);
+                const progress = document.getElementById(`progress${i}`);
+                
+                if (i < stepNumber) {
+                    indicator.classList.remove('bg-border', 'text-text-secondary');
+                    indicator.classList.add('bg-success', 'text-white');
+                    if (progress) progress.style.width = '100%';
+                } else if (i === stepNumber) {
+                    indicator.classList.remove('bg-border', 'bg-success', 'text-text-secondary');
+                    indicator.classList.add('bg-accent', 'text-white');
+                    if (progress) progress.style.width = '0%';
+                } else {
+                    indicator.classList.remove('bg-accent', 'bg-success', 'text-white');
+                    indicator.classList.add('bg-border', 'text-text-secondary');
+                    if (progress) progress.style.width = '0%';
+                }
+            }
+        }
+
+        // Step 1: Property Form
+        document.getElementById('propertyForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            orderData.property = {
+                address: document.getElementById('propertyAddress').value,
+                type: document.getElementById('propertyType').value,
+                size: document.getElementById('estimatedSize').value,
+                contactName: document.getElementById('contactName').value,
+                contactEmail: document.getElementById('contactEmail').value,
+                contactPhone: document.getElementById('contactPhone').value,
+                companyName: document.getElementById('companyName').value,
+                notes: document.getElementById('projectNotes').value
+            };
+            
+            showStep(2);
+        });
+
+        // Step 2: Service Selection
+        const serviceOptions = document.querySelectorAll('.service-option');
+        const continueToStep3Btn = document.getElementById('continueToStep3');
+        
+        serviceOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                // Remove selection from all options
+                serviceOptions.forEach(opt => {
+                    opt.classList.remove('border-accent');
+                    opt.classList.add('border-transparent');
+                    opt.querySelector('.service-radio div').classList.add('hidden');
+                });
+                
+                // Add selection to clicked option
+                option.classList.remove('border-transparent');
+                option.classList.add('border-accent');
+                option.querySelector('.service-radio div').classList.remove('hidden');
+                
+                // Update order data
+                orderData.service = {
+                    type: option.dataset.service,
+                    price: parseInt(option.dataset.price)
+                };
+                
+                // Update summary
+                const serviceNames = {
+                    'standard': 'Standard (24-48 hours)',
+                    'express': 'Express (12-24 hours)',
+                    'rush': 'Rush (6-12 hours)'
+                };
+                
+                document.getElementById('selectedServiceName').textContent = serviceNames[orderData.service.type];
+                document.getElementById('selectedServiceDelivery').textContent = serviceNames[orderData.service.type].match(/\(([^)]+)\)/)[1];
+                document.getElementById('selectedServicePrice').textContent = orderData.service.price;
+                
+                // Enable continue button
+                continueToStep3Btn.disabled = false;
+                continueToStep3Btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            });
+        });
+
+        continueToStep3Btn.addEventListener('click', () => {
+            if (orderData.service.type) {
+                // Update summary in step 3
+                document.getElementById('summaryAddress').textContent = orderData.property.address;
+                document.getElementById('summaryType').textContent = orderData.property.type;
+                
+                const serviceNames = {
+                    'standard': 'Standard',
+                    'express': 'Express',
+                    'rush': 'Rush'
+                };
+                const deliveryTimes = {
+                    'standard': '24-48 hours',
+                    'express': '12-24 hours',
+                    'rush': '6-12 hours'
+                };
+                
+                document.getElementById('summaryService').textContent = serviceNames[orderData.service.type];
+                document.getElementById('summaryDelivery').textContent = deliveryTimes[orderData.service.type];
+                document.getElementById('summaryTotal').textContent = orderData.service.price;
+                
+                showStep(3);
+            }
+        });
+
+        document.getElementById('backToStep1').addEventListener('click', () => showStep(1));
+
+        // Step 3: File Upload
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const browseBtn = document.getElementById('browseBtn');
+        const fileList = document.getElementById('fileList');
+
+        browseBtn.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-accent', 'bg-accent-50');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-accent', 'bg-accent-50');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-accent', 'bg-accent-50');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    orderData.files.push(file);
+                    displayFile(file);
+                }
+            });
+        }
+
+        function displayFile(file) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'flex items-center justify-between bg-surface p-4 rounded-lg';
+            fileItem.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <div>
+                        <p class="font-semibold text-primary">${file.name}</p>
+                        <p class="text-xs text-text-secondary">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                    </div>
+                </div>
+                <button type="button" class="text-error hover:text-error-700 transition-colors duration-200" onclick="removeFile('${file.name}')">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                </button>
+            `;
+            fileList.appendChild(fileItem);
+        }
+
+        window.removeFile = function(fileName) {
+            orderData.files = orderData.files.filter(f => f.name !== fileName);
+            const fileItems = fileList.querySelectorAll('div');
+            fileItems.forEach(item => {
+                if (item.textContent.includes(fileName)) {
+                    item.remove();
+                }
+            });
+        };
+
+        document.getElementById('continueToStep4').addEventListener('click', () => {
+            // Update checkout summary
+            document.getElementById('checkoutService').textContent = document.getElementById('summaryService').textContent;
+            document.getElementById('checkoutSubtotal').textContent = orderData.service.price;
+            
+            const processingFee = Math.round(orderData.service.price * 0.029);
+            document.getElementById('checkoutFee').textContent = processingFee;
+            
+            const total = orderData.service.price + processingFee;
+            document.getElementById('checkoutTotal').textContent = total;
+            
+            showStep(4);
+        });
+
+        document.getElementById('backToStep2').addEventListener('click', () => showStep(2));
+
+        // Step 4: Payment
+        const paymentMethods = document.querySelectorAll('.payment-method');
+        const cardPaymentFields = document.getElementById('cardPaymentFields');
+        const achPaymentFields = document.getElementById('achPaymentFields');
+
+        paymentMethods.forEach(method => {
+            method.addEventListener('click', () => {
+                // Remove selection from all methods
+                paymentMethods.forEach(m => {
+                    m.classList.remove('border-accent');
+                    m.classList.add('border-border');
+                    m.querySelector('.w-5').classList.remove('border-accent');
+                    m.querySelector('.w-5').classList.add('border-border');
+                    m.querySelector('.w-3').classList.add('hidden');
+                });
+                
+                // Add selection to clicked method
+                method.classList.remove('border-border');
+                method.classList.add('border-accent');
+                method.querySelector('.w-5').classList.remove('border-border');
+                method.querySelector('.w-5').classList.add('border-accent');
+                method.querySelector('.w-3').classList.remove('hidden');
+                
+                // Show/hide payment fields
+                if (method.dataset.method === 'card') {
+                    cardPaymentFields.classList.remove('hidden');
+                    achPaymentFields.classList.add('hidden');
+                } else {
+                    cardPaymentFields.classList.add('hidden');
+                    achPaymentFields.classList.remove('hidden');
+                }
+            });
+        });
+
+        // Card number formatting
+        document.getElementById('cardNumber').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\s/g, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formattedValue;
+        });
+
+        // Expiry date formatting
+        document.getElementById('cardExpiry').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        document.getElementById('paymentForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Simulate payment processing
+            const loadingOverlay = document.createElement('div');
+            loadingOverlay.className = 'fixed inset-0 bg-black/50 z-50 flex items-center justify-center';
+            loadingOverlay.innerHTML = `
+                <div class="bg-white rounded-2xl p-8 max-w-md text-center">
+                    <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-accent mx-auto mb-4"></div>
+                    <h3 class="text-xl font-headline font-bold text-primary mb-2">Processing Payment</h3>
+                    <p class="text-text-secondary">Please wait while we securely process your payment...</p>
+                </div>
+            `;
+            document.body.appendChild(loadingOverlay);
+            
+            setTimeout(() => {
+                document.body.removeChild(loadingOverlay);
+                
+                // Generate order number
+                const orderNumber = 'RM-2026-' + String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+                document.getElementById('orderNumber').textContent = orderNumber;
+                
+                // Calculate delivery date
+                const deliveryDays = {
+                    'standard': 2,
+                    'express': 1,
+                    'rush': 0.5
+                };
+                const deliveryDate = new Date();
+                deliveryDate.setDate(deliveryDate.getDate() + deliveryDays[orderData.service.type]);
+                document.getElementById('orderDelivery').textContent = deliveryDate.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                
+                // Hide all steps and show success
+                for (let i = 1; i <= 4; i++) {
+                    document.getElementById(`step${i}`).classList.add('hidden');
+                }
+                document.getElementById('successConfirmation').classList.remove('hidden');
+                
+                // Update progress to show completion
+                for (let i = 1; i <= 4; i++) {
+                    const indicator = document.getElementById(`step${i}Indicator`);
+                    const progress = document.getElementById(`progress${i}`);
+                    indicator.classList.remove('bg-border', 'bg-accent', 'text-text-secondary');
+                    indicator.classList.add('bg-success', 'text-white');
+                    if (progress) progress.style.width = '100%';
+                }
+            }, 2000);
+        });
+
+        document.getElementById('backToStep3').addEventListener('click', () => showStep(3));
+
+        // Initialize
+        updateProgressIndicators(1);
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>
