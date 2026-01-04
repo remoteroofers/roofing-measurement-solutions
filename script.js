@@ -7,8 +7,8 @@ orderForm.onsubmit = async (e) => {
     const data = Object.fromEntries(formData.entries());
     data.timestamp = new Date().toLocaleString();
 
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0WgSZk3RHRj8Mqn8DunDfvi5EfniHdY_PIDk8z3-yEFZRldKq7Q0Q9E_L32bvQwmW/exec'; // Replace with your actual URL
-
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyZ6w461PjqVcygYYFWQBetK1qZZvZ7ig6gn964qT1pT3ZdN6doHOyjMlVpZO7Hdu0l/exec'; // Replace with your actual URL
+                            
     try {
         // We use 'method: POST' and 'mode: no-cors' for Google Apps Script
         await fetch(GOOGLE_SCRIPT_URL, {
