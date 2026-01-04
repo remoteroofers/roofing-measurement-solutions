@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Remote Roofers</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Admin Panel</h1>
+        <a href="index.html">Home</a>
+    </header>
+    
+    <input type="password" id="adminPassword" placeholder="Admin Password">
+    <button onclick="loginAdmin()">Log In as Admin</button>
+    
+    <section id="adminContent" style="display:none;">
+        <h2>Users</h2>
+        <table id="usersTable"></table>
+        
+        <h2>Orders</h2>
+        <table id="ordersTable"></table>
+    </section>
+    
+    <script src="script.js"></script>
+</body>
+</html>
