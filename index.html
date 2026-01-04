@@ -1,173 +1,624 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PeakPrecision | AI-Powered Roof Measurements</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
+    <meta name="description" content="RoofMetrics Pro - Professional roof measurement and aerial analytics platform for US contractors. Get precision measurements that win bids.">
+    <title>RoofMetrics Pro - Precision Roof Measurements for Contractors</title>
+    <link rel="stylesheet" href="../css/main.css">
+  
+  <script type="module" async src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Froofmetric3026back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.12"></script>
+  <script type="module" defer src="https://static.rocket.new/rocket-shot.js?v=0.0.2"></script>
+  </head>
+<body class="antialiased">
+    <!-- Header Navigation -->
+    <header class="bg-white shadow-card sticky top-0 z-50">
+        <nav class="container-custom">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <a href="homepage.html" class="flex items-center space-x-3 group">
+                    <svg class="w-10 h-10 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="40" height="40" rx="8" fill="#1E3A5F"/>
+                        <path d="M20 8L32 16V28L20 36L8 28V16L20 8Z" fill="#FF6B35"/>
+                        <path d="M20 12L28 17V27L20 32L12 27V17L20 12Z" fill="#2D5A87"/>
+                        <circle cx="20" cy="20" r="3" fill="white"/>
+                    </svg>
+                    <span class="text-2xl font-headline font-bold text-primary">RoofMetrics<span class="text-accent">Pro</span></span>
+                </a>
 
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="logo">Peak<span>Precision</span></div>
-        <ul class="nav-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#pricing">Pricing</a></li>
-            <li><a href="#about">About Us</a></li>
-            <li><a href="#faq">FAQ</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-        <button class="btn-primary order-trigger">ORDER NOW</button>
-    </nav> 
+                <!-- Desktop Navigation -->
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="homepage.html" class="text-primary font-semibold border-b-2 border-accent py-2 transition-colors duration-200">Home</a>
+                    <a href="pricing.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Pricing</a>
+                    <a href="order_portal.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Order Now</a>
+                    <a href="about_us.html" class="text-text-secondary hover:text-primary transition-colors duration-200">About Us</a>
+                    <a href="dashboard.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Dashboard</a>
+                </div>
 
-    <!-- Hero Section -->
-    <header id="home" class="hero">
-        <div class="hero-content">
-            <h1>Precise Roof Reports in <span class="highlight">Under 24 Hours.</span></h1>
-            <p>High-resolution aerial measurements for US-based contractors. Save time, eliminate manual errors, and win more bids.</p>
-            <div class="hero-btns">
-                <button class="btn-primary order-trigger">Start New Order</button>
-                <button class="btn-secondary">View Sample Report</button>
+                <!-- CTA Buttons -->
+                <div class="hidden lg:flex items-center space-x-4">
+                    <a href="login.html" class="text-primary font-semibold hover:text-secondary transition-colors duration-200">Login</a>
+                    <a href="order_portal.html" class="btn-primary">Get Started</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="lg:hidden p-2 rounded-lg hover:bg-surface transition-colors duration-200" aria-label="Toggle mobile menu">
+                    <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
             </div>
-        </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="hidden lg:hidden pb-6 pt-2">
+                <div class="flex flex-col space-y-4">
+                    <a href="homepage.html" class="text-primary font-semibold py-2 border-l-4 border-accent pl-4">Home</a>
+                    <a href="pricing.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Pricing</a>
+                    <a href="order_portal.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Order Now</a>
+                    <a href="about_us.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">About Us</a>
+                    <a href="dashboard.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Dashboard</a>
+                    <div class="flex flex-col space-y-3 pt-4 border-t border-border">
+                        <a href="login.html" class="btn-outline text-center">Login</a>
+                        <a href="order_portal.html" class="btn-primary text-center">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
     </header>
 
-    <!-- Pricing Section -->
-    <section id="pricing" class="pricing">
-        <h2 class="section-title">Transparent Pricing</h2>
-        <div class="pricing-grid">
-            <div class="price-card">
-                <h3>Residential</h3>
-                <div class="price">$15<span>/Report</span></div>
-                <ul>
-                    <li>3D Roof Diagram</li>
-                    <li>Length & Area Measurements</li>
-                    <li>Pitch Breakdown</li>
-                    <li>Delivery in 12h</li>
-                </ul>
-                <button class="btn-outline order-trigger">Order Basic</button>
-            </div>
-            <div class="price-card featured">
-                <div class="badge">Most Popular</div>
-                <h3>Premium</h3>
-                <div class="price">$25<span>/Report</span></div>
-                <ul>
-                    <li>Everything in Residential</li>
-                    <li>Wall Measurements</li>
-                    <li>Gutter & Downspout Data</li>
-                    <li>ESX/XML Files for Xactimate</li>
-                </ul>
-                <button class="btn-primary order-trigger">Order Premium</button>
-            </div>
-            <div class="price-card">
-                <h3>Commercial</h3>
-                <div class="price">$55<span>/Report</span></div>
-                <ul>
-                    <li>Large Complex Structures</li>
-                    <li>HVAC/Equipment Mapping</li>
-                    <li>CAD Compatible Files</li>
-                    <li>Priority Support</li>
-                </ul>
-                <button class="btn-outline order-trigger">Order Commercial</button>
-            </div>
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-br from-primary-50 via-white to-secondary-50 overflow-hidden">
+        <div class="absolute inset-0 opacity-5">
+            <svg class="w-full h-full" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 400L50 380C100 360 200 320 300 300C400 280 500 280 600 300C700 320 800 360 900 380C1000 400 1100 400 1150 400L1200 400V800H1150C1100 800 1000 800 900 800C800 800 700 800 600 800C500 800 400 800 300 800C200 800 100 800 50 800H0V400Z" fill="#1E3A5F"/>
+            </svg>
         </div>
-    </section>
+        
+        <div class="container-custom relative">
+            <div class="grid lg:grid-cols-2 gap-12 items-center py-20 lg:py-32">
+                <!-- Hero Content -->
+                <div class="space-y-8 animate-fade-in">
+                    <div class="inline-flex items-center space-x-2 bg-accent-50 text-accent-700 px-4 py-2 rounded-full text-sm font-semibold">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                        <span>Trusted by 5,000+ Contractors Nationwide</span>
+                    </div>
+                    
+                    <h1 class="text-5xl lg:text-6xl font-headline font-bold text-primary leading-tight">
+                        Precision Measurements That <span class="text-gradient">Win Bids</span>
+                    </h1>
+                    
+                    <p class="text-xl text-text-secondary leading-relaxed">
+                        Professional aerial roof analytics delivering enterprise-grade accuracy in hours, not days. Stake your reputation on measurements contractors trust.
+                    </p>
 
-    <!-- Order Modal (The Form) -->
-    <div id="orderModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2>Place Your Order</h2>
-            <div class="stepper">
-                <div class="step active" id="step1-indicator">1. Address</div>
-                <div class="step" id="step2-indicator">2. Details</div>
-                <div class="step" id="step3-indicator">3. Payment</div>
-            </div>
-
-            <form id="orderForm">
-                <!-- Step 1: Address -->
-                <div class="form-step" id="step1">
-                    <label>Property Address</label>
-                    <input type="text" name="address" placeholder="123 Main St, Dallas, TX" required>
-                    <label>Contractor Name</label>
-                    <input type="text" name="contractor" placeholder="Your Name/Company" required>
-                    <button type="button" class="btn-next" onclick="nextStep(2)">Next: Report Details</button>
-                </div>
-
-                <!-- Step 2: Report Type -->
-                <div class="form-step hidden" id="step2">
-                    <label>Select Report Type</label>
-                    <select name="reportType" required>
-                        <option value="residential">Residential ($15)</option>
-                        <option value="premium">Premium ($25)</option>
-                        <option value="commercial">Commercial ($55)</option>
-                    </select>
-                    <label>Special Instructions</label>
-                    <textarea name="notes" placeholder="e.g., Detached garage included?"></textarea>
-                    <button type="button" class="btn-next" onclick="nextStep(3)">Next: Payment</button>
-                </div>
-
-                <!-- Step 3: Payment Simulation -->
-                <div class="form-step hidden" id="step3">
-                    <div class="payment-box">
-                        <p><i class="fa fa-lock"></i> Secure Payment Gateway</p>
-                        <input type="text" placeholder="Card Number">
-                        <div class="flex">
-                            <input type="text" placeholder="MM/YY">
-                            <input type="text" placeholder="CVC">
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-3 gap-6 pt-4">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-accent">99.8%</div>
+                            <div class="text-sm text-text-secondary mt-1">Accuracy Rate</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-accent">24hr</div>
+                            <div class="text-sm text-text-secondary mt-1">Turnaround</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-accent">250K+</div>
+                            <div class="text-sm text-text-secondary mt-1">Reports Done</div>
                         </div>
                     </div>
-                    <button type="submit" class="btn-submit" id="submitBtn">Complete Order & Pay</button>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                        <a href="order_portal.html" class="btn-primary text-center group">
+                            Get Instant Quote
+                            <svg class="inline-block w-5 h-5 ml-2 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
+                        </a>
+                        <button id="viewSampleBtn" class="btn-outline text-center group">
+                            View Sample Report
+                            <svg class="inline-block w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Trust Badges -->
+                    <div class="flex items-center space-x-6 pt-6 border-t border-border-light">
+                        <img src="https://img.rocket.new/generatedImages/rocket_gen_img_17ce47fde-1767539924380.png" alt="Industry certification badge" class="h-10 opacity-60 hover:opacity-100 transition-opacity duration-200" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;">
+                        <img src="https://img.rocket.new/generatedImages/rocket_gen_img_1bc97833a-1766973284750.png" alt="Security compliance certification" class="h-10 opacity-60 hover:opacity-100 transition-opacity duration-200" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;">
+                        <img src="https://img.rocket.new/generatedImages/rocket_gen_img_12ebd450b-1767539927465.png" alt="Technology partnership badge" class="h-10 opacity-60 hover:opacity-100 transition-opacity duration-200" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;">
+                    </div>
                 </div>
-            </form>
-        </div>
-    </div>
 
-    <!-- About Section -->
-    <section id="about" class="about">
-        <div class="about-container">
-            <h2>Why US Contractors Choose PeakPrecision</h2>
-            <p>Founded in Texas, we understand the US roofing industry. We use high-resolution proprietary imagery and AI-assisted drafting to ensure 99% accuracy on every report. Our goal is to keep your estimators off the ladder and focused on closing deals.</p>
+                <!-- Hero Image -->
+                <div class="relative animate-slide-up">
+                    <div class="relative rounded-2xl overflow-hidden shadow-modal">
+                        <img src="https://img.rocket.new/generatedImages/rocket_gen_img_13ff42a5c-1767539924094.png" alt="Aerial view of residential roof with measurement overlay showing precise dimensions and angles" class="w-full h-auto object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;">
+                        <div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>
+                    </div>
+                    
+                    <!-- Floating Stats Card -->
+                    <div class="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-modal p-6 max-w-xs hidden lg:block">
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-success-100 rounded-full p-3">
+                                <svg class="w-6 h-6 text-success-700" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-primary">$47K</div>
+                                <div class="text-sm text-text-secondary">Avg. Annual Savings</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- FAQ Section -->
-    <section id="faq" class="faq">
-        <h2 class="section-title">Frequently Asked Questions</h2>
-        <div class="faq-item">
-            <div class="faq-question">What is the accuracy rate? <i class="fa fa-chevron-down"></i></div>
-            <div class="faq-answer">Our reports are accurate within 1-2% of actual field measurements.</div>
-        </div>
-        <div class="faq-item">
-            <div class="faq-question">Do you provide ESX files? <i class="fa fa-chevron-down"></i></div>
-            <div class="faq-answer">Yes, our Premium and Commercial reports include ESX files for Xactimate and Symbility.</div>
+    <!-- Instant Quote Calculator Section -->
+    <section class="section bg-white">
+        <div class="container-custom">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-headline font-bold text-primary mb-4">Get Your Instant Quote</h2>
+                    <p class="text-xl text-text-secondary">Enter your project details for immediate pricing</p>
+                </div>
+
+                <div class="card p-8 lg:p-12">
+                    <form id="quoteCalculator" class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="propertyAddress" class="block text-sm font-semibold text-primary mb-2">Property Address</label>
+                                <input type="text" id="propertyAddress" class="input" placeholder="123 Main Street, City, State" required>
+                            </div>
+                            <div>
+                                <label for="propertyType" class="block text-sm font-semibold text-primary mb-2">Property Type</label>
+                                <select id="propertyType" class="input" required>
+                                    <option value="">Select type</option>
+                                    <option value="residential">Residential</option>
+                                    <option value="commercial">Commercial</option>
+                                    <option value="industrial">Industrial</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="roofSize" class="block text-sm font-semibold text-primary mb-2">Estimated Roof Size (sq ft)</label>
+                                <input type="number" id="roofSize" class="input" placeholder="2500" min="100" required>
+                            </div>
+                            <div>
+                                <label for="turnaround" class="block text-sm font-semibold text-primary mb-2">Turnaround Time</label>
+                                <select id="turnaround" class="input" required>
+                                    <option value="standard">Standard (24-48 hours)</option>
+                                    <option value="express">Express (12-24 hours)</option>
+                                    <option value="rush">Rush (6-12 hours)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="email" class="block text-sm font-semibold text-primary mb-2">Email Address</label>
+                            <input type="email" id="email" class="input" placeholder="contractor@example.com" required>
+                        </div>
+
+                        <div class="bg-accent-50 border-l-4 border-accent p-6 rounded-lg">
+                            <div class="flex items-start space-x-4">
+                                <svg class="w-6 h-6 text-accent flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <h4 class="font-semibold text-primary mb-1">Estimated Quote</h4>
+                                    <p class="text-3xl font-bold text-accent mb-2">$<span id="quoteAmount">149</span></p>
+                                    <p class="text-sm text-text-secondary">Final pricing based on actual measurements</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary w-full">
+                            Get Detailed Quote
+                            <svg class="inline-block w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- Footer / Contact -->
-    <footer id="contact">
-        <div class="footer-grid">
-            <div>
-                <h3>PeakPrecision</h3>
-                <p>Top-tier roof measurements for pros.</p>
+    <!-- Features Section -->
+    <section class="section bg-surface">
+        <div class="container-custom">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-headline font-bold text-primary mb-4">Why Contractors Choose RoofMetrics Pro</h2>
+                <p class="text-xl text-text-secondary max-w-3xl mx-auto">Technology that works as hard as you do, delivering precision measurements that give you the competitive edge</p>
             </div>
-            <div>
-                <h4>Contact Us</h4>
-                <p>Email: support@peakprecision.com</p>
-                <p>Phone: (555) 123-4567</p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="card-interactive p-8 group">
+                    <div class="bg-accent-100 rounded-xl p-4 w-16 h-16 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-headline font-bold text-primary mb-3">99.8% Accuracy</h3>
+                    <p class="text-text-secondary leading-relaxed">Enterprise-grade precision using advanced aerial analytics and AI-powered measurement validation. Every dimension verified for bid-winning confidence.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="card-interactive p-8 group">
+                    <div class="bg-secondary-100 rounded-xl p-4 w-16 h-16 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-headline font-bold text-primary mb-3">24-Hour Turnaround</h3>
+                    <p class="text-text-secondary leading-relaxed">Standard delivery in 24-48 hours with express options available. Rush service delivers comprehensive reports in as little as 6 hours when you need them.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="card-interactive p-8 group">
+                    <div class="bg-success-100 rounded-xl p-4 w-16 h-16 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-headline font-bold text-primary mb-3">Professional Reports</h3>
+                    <p class="text-text-secondary leading-relaxed">Detailed measurements with 3D visualizations, material calculations, and waste factors. Reports that impress clients and streamline your estimation process.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="card-interactive p-8 group">
+                    <div class="bg-primary-100 rounded-xl p-4 w-16 h-16 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-headline font-bold text-primary mb-3">Secure & Compliant</h3>
+                    <p class="text-text-secondary leading-relaxed">Bank-level encryption, HIPAA compliance, and secure data handling. Your project information protected with enterprise-grade security standards.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="card-interactive p-8 group">
+                    <div class="bg-warning-100 rounded-xl p-4 w-16 h-16 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-headline font-bold text-primary mb-3">Transparent Pricing</h3>
+                    <p class="text-text-secondary leading-relaxed">No hidden fees or surprise charges. Clear pricing tiers with volume discounts and flexible payment options that fit your business needs.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="card-interactive p-8 group">
+                    <div class="bg-accent-100 rounded-xl p-4 w-16 h-16 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-headline font-bold text-primary mb-3">Mobile Access</h3>
+                    <p class="text-text-secondary leading-relaxed">Access reports anywhere with our mobile-optimized platform. Review measurements on-site, share with clients, and manage projects from the field.</p>
+                </div>
             </div>
-            <div>
-                <h4>Follow Us</h4>
-                <div class="socials">
-                    <i class="fab fa-facebook"></i>
-                    <i class="fab fa-linkedin"></i>
+        </div>
+    </section>
+
+    <!-- Social Proof Carousel -->
+    <section class="section bg-white">
+        <div class="container-custom">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-headline font-bold text-primary mb-4">Trusted by Industry Leaders</h2>
+                <p class="text-xl text-text-secondary">See how contractors are winning more bids with RoofMetrics Pro</p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="card p-8">
+                    <div class="flex items-center mb-6">
+                        <img src="https://img.rocket.new/generatedImages/rocket_gen_img_160e9148d-1763296539983.png" alt="Portrait of Mike Rodriguez, owner of Rodriguez Roofing LLC" class="w-16 h-16 rounded-full object-cover mr-4" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;">
+                        <div>
+                            <h4 class="font-bold text-primary">Mike Rodriguez</h4>
+                            <p class="text-sm text-text-secondary">Rodriguez Roofing LLC</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-4">
+                        <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="text-text-secondary leading-relaxed mb-4">"RoofMetrics Pro increased our bid win rate by 34% in just 3 months. The accuracy and professional reports give us a huge competitive advantage."</p>
+                    <div class="bg-success-50 rounded-lg p-4 border-l-4 border-success">
+                        <p class="text-sm font-semibold text-success-700">ROI: $52,000 additional revenue in Q1 2026</p>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="card p-8">
+                    <div class="flex items-center mb-6">
+                        <img src="https://img.rocket.new/generatedImages/rocket_gen_img_14a6b904c-1763297183395.png" alt="Portrait of Sarah Chen, operations manager at Summit Roofing Co" class="w-16 h-16 rounded-full object-cover mr-4" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;">
+                        <div>
+                            <h4 class="font-bold text-primary">Sarah Chen</h4>
+                            <p class="text-sm text-text-secondary">Summit Roofing Co.</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-4">
+                        <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="text-text-secondary leading-relaxed mb-4">"We've eliminated measurement errors completely. The 24-hour turnaround means we can respond to RFPs faster than our competitors."</p>
+                    <div class="bg-success-50 rounded-lg p-4 border-l-4 border-success">
+                        <p class="text-sm font-semibold text-success-700">Time Saved: 15 hours per week on measurements</p>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="card p-8">
+                    <div class="flex items-center mb-6">
+                        <img src="https://img.rocket.new/generatedImages/rocket_gen_img_1614f696c-1763295242937.png"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&q=80" alt="Portrait of James Thompson, CEO of Precision Contractors Inc" class="w-16 h-16 rounded-full object-cover mr-4" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;">
+                        <div>
+                            <h4 class="font-bold text-primary">James Thompson</h4>
+                            <p class="text-sm text-text-secondary">Precision Contractors Inc.</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-4">
+                        <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="text-text-secondary leading-relaxed mb-4">"The mobile access is a game-changer. I can review reports on-site with clients and close deals faster. Professional reports that impress every time."</p>
+                    <div class="bg-success-50 rounded-lg p-4 border-l-4 border-success">
+                        <p class="text-sm font-semibold text-success-700">Bid Win Rate: Increased from 42% to 68%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section bg-gradient-to-br from-primary to-secondary relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <svg class="w-full h-full" viewBox="0 0 1200 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="100" cy="100" r="300" fill="white"/>
+                <circle cx="1100" cy="500" r="400" fill="white"/>
+            </svg>
+        </div>
+        
+        <div class="container-custom relative">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-4xl lg:text-5xl font-headline font-bold text-white mb-6">Ready to Win More Bids?</h2>
+                <p class="text-xl text-white/90 mb-8 leading-relaxed">Join 5,000+ contractors who trust RoofMetrics Pro for precision measurements that drive business growth</p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+                    <a href="order_portal.html" class="bg-accent hover:bg-accent-600 text-white px-8 py-4 rounded-lg font-cta font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl">
+                        Start Your First Order
+                    </a>
+                    <a href="pricing.html" class="bg-white hover:bg-gray-50 text-primary px-8 py-4 rounded-lg font-cta font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl">
+                        View Pricing Plans
+                    </a>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8 text-white">
+                    <div>
+                        <div class="text-4xl font-bold mb-2">250K+</div>
+                        <div class="text-white/80">Reports Delivered</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold mb-2">99.8%</div>
+                        <div class="text-white/80">Accuracy Rate</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold mb-2">24hr</div>
+                        <div class="text-white/80">Average Turnaround</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-primary-800 text-white">
+        <div class="container-custom py-16">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+                <!-- Company Info -->
+                <div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <svg class="w-10 h-10" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="40" height="40" rx="8" fill="#FF6B35"/>
+                            <path d="M20 8L32 16V28L20 36L8 28V16L20 8Z" fill="white"/>
+                        </svg>
+                        <span class="text-2xl font-headline font-bold">RoofMetrics<span class="text-accent">Pro</span></span>
+                    </div>
+                    <p class="text-white/70 leading-relaxed mb-4">Professional roof measurement and aerial analytics for contractors who demand precision.</p>
+                    <div class="flex space-x-4">
+                        <a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200" aria-label="Facebook">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </a>
+                        <a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200" aria-label="Twitter">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                        </a>
+                        <a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200" aria-label="LinkedIn">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Services -->
+                <div>
+                    <h4 class="text-lg font-headline font-bold mb-6">Services</h4>
+                    <ul class="space-y-3">
+                        <li><a href="order_portal.html" class="text-white/70 hover:text-accent transition-colors duration-200">Roof Measurements</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Aerial Analytics</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">3D Modeling</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Material Calculations</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Express Service</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company -->
+                <div>
+                    <h4 class="text-lg font-headline font-bold mb-6">Company</h4>
+                    <ul class="space-y-3">
+                        <li><a href="about_us.html" class="text-white/70 hover:text-accent transition-colors duration-200">About Us</a></li>
+                        <li><a href="pricing.html" class="text-white/70 hover:text-accent transition-colors duration-200">Pricing</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Case Studies</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Blog</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Careers</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div>
+                    <h4 class="text-lg font-headline font-bold mb-6">Support</h4>
+                    <ul class="space-y-3">
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Help Center</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Contact Us</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">API Documentation</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Privacy Policy</a></li>
+                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                    <p class="text-white/60 text-sm">© 2026 RoofMetrics Pro. All Rights Reserved.</p>
+                    <div class="flex items-center space-x-6 text-sm text-white/60">
+                        <a href="javascript:void(0)" class="hover:text-accent transition-colors duration-200">Privacy</a>
+                        <a href="javascript:void(0)" class="hover:text-accent transition-colors duration-200">Terms</a>
+                        <a href="javascript:void(0)" class="hover:text-accent transition-colors duration-200">Cookies</a>
+                    </div>
                 </div>
             </div>
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <!-- Sample Report Modal -->
+    <div id="sampleReportModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-3xl font-headline font-bold text-primary">Sample Measurement Report</h3>
+                    <button id="closeModal" class="text-text-secondary hover:text-primary transition-colors duration-200">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="space-y-6">
+                    <div class="bg-surface rounded-lg p-6">
+                        <h4 class="font-bold text-primary mb-4">Property Information</h4>
+                        <div class="grid md:grid-cols-2 gap-4 text-sm">
+                            <div><span class="text-text-secondary">Address:</span> <span class="font-semibold">123 Main Street, Austin, TX 78701</span></div>
+                            <div><span class="text-text-secondary">Total Area:</span> <span class="font-semibold">2,847 sq ft</span></div>
+                            <div><span class="text-text-secondary">Roof Pitch:</span> <span class="font-semibold">6/12</span></div>
+                            <div><span class="text-text-secondary">Report Date:</span> <span class="font-semibold">January 3, 2026</span></div>
+                        </div>
+                    </div>
+
+                    <div class="rounded-lg overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1558579052-3bfe094600e6" alt="Aerial view of residential property with measurement overlay showing roof dimensions and angles" class="w-full h-auto" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;">
+                    </div>
+
+                    <div class="bg-success-50 border-l-4 border-success p-6 rounded-lg">
+                        <h4 class="font-bold text-success-700 mb-2">Measurement Accuracy: 99.8%</h4>
+                        <p class="text-sm text-text-secondary">All measurements verified using advanced AI algorithms and manual quality checks</p>
+                    </div>
+
+                    <a href="order_portal.html" class="btn-primary w-full text-center block">Order Your Report Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Quote Calculator
+        const quoteForm = document.getElementById('quoteCalculator');
+        const roofSizeInput = document.getElementById('roofSize');
+        const turnaroundSelect = document.getElementById('turnaround');
+        const quoteAmountSpan = document.getElementById('quoteAmount');
+
+        function calculateQuote() {
+            const roofSize = parseInt(roofSizeInput.value) || 2500;
+            const turnaround = turnaroundSelect.value;
+            
+            let basePrice = Math.ceil(roofSize / 1000) * 50;
+            
+            if (turnaround === 'express') {
+                basePrice *= 1.5;
+            } else if (turnaround === 'rush') {
+                basePrice *= 2;
+            }
+            
+            quoteAmountSpan.textContent = Math.round(basePrice);
+        }
+
+        roofSizeInput.addEventListener('input', calculateQuote);
+        turnaroundSelect.addEventListener('change', calculateQuote);
+
+        quoteForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            window.location.href = 'order_portal.html';
+        });
+
+        // Sample Report Modal
+        const viewSampleBtn = document.getElementById('viewSampleBtn');
+        const sampleReportModal = document.getElementById('sampleReportModal');
+        const closeModal = document.getElementById('closeModal');
+
+        viewSampleBtn.addEventListener('click', () => {
+            sampleReportModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        });
+
+        closeModal.addEventListener('click', () => {
+            sampleReportModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        });
+
+        sampleReportModal.addEventListener('click', (e) => {
+            if (e.target === sampleReportModal) {
+                sampleReportModal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
 </body>
 </html>
