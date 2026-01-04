@@ -1,29 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order - Remote Roofers</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <header>
-        <h1>Place Your Order</h1>
-        <a href="index.html">Home</a>
-    </header>
-    
-    <form id="orderForm">
-        <label>Package:
-            <select id="package" required>
-                <option value="Bronze">Bronze</option>
-                <option value="Silver">Silver</option>
-                <option value="Gold">Gold</option>
-            </select>
-        </label>
-        <label>Additional Info: <textarea id="additionalInfo"></textarea></label>
-        <button type="submit">Submit Order</button>
-    </form>
-    
-    <script src="script.js"></script>
-</body>
-</html>
+<form id="orderForm">
+  <select id="package">
+    <option>Bronze</option>
+    <option>Silver</option>
+    <option>Gold</option>
+  </select>
+
+  <input type="text" placeholder="Property Address" required>
+  <button>Proceed to Payment</button>
+</form>
