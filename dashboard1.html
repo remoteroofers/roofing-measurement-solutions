@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard | Roofing Measurement Solutions</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // 🔥 REPLACE WITH YOUR FIREBASE CONFIG
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.logout = async function () {
+      await signOut(auth);
+      window.location.href = "login.html";
+    };
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (!userDoc.exists()) return;
+
+      const data = userDoc.data();
+      document.getElementById("userName").textContent =
+        `${data.firstName} ${data.lastName}`;
+
+      if (data.role === "admin") {
+        document.getElementById("adminPanel").classList.remove("hidden");
+      } else {
+        document.getElementById("clientPanel").classList.remove("hidden");
+      }
+    });
+  </script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white shadow px-6 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold">Roofing Measurement Dashboard</h1>
+    <div class="flex items-center gap-4">
+      <span id="userName" class="font-semibold"></span>
+      <button onclick="logout()"
+        class="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700">
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <!-- CLIENT DASHBOARD -->
+  <main id="clientPanel" class="hidden p-6">
+    <h2 class="text-2xl font-bold mb-4">Client Dashboard</h2>
+
+    <div class="grid md:grid-cols-3 gap-6">
+
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h3 class="font-semibold text-lg mb-2">Place New Order</h3>
+        <p class="text-sm text-gray-600 mb-4">
+          Submit a roof measurement order with property details.
+        </p>
+        <a href="order_portal.html"
+          class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          New Order
+        </a>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h3 class="font-semibold text-lg mb-2">Pricing Plans</h3>
+        <p class="text-sm text-gray-600 mb-4">
+          View Bronze, Silver & Gold measurement packages.
+        </p>
+        <a href="pricing.html"
+          class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+          View Pricing
+        </a>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h3 class="font-semibold text-lg mb-2">Support</h3>
+        <p class="text-sm text-gray-600 mb-4">
+          Need help with your orders?
+        </p>
+        <a href="contact.html"
+          class="inline-block bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900">
+          Contact Us
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ADMIN DASHBOARD -->
+  <main id="adminPanel" class="hidden p-6">
+    <h2 class="text-2xl font-bold mb-4 text-red-600">Admin Dashboard</h2>
+
+    <div class="grid md:grid-cols-4 gap-6">
+
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h3 class="font-semibold mb-2">All Orders</h3>
+        <p class="text-sm text-gray-600 mb-4">
+          Review incoming measurement orders.
+        </p>
+        <a href="admin-orders.html"
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          View Orders
+        </a>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h3 class="font-semibold mb-2">Clients</h3>
+        <p class="text-sm text-gray-600 mb-4">
+          Manage registered contractors.
+        </p>
+        <a href="admin-users.html"
+          class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+          View Users
+        </a>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h3 class="font-semibold mb-2">Pricing Control</h3>
+        <p class="text-sm text-gray-600 mb-4">
+          Update plans and bulk pricing.
+        </p>
+        <a href="admin-pricing.html"
+          class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+          Edit Pricing
+        </a>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h3 class="font-semibold mb-2">Reports</h3>
+        <p class="text-sm text-gray-600 mb-4">
+          Export orders to Google Sheets.
+        </p>
+        <button class="bg-gray-800 text-white px-4 py-2 rounded">
+          Export Data
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>
