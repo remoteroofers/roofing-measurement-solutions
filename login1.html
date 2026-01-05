@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Login to RoofMetrics Pro - Secure access to your contractor dashboard, order management, and professional roof measurement reports.">
+<title>Login - Remote Roofers | Secure Access</title>
+<link rel="stylesheet" href="main.css">
+
+<!-- Rocket Scripts (if needed) -->
+<script type="module" async src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Froofmetric3026back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.12"></script>
+<script type="module" defer src="https://static.rocket.new/rocket-shot.js?v=0.0.2"></script>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+
+// TODO: Replace these values with your Firebase project config
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+</script>
+</head>
+<body class="antialiased bg-surface">
+
+<!-- Header & Navigation -->
+<header class="bg-white shadow-card sticky top-0 z-50">
+<nav class="container-custom">
+    <div class="flex items-center justify-between h-20">
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center space-x-3 group">
+            <svg class="w-10 h-10 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="40" height="40" rx="8" fill="#1E3A5F"/>
+                <path d="M20 8L32 16V28L20 36L8 28V16L20 8Z" fill="#FF6B35"/>
+                <path d="M20 12L28 17V27L20 32L12 27V17L20 12Z" fill="#2D5A87"/>
+                <circle cx="20" cy="20" r="3" fill="white"/>
+            </svg>
+            <span class="text-2xl font-headline font-bold text-primary">Remote<span class="text-accent">Roofers</span></span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden lg:flex items-center space-x-8">
+            <a href="index.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Home</a>
+            <a href="pricing.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Pricing</a>
+            <a href="order_portal.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Order Now</a>
+            <a href="about_us.html" class="text-text-secondary hover:text-primary transition-colors duration-200">About Us</a>
+        </div>
+
+        <!-- CTA Buttons -->
+        <div class="hidden lg:flex items-center space-x-4">
+            <a href="login.html" class="text-primary font-semibold border-b-2 border-accent py-2 transition-colors duration-200">Login</a>
+            <a href="order_portal.html" class="btn-primary">Get Started</a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobileMenuBtn" class="lg:hidden p-2 rounded-lg hover:bg-surface transition-colors duration-200" aria-label="Toggle mobile menu">
+            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden lg:hidden pb-6 pt-2">
+        <div class="flex flex-col space-y-4">
+            <a href="index.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Home</a>
+            <a href="pricing.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Pricing</a>
+            <a href="order_portal.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Order Now</a>
+            <a href="about_us.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">About Us</a>
+            <div class="flex flex-col space-y-3 pt-4 border-t border-border-light">
+                <a href="login.html" class="btn-outline text-center">Login</a>
+                <a href="order_portal.html" class="btn-primary text-center">Get Started</a>
+            </div>
+        </div>
+    </div>
+</nav>
+</header>
+
+<!-- Login Section -->
+<section class="section-sm min-h-screen flex items-center justify-center relative overflow-hidden">
+<div class="container-custom relative z-10">
+<div class="max-w-md mx-auto">
+<div class="card p-8 lg:p-10 animate-fade-in">
+<div class="text-center mb-8">
+    <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-50 rounded-full mb-4">
+        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
+    </div>
+    <h1 class="text-3xl font-headline font-bold text-primary mb-2">Welcome Back</h1>
+    <p class="text-text-secondary">Sign in to access your contractor dashboard</p>
+</div>
+
+<form id="loginForm" class="space-y-6">
+<div>
+<label for="email" class="block text-sm font-semibold text-primary mb-2">Email Address</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<svg class="w-5 h-5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
+</svg>
+</div>
+<input type="email" id="email" name="email" class="input pl-10" placeholder="contractor@example.com" required autocomplete="email">
+</div>
+<p id="emailError" class="hidden text-sm text-error mt-1" role="alert">Please enter a valid email address</p>
+</div>
+
+<div>
+<label for="password" class="block text-sm font-semibold text-primary mb-2">Password</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<svg class="w-5 h-5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+</svg>
+</div>
+<input type="password" id="password" name="password" class="input pl-10 pr-10" placeholder="Enter your password" required autocomplete="current-password">
+<button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-text-secondary hover:text-primary transition-colors duration-200" aria-label="Toggle password visibility">
+<svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+</svg>
+<svg id="eyeOffIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+</svg>
+</button>
+</div>
+<p id="passwordError" class="hidden text-sm text-error mt-1" role="alert">Password must be at least 8 characters</p>
+</div>
+
+<div class="flex items-center justify-between">
+<div class="flex items-center">
+<input type="checkbox" id="rememberMe" name="rememberMe" class="w-4 h-4 text-accent border-border rounded focus:ring-2 focus:ring-accent-200 transition-colors duration-200">
+<label for="rememberMe" class="ml-2 text-sm text-text-secondary">Remember me</label>
+</div>
+<button type="button" id="forgotPasswordBtn" class="text-sm font-semibold text-accent hover:text-accent-600 transition-colors duration-200">Forgot password?</button>
+</div>
+
+<button type="submit" class="btn-primary w-full group">Sign In
+<svg class="inline-block w-5 h-5 ml-2 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+</svg>
+</button>
+
+<!-- Sign Up Link -->
+<div class="mt-8 text-center">
+<p class="text-sm text-text-secondary">
+Don't have an account? 
+<a href="signup.html" class="font-semibold text-accent hover:text-accent-600 transition-colors duration-200">Sign up for free</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Success Toast -->
+<div id="successToast" class="hidden fixed top-4 right-4 z-50 animate-slide-down">
+<div class="bg-success-50 border-l-4 border-success rounded-lg p-4 shadow-modal max-w-md">
+<div class="flex items-start">
+<svg class="w-6 h-6 text-success flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+</svg>
+<div class="ml-3">
+<h4 class="font-semibold text-success-700">Success!</h4>
+<p id="successMessage" class="text-sm text-success-700 mt-1"></p>
+</div>
+<button id="closeToast" class="ml-4 text-success-700 hover:text-success-800 transition-colors duration-200" aria-label="Close notification">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+</svg>
+</button>
+</div>
+</div>
+</div>
+
+<!-- Firebase & JS Logic -->
+<script type="module">
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+
+const togglePassword = document.getElementById('togglePassword');
+const passwordInput = document.getElementById('password');
+const eyeIcon = document.getElementById('eyeIcon');
+const eyeOffIcon = document.getElementById('eyeOffIcon');
+togglePassword.addEventListener('click', () => {
+    const type = passwordInput.type === 'password' ? 'text' : 'password';
+    passwordInput.type = type;
+    eyeIcon.classList.toggle('hidden');
+    eyeOffIcon.classList.toggle('hidden');
+});
+
+const loginForm = document.getElementById('loginForm');
+const emailInput = document.getElementById('email');
+const emailError = document.getElementById('emailError');
+const passwordError = document.getElementById('passwordError');
+const rememberMe = document.getElementById('rememberMe');
+
+function validateEmail(email){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);}
+function validatePassword(password){return password.length >= 8;}
+
+emailInput.addEventListener('blur',()=>{validateEmail(emailInput.value)?(emailInput.classList.remove('input-error'),emailError.classList.add('hidden')):(emailInput.classList.add('input-error'),emailError.classList.remove('hidden'));});
+passwordInput.addEventListener('blur',()=>{validatePassword(passwordInput.value)?(passwordInput.classList.remove('input-error'),passwordError.classList.add('hidden')):(passwordInput.classList.add('input-error'),passwordError.classList.remove('hidden'));});
+
+// Success Toast
+function showSuccessToast(message){
+    const toast=document.getElementById('successToast');
+    const msg=document.getElementById('successMessage');
+    msg.textContent=message;
+    toast.classList.remove('hidden');
+    setTimeout(()=>{toast.classList.add('hidden');},5000);
+}
+document.getElementById('closeToast').addEventListener('click',()=>document.getElementById('successToast').classList.add('hidden'));
+
+// Login with Firebase
+loginForm.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const email=emailInput.value;
+    const password=passwordInput.value;
+
+    if(!validateEmail(email)){emailInput.classList.add('input-error'); emailError.classList.remove('hidden'); return;}
+    if(!validatePassword(password)){passwordInput.classList.add('input-error'); passwordError.classList.remove('hidden'); return;}
+
+    try{
+        await setPersistence(auth, rememberMe.checked?browserLocalPersistence:browserSessionPersistence);
+        await signInWithEmailAndPassword(auth,email,password);
+        showSuccessToast('Login successful! Redirecting to dashboard...');
+        setTimeout(()=>{window.location.href='dashboard1.html';},1500);
+    }catch(error){
+        showSuccessToast(error.message);
+    }
+});
+</script>
+</body>
+</html>
