@@ -131,7 +131,7 @@ loginForm.addEventListener('submit', async (e) => {
     await setPersistence(auth, rememberMe.checked ? browserLocalPersistence : browserSessionPersistence);
     await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
     alert("Login successful! Redirecting...");
-    window.location.href = "dashboard1.html";
+    window.location.href = "dashboard.html";
   } catch(e) {
     alert(e.message);
   }
