@@ -1,73 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
-    <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Login to RoofMetrics Pro - Secure access to your contractor dashboard, order management, and professional roof measurement reports.">
-    <title>Login - Remote Roofers | Secure Access</title>
-    <link rel="stylesheet" href="main.css">
-  
-  <script type="module" async src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Froofmetric3026back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.12"></script>
-  <script type="module" defer src="https://static.rocket.new/rocket-shot.js?v=0.0.2"></script>
-    <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Firebase SDKs -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    // ?? REPLACE WITH YOUR FIREBASE CONFIG
-    const firebaseConfig = {
-      apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
-      authDomain: "remoteroofers-51826.firebaseapp.com",
-  
-      projectId: "remoteroofers-51826",
-      storageBucket: "remoteroofers-51826.firebasestorage.app",
-      messagingSenderId: "901240361996",
-      appId: "1:901240361996:web:2a209986f74f15618aca29"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    window.signupUser = async function () {
-      const firstName = document.getElementById("firstName").value;
-      const lastName = document.getElementById("lastName").value;
-      const email = document.getElementById("email").value;
-      const phone = document.getElementById("phone").value;
-      const password = document.getElementById("password").value;
-      const errorBox = document.getElementById("error");
-
-      errorBox.textContent = "";
-
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-
-        await setDoc(doc(db, "users", user.uid), {
-          firstName,
-          lastName,
-          email,
-          phone,
-          role: "client",
-          createdAt: new Date()
-        });
-
-        window.location.href = "dashboard.html";
-
-      } catch (error) {
-        errorBox.textContent = error.message;
-      }
-    };
-  </script>
-  
-  </head>
-  </head>
-<body class="antialiased bg-surface">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Remote Roofers</title>
+<link rel="stylesheet" href="main.css">
+</head>
+<body class="bg-surface antialiased">
     <!-- Header Navigation -->
     <header class="bg-white shadow-card sticky top-0 z-50">
         <nav class="container-custom">
@@ -123,8 +63,7 @@
         </nav>
     </header>
 
-    <!-- Login Section -->
-   <section class="min-h-screen flex items-center justify-center">
+<section class="min-h-screen flex items-center justify-center">
   <div class="card p-8 max-w-md w-full">
     <h1 class="text-3xl font-bold mb-6 text-center">Welcome Back</h1>
     <form id="loginForm" class="space-y-4">
@@ -146,150 +85,57 @@
     <p class="mt-4 text-center">Don't have an account? <a href="signup.html" class="text-accent">Sign Up</a></p>
   </div>
 </section>
-   
-   
-   
 
-    <!-- Forgot Password Modal -->
-    <div id="forgotPasswordModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full animate-scale-in">
-            <div class="p-8">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-2xl font-headline font-bold text-primary">Reset Password</h3>
-                    <button id="closeForgotModal" class="text-text-secondary hover:text-primary transition-colors duration-200" aria-label="Close modal">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
-                
-                <p class="text-text-secondary mb-6">Enter your email address and we'll send you instructions to reset your password.</p>
-                
-                <form id="forgotPasswordForm" class="space-y-6">
-                    <div>
-                        <label for="resetEmail" class="block text-sm font-semibold text-primary mb-2">
-                            Email Address
-                        </label>
-                        <input 
-                            type="email" 
-                            id="resetEmail" 
-                            name="resetEmail"
-                            class="input" 
-                            placeholder="contractor@example.com" 
-                            required
-                        >
-                    </div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, setPersistence, sendPasswordResetEmail, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 
-                    <button type="submit" class="btn-primary w-full">
-                        Send Reset Instructions
-                    </button>
+const firebaseConfig = {
+  apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
+  authDomain: "remoteroofers-51826.firebaseapp.com",
+  projectId: "remoteroofers-51826",
+  storageBucket: "remoteroofers-51826.appspot.com",
+  messagingSenderId: "901240361996",
+  appId: "1:901240361996:web:2a209986f74f15618aca29"
+};
 
-                    <button type="button" id="backToLogin" class="btn-outline w-full">
-                        Back to Login
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-    <!-- Success Message Toast -->
-    <div id="successToast" class="hidden fixed top-4 right-4 z-50 animate-slide-down">
-        <div class="bg-success-50 border-l-4 border-success rounded-lg p-4 shadow-modal max-w-md">
-            <div class="flex items-start">
-                <svg class="w-6 h-6 text-success flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-                <div class="ml-3">
-                    <h4 class="font-semibold text-success-700">Success!</h4>
-                    <p id="successMessage" class="text-sm text-success-700 mt-1"></p>
-                </div>
-                <button id="closeToast" class="ml-4 text-success-700 hover:text-success-800 transition-colors duration-200" aria-label="Close notification">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
+const loginForm = document.getElementById('loginForm');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const rememberMe = document.getElementById('rememberMe');
+const togglePassword = document.getElementById('togglePassword');
+const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
 
-    <!-- Footer -->
-    <footer class="bg-primary-800 text-white">
-        <div class="container-custom py-16">
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-                <!-- Company Info -->
-                <div>
-                    <div class="flex items-center space-x-3 mb-6">
-                        <svg class="w-10 h-10" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="40" height="40" rx="8" fill="#FF6B35"/>
-                            <path d="M20 8L32 16V28L20 36L8 28V16L20 8Z" fill="white"/>
-                        </svg>
-                        <span class="text-2xl font-headline font-bold">RoofMetrics<span class="text-accent">Pro</span></span>
-                    </div>
-                    <p class="text-white/70 leading-relaxed mb-4">Professional roof measurement and aerial analytics for contractors who demand precision.</p>
-                    <div class="flex space-x-4">
-                        <a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200" aria-label="Facebook">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                        </a>
-                        <a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200" aria-label="Twitter">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
-                        </a>
-                        <a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200" aria-label="LinkedIn">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                        </a>
-                    </div>
-                </div>
+togglePassword.addEventListener('click', () => {
+  if (passwordInput.type === 'password') passwordInput.type = 'text';
+  else passwordInput.type = 'password';
+});
 
-                <!-- Services -->
-                <div>
-                    <h4 class="text-lg font-headline font-bold mb-6">Services</h4>
-                    <ul class="space-y-3">
-                        <li><a href="order_portal.html" class="text-white/70 hover:text-accent transition-colors duration-200">Roof Measurements</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Aerial Analytics</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">3D Modeling</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Material Calculations</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Express Service</a></li>
-                    </ul>
-                </div>
+forgotPasswordBtn.addEventListener('click', async () => {
+  const email = prompt("Enter your registered email:");
+  if (!email) return;
+  try {
+    await sendPasswordResetEmail(auth, email);
+    alert("Password reset email sent!");
+  } catch(e) {
+    alert(e.message);
+  }
+});
 
-                <!-- Company -->
-                <div>
-                    <h4 class="text-lg font-headline font-bold mb-6">Company</h4>
-                    <ul class="space-y-3">
-                        <li><a href="about_us.html" class="text-white/70 hover:text-accent transition-colors duration-200">About Us</a></li>
-                        <li><a href="pricing.html" class="text-white/70 hover:text-accent transition-colors duration-200">Pricing</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Case Studies</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Blog</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Careers</a></li>
-                    </ul>
-                </div>
-
-                <!-- Support -->
-                <div>
-                    <h4 class="text-lg font-headline font-bold mb-6">Support</h4>
-                    <ul class="space-y-3">
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Help Center</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Contact Us</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">API Documentation</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Privacy Policy</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Terms of Service</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="border-t border-white/10 pt-8">
-                <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-                    <p class="text-white/60 text-sm">© 2026 RoofMetrics Pro. All Rights Reserved.</p>
-                    <div class="flex items-center space-x-6 text-sm text-white/60">
-                        <a href="javascript:void(0)" class="hover:text-accent transition-colors duration-200">Privacy</a>
-                        <a href="javascript:void(0)" class="hover:text-accent transition-colors duration-200">Terms</a>
-                        <a href="javascript:void(0)" class="hover:text-accent transition-colors duration-200">Cookies</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    
-<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    await setPersistence(auth, rememberMe.checked ? browserLocalPersistence : browserSessionPersistence);
+    await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+    alert("Login successful! Redirecting...");
+    window.location.href = "dashboard1.html";
+  } catch(e) {
+    alert(e.message);
+  }
+});
+</script>
 </body>
 </html>
