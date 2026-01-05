@@ -38,13 +38,14 @@
     // ADMIN EMAIL LIST
     const adminEmails = ["admin@remoteroofers.com"];
 
+    // SIGNUP FUNCTION
     window.signupUser = async function () {
-      const firstName = firstNameEl.value.trim();
-      const lastName = lastNameEl.value.trim();
-      const email = emailEl.value.trim();
-      const phone = phoneEl.value.trim();
-      const password = passwordEl.value;
-      const confirmPassword = confirmPasswordEl.value;
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
       const errorBox = document.getElementById("error");
 
       errorBox.textContent = "";
@@ -94,118 +95,108 @@
   </script>
 </head>
 
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-   <!-- Header Navigation -->
-    <header class="bg-white shadow-card sticky top-0 z-50">
-        <nav class="container-custom">
-            <div class="flex items-center justify-between h-20">
-                <!-- Logo -->
-                <a href="index.html" class="flex items-center space-x-3 group">
-                    <svg class="w-10 h-10 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="40" height="40" rx="8" fill="#1E3A5F"/>
-                        <path d="M20 8L32 16V28L20 36L8 28V16L20 8Z" fill="#FF6B35"/>
-                        <path d="M20 12L28 17V27L20 32L12 27V17L20 12Z" fill="#2D5A87"/>
-                        <circle cx="20" cy="20" r="3" fill="white"/>
-                    </svg>
-                    <span class="text-2xl font-headline font-bold text-primary">Remote<span class="text-accent">Roofers</span></span>
-                </a>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+  <!-- Header Navigation -->
+  <header class="bg-white shadow-card sticky top-0 z-50">
+    <nav class="container-custom">
+      <div class="flex items-center justify-between h-20">
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center space-x-3 group">
+          <svg class="w-10 h-10 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="8" fill="#1E3A5F"/>
+            <path d="M20 8L32 16V28L20 36L8 28V16L20 8Z" fill="#FF6B35"/>
+            <path d="M20 12L28 17V27L20 32L12 27V17L20 12Z" fill="#2D5A87"/>
+            <circle cx="20" cy="20" r="3" fill="white"/>
+          </svg>
+          <span class="text-2xl font-headline font-bold text-primary">Remote<span class="text-accent">Roofers</span></span>
+        </a>
 
-                <!-- Desktop Navigation -->
-                <div class="hidden lg:flex items-center space-x-8">
-                    <a href="index.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Home</a>
-                    <a href="pricing.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Pricing</a>
-                    <a href="order_portal.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Order Now</a>
-                    <a href="about_us.html" class="text-text-secondary hover:text-primary transition-colors duration-200">About Us</a>
-                    
-                </div>
+        <!-- Desktop Navigation -->
+        <div class="hidden lg:flex items-center space-x-8">
+          <a href="index.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Home</a>
+          <a href="pricing.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Pricing</a>
+          <a href="order_portal.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Order Now</a>
+          <a href="about_us.html" class="text-text-secondary hover:text-primary transition-colors duration-200">About Us</a>
+        </div>
 
-                <!-- CTA Buttons -->
-                <div class="hidden lg:flex items-center space-x-4">
-                    <a href="login.html" class="text-primary font-semibold border-b-2 border-accent py-2 transition-colors duration-200">Login</a>
-                    <a href="order_portal.html" class="btn-primary">Get Started</a>
-                </div>
+        <!-- CTA Buttons -->
+        <div class="hidden lg:flex items-center space-x-4">
+          <a href="login.html" class="text-primary font-semibold border-b-2 border-accent py-2 transition-colors duration-200">Login</a>
+          <a href="order_portal.html" class="btn-primary">Get Started</a>
+        </div>
 
-                <!-- Mobile Menu Button -->
-                <button id="mobileMenuBtn" class="lg:hidden p-2 rounded-lg hover:bg-surface transition-colors duration-200" aria-label="Toggle mobile menu">
-                    <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Mobile Menu -->
-            <div id="mobileMenu" class="hidden lg:hidden pb-6 pt-2">
-                <div class="flex flex-col space-y-4">
-                    <a href="index.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Home</a>
-                    <a href="pricing.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Pricing</a>
-                    <a href="order_portal.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Order Now</a>
-                    <a href="about_us.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">About Us</a>
-                   
-                    <div class="flex flex-col space-y-3 pt-4 border-t border-border-light">
-                        <a href="login.html" class="btn-outline text-center">Login</a>
-                        <a href="order_portal.html" class="btn-primary text-center">Get Started</a>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-  <section class="min-h-screen flex items-center justify-center">
-  <div class="card p-8 max-w-md w-full">
-    <h1 class="text-2xl font-bold text-center mb-6">Create Account</h1>
-
-    <div class="space-y-4">
-      <input id="firstName" placeholder="First Name"
-        class="w-full px-4 py-2 border rounded-lg" />
-      <input id="lastName" placeholder="Last Name"
-        class="w-full px-4 py-2 border rounded-lg" />
-      <input id="email" type="email" placeholder="Email"
-        class="w-full px-4 py-2 border rounded-lg" />
-      <input id="phone" placeholder="Phone (optional)"
-        class="w-full px-4 py-2 border rounded-lg" />
-
-      <!-- PASSWORD -->
-      <div class="relative">
-        <input id="password" type="password" placeholder="Password"
-          class="w-full px-4 py-2 border rounded-lg pr-10" />
-        <span onclick="togglePassword('password')"
-          class="absolute right-3 top-2.5 cursor-pointer">👁</span>
+        <!-- Mobile Menu Button -->
+        <button id="mobileMenuBtn" class="lg:hidden p-2 rounded-lg hover:bg-surface transition-colors duration-200" aria-label="Toggle mobile menu">
+          <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
       </div>
 
-      <div class="relative">
-        <input id="confirmPassword" type="password" placeholder="Confirm Password"
-          class="w-full px-4 py-2 border rounded-lg pr-10" />
-        <span onclick="togglePassword('confirmPassword')"
-          class="absolute right-3 top-2.5 cursor-pointer">👁</span>
+      <!-- Mobile Menu -->
+      <div id="mobileMenu" class="hidden lg:hidden pb-6 pt-2">
+        <div class="flex flex-col space-y-4">
+          <a href="index.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Home</a>
+          <a href="pricing.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Pricing</a>
+          <a href="order_portal.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Order Now</a>
+          <a href="about_us.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">About Us</a>
+          <div class="flex flex-col space-y-3 pt-4 border-t border-border-light">
+            <a href="login.html" class="btn-outline text-center">Login</a>
+            <a href="order_portal.html" class="btn-primary text-center">Get Started</a>
+          </div>
+        </div>
       </div>
+    </nav>
+  </header>
 
-      <!-- STRENGTH -->
-      <div class="w-full bg-gray-200 rounded h-2">
-        <div id="strengthBar" class="h-2 rounded w-0"></div>
+  <!-- Centered Signup Section -->
+  <section class="flex items-center justify-center flex-1 min-h-[calc(100vh-5rem)]">
+    <div class="card p-8 max-w-md w-full bg-white shadow-lg rounded-lg">
+      <h1 class="text-2xl font-bold text-center mb-6">Create Account</h1>
+
+      <div class="space-y-4">
+        <input id="firstName" placeholder="First Name" class="w-full px-4 py-2 border rounded-lg" />
+        <input id="lastName" placeholder="Last Name" class="w-full px-4 py-2 border rounded-lg" />
+        <input id="email" type="email" placeholder="Email" class="w-full px-4 py-2 border rounded-lg" />
+        <input id="phone" placeholder="Phone (optional)" class="w-full px-4 py-2 border rounded-lg" />
+
+        <!-- PASSWORD -->
+        <div class="relative">
+          <input id="password" type="password" placeholder="Password" class="w-full px-4 py-2 border rounded-lg pr-10" />
+          <span onclick="togglePassword('password')" class="absolute right-3 top-2.5 cursor-pointer">👁</span>
+        </div>
+
+        <div class="relative">
+          <input id="confirmPassword" type="password" placeholder="Confirm Password" class="w-full px-4 py-2 border rounded-lg pr-10" />
+          <span onclick="togglePassword('confirmPassword')" class="absolute right-3 top-2.5 cursor-pointer">👁</span>
+        </div>
+
+        <!-- STRENGTH -->
+        <div class="w-full bg-gray-200 rounded h-2">
+          <div id="strengthBar" class="h-2 rounded w-0"></div>
+        </div>
+        <p id="strengthText" class="text-sm"></p>
+
+        <p id="error" class="text-red-600 text-sm"></p>
+
+        <button id="signupBtn" onclick="signupUser()" disabled class="w-full bg-blue-600 text-white py-2 rounded-lg opacity-50 cursor-not-allowed">
+          Sign Up
+        </button>
+
+        <p class="text-center text-sm">
+          Already have an account? <a href="login.html" class="text-blue-600 font-semibold">Login</a>
+        </p>
       </div>
-      <p id="strengthText" class="text-sm"></p>
-
-      <p id="error" class="text-red-600 text-sm"></p>
-
-      <button id="signupBtn" onclick="signupUser()" disabled
-        class="w-full bg-blue-600 text-white py-2 rounded-lg opacity-50 cursor-not-allowed">
-        Sign Up
-      </button>
-
-      <p class="text-center text-sm">
-        Already have an account?
-        <a href="login.html" class="text-blue-600 font-semibold">Login</a>
-      </p>
     </div>
-  </div>
 
-  <!-- SUCCESS TOAST -->
-  <div id="successToast" class="hidden fixed top-4 right-4">
-    <div class="bg-green-100 border-l-4 border-green-600 p-4 rounded shadow">
-      <p id="successMessage" class="text-green-800 font-semibold"></p>
+    <!-- SUCCESS TOAST -->
+    <div id="successToast" class="hidden fixed top-4 right-4">
+      <div class="bg-green-100 border-l-4 border-green-600 p-4 rounded shadow">
+        <p id="successMessage" class="text-green-800 font-semibold"></p>
+      </div>
     </div>
-  </div>
   </section>
+
   <!-- UI + VALIDATION -->
   <script>
     const passwordEl = document.getElementById("password");
@@ -213,11 +204,6 @@
     const signupBtn = document.getElementById("signupBtn");
     const strengthBar = document.getElementById("strengthBar");
     const strengthText = document.getElementById("strengthText");
-
-    const firstNameEl = document.getElementById("firstName");
-    const lastNameEl = document.getElementById("lastName");
-    const emailEl = document.getElementById("email");
-    const phoneEl = document.getElementById("phone");
 
     function togglePassword(id) {
       const input = document.getElementById(id);
@@ -250,7 +236,11 @@
         strengthText.textContent = "";
       }
 
-      const valid = score === 4 && password === confirm;
+      const email = document.getElementById("email").value.trim();
+      const isAdmin = ["admin@remoteroofers.com"].includes(email);
+      const minLength = isAdmin ? 12 : 8;
+
+      const valid = score === 4 && password === confirm && password.length >= minLength;
       signupBtn.disabled = !valid;
       signupBtn.classList.toggle("opacity-50", !valid);
       signupBtn.classList.toggle("cursor-not-allowed", !valid);
@@ -258,13 +248,23 @@
 
     passwordEl.addEventListener("input", validatePassword);
     confirmPasswordEl.addEventListener("input", validatePassword);
+    document.getElementById("email").addEventListener("input", validatePassword);
 
     function signupSuccess(message) {
       document.getElementById("successMessage").textContent = message;
       document.getElementById("successToast").classList.remove("hidden");
+
+      // Clear form
+      ["firstName","lastName","email","phone","password","confirmPassword"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
+      strengthBar.style.width = "0";
+      strengthText.textContent = "";
+      signupBtn.disabled = true;
+      signupBtn.classList.add("opacity-50","cursor-not-allowed");
+
       setTimeout(() => window.location.href = "login.html", 2500);
     }
   </script>
-
 </body>
 </html>
