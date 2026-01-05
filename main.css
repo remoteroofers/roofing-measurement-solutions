@@ -2574,5 +2574,8 @@ code, pre, .code{
   background-color: lightblue;
   border: 1px solid black;
 }
+  .center-text {
+    text-align: center;
+}
 
 }
