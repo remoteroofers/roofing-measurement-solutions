@@ -2559,4 +2559,20 @@ code, pre, .code{
     font-size: 3.75rem;
     line-height: 1;
   }
+
+  .container {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;     /* Centers vertically */
+  height: 100vh;           /* Ensures the container fills the viewport height */
+}
+
+.center-div {
+  /* Add styling for your div */
+  width: 200px;
+  height: 100px;
+  background-color: lightblue;
+  border: 1px solid black;
+}
+
 }
