@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="RoofMetrics Pro - Professional roof measurement and aerial analytics platform for US contractors. Get precision measurements that win bids.">
+    <title>Remote Roofers Measurement Solutions</title>
+    <link rel="stylesheet" href="main.css">
+  
+  <script type="module" async src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Froofmetric3026back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.12"></script>
+  <script type="module" defer src="https://static.rocket.new/rocket-shot.js?v=0.0.2"></script>
+  </head>
+<body class="antialiased">
+    <!-- Header Navigation -->
+    <header class="bg-white shadow-card sticky top-0 z-50">
+        <nav class="container-custom">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center space-x-3 group">
+                    <svg class="w-10 h-10 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="40" height="40" rx="8" fill="#1E3A5F"/>
+                        <path d="M20 8L32 16V28L20 36L8 28V16L20 8Z" fill="#FF6B35"/>
+                        <path d="M20 12L28 17V27L20 32L12 27V17L20 12Z" fill="#2D5A87"/>
+                        <circle cx="20" cy="20" r="3" fill="white"/>
+                    </svg>
+                    <span class="text-2xl font-headline font-bold text-primary">Remote<span class="text-accent">Roofers</span></span>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="index.html" class="text-primary font-semibold border-b-2 border-accent py-2 transition-colors duration-200">Home</a>
+                    <a href="pricing.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Pricing</a>
+                    <a href="about_us.html" class="text-text-secondary hover:text-primary transition-colors duration-200">About Us</a>
+                    <a href="contact.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Contact Us</a>
+                    
+                </div>
+
+  </body>
+  </html>
+
+                <!-- CTA Buttons -->
+                <div class="hidden lg:flex items-center space-x-4">
+                    <a href="login.html" class="text-primary font-semibold hover:text-secondary transition-colors duration-200">Login</a>
+                    <a href="signup.html" class="btn-primary">Sign Up</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="lg:hidden p-2 rounded-lg hover:bg-surface transition-colors duration-200" aria-label="Toggle mobile menu">
+                    <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="hidden lg:hidden pb-6 pt-2">
+                <div class="flex flex-col space-y-4">
+                    <a href="index.html" class="text-primary font-semibold py-2 border-l-4 border-accent pl-4">Home</a>
+                    <a href="pricing.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Pricing</a>
+                    <a href="order_portal.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Order Now</a>
+                    <a href="about_us.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">About Us</a>
+                    <a href="dashboard.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Dashboard</a>
+                    <div class="flex flex-col space-y-3 pt-4 border-t border-border">
+                        <a href="login.html" class="btn-outline text-center">Login</a>
+                        <a href="order_portal.html" class="btn-primary text-center">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-br from-primary-50 via-white to-secondary-50 overflow-hidden">
+        <div class="absolute inset-0 opacity-5">
+            <svg class="w-full h-full" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 400L50 380C100 360 200 320 300 300C400 280 500 280 600 300C700 320 800 360 900 380C1000 400 1100 400 1150 400L1200 400V800H1150C1100 800 1000 800 900 800C800 800 700 800 600 800C500 800 400 800 300 800C200 800 100 800 50 800H0V400Z" fill="#1E3A5F"/>
+            </svg>
+        </div>
+        
+        <div class="container-custom relative">
+            <div class="grid lg:grid-cols-2 gap-12 items-center py-20 lg:py-32">
+                <!-- Hero Content -->
+                <div class="space-y-8 animate-fade-in">
+                    <div class="inline-flex items-center space-x-2 bg-accent-50 text-accent-700 px-4 py-2 rounded-full text-sm font-semibold">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                        <span>Trusted by 5,000+ Contractors Nationwide</span>
+                    </div>
+                    
+                    <h1 class="text-5xl lg:text-6xl font-headline font-bold text-primary leading-tight">
+                        Precision Measurements That <span class="text-gradient">Win Bids</span>
+                    </h1>
+                    
+                    <p class="text-xl text-text-secondary leading-relaxed">
+                        Professional aerial roof analytics delivering enterprise-grade accuracy in hours, not days. Stake your reputation on measurements contractors trust.
+                    </p>
+
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-3 gap-6 pt-4">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-accent">99.8%</div>
+                            <div class="text-sm text-text-secondary mt-1">Accuracy Rate</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-accent">24hr</div>
+                            <div class="text-sm text-text-secondary mt-1">Turnaround</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-accent">250K+</div>
+                            <div class="text-sm text-text-secondary mt-1">Reports Done</div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                        <a href="order_portal.html" class="btn-primary text-center group">
+                            Get Instant Quote
+                            <svg class="inline-block w-5 h-5 ml-2 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
+                        </a>
+                        <button id="viewSampleBtn" class="btn-outline text-center group">
+                            View Sample Report
+                            <svg class="inline-block w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg> 
+                        </button>
+                    </div>
