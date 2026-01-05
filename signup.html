@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Login to RoofMetrics Pro - Secure access to your contractor dashboard, order management, and professional roof measurement reports.">
-    <title>Signup - Remote Roofers | Secure Access</title>
-    <link rel="stylesheet" href="main.css">
-  
-  <script type="module" async src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Froofmetric3026back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.12"></script>
-  <script type="module" defer src="https://static.rocket.new/rocket-shot.js?v=0.0.2"></script>
-    <!-- Tailwind CSS -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signup | Remote Roofers</title>
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Firebase SDKs -->
+  <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      sendEmailVerification
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // ?? REPLACE WITH YOUR FIREBASE CONFIG
     const firebaseConfig = {
       apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
       authDomain: "remoteroofers-51826.firebaseapp.com",
-  
       projectId: "remoteroofers-51826",
       storageBucket: "remoteroofers-51826.firebasestorage.app",
       messagingSenderId: "901240361996",
@@ -33,15 +35,36 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // ADMIN EMAIL LIST
+    const adminEmails = ["admin@remoteroofers.com"];
+
     window.signupUser = async function () {
-      const firstName = document.getElementById("firstName").value;
-      const lastName = document.getElementById("lastName").value;
-      const email = document.getElementById("email").value;
-      const phone = document.getElementById("phone").value;
-      const password = document.getElementById("password").value;
+      const firstName = firstNameEl.value.trim();
+      const lastName = lastNameEl.value.trim();
+      const email = emailEl.value.trim();
+      const phone = phoneEl.value.trim();
+      const password = passwordEl.value;
+      const confirmPassword = confirmPasswordEl.value;
       const errorBox = document.getElementById("error");
 
       errorBox.textContent = "";
+
+      if (!firstName || !lastName || !email || !password) {
+        errorBox.textContent = "Please fill all required fields.";
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        errorBox.textContent = "Passwords do not match.";
+        return;
+      }
+
+      const isAdmin = adminEmails.includes(email);
+
+      if (isAdmin && password.length < 12) {
+        errorBox.textContent = "Admin password must be at least 12 characters.";
+        return;
+      }
 
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -52,21 +75,27 @@
           lastName,
           email,
           phone,
-          role: "client",
+          role: isAdmin ? "admin" : "client",
+          emailVerified: false,
           createdAt: new Date()
         });
 
-        window.location.href = "dashboard1.html";
+        await sendEmailVerification(user);
+
+        signupSuccess(
+          "Account created! Please verify your email before logging in."
+        );
 
       } catch (error) {
+        console.error(error);
         errorBox.textContent = error.message;
       }
     };
   </script>
-  
-  </head>
-<body class="antialiased bg-surface">
-    <!-- Header Navigation -->
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+   <!-- Header Navigation -->
     <header class="bg-white shadow-card sticky top-0 z-50">
         <nav class="container-custom">
             <div class="flex items-center justify-between h-20">
@@ -85,16 +114,16 @@
                 <div class="hidden lg:flex items-center space-x-8">
                     <a href="index.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Home</a>
                     <a href="pricing.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Pricing</a>
-                    
+                    <a href="order_portal.html" class="text-text-secondary hover:text-primary transition-colors duration-200">Order Now</a>
                     <a href="about_us.html" class="text-text-secondary hover:text-primary transition-colors duration-200">About Us</a>
                     
                 </div>
 
-            <!-- CTA Buttons -->
-          <!--     <div class="hidden lg:flex items-center space-x-4">
-                   <a href="login.html" class="text-primary font-semibold border-b-2 border-accent py-2 transition-colors duration-200">Login</a>
+                <!-- CTA Buttons -->
+                <div class="hidden lg:flex items-center space-x-4">
+                    <a href="login.html" class="text-primary font-semibold border-b-2 border-accent py-2 transition-colors duration-200">Login</a>
                     <a href="order_portal.html" class="btn-primary">Get Started</a>
-                </div>  -->
+                </div>
 
                 <!-- Mobile Menu Button -->
                 <button id="mobileMenuBtn" class="lg:hidden p-2 rounded-lg hover:bg-surface transition-colors duration-200" aria-label="Toggle mobile menu">
@@ -111,7 +140,7 @@
                     <a href="pricing.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Pricing</a>
                     <a href="order_portal.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Order Now</a>
                     <a href="about_us.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">About Us</a>
-                    <a href="dashboard.html" class="text-text-secondary hover:text-primary py-2 pl-4 transition-colors duration-200">Dashboard</a>
+                   
                     <div class="flex flex-col space-y-3 pt-4 border-t border-border-light">
                         <a href="login.html" class="btn-outline text-center">Login</a>
                         <a href="order_portal.html" class="btn-primary text-center">Get Started</a>
@@ -120,303 +149,120 @@
             </div>
         </nav>
     </header>
-
-    <!-- sign up Section -->
-   <section class="section-sm min-h-screen flex items-center justify-center relative overflow-hidden">
-  <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
-
-    <h1 class="text-2xl font-bold text-center mb-6">
-      Create Your Account
-    </h1>
+  <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center mb-6">Create Account</h1>
 
     <div class="space-y-4">
-      <input id="firstName" type="text" placeholder="First Name"
+      <input id="firstName" placeholder="First Name"
+        class="w-full px-4 py-2 border rounded-lg" />
+      <input id="lastName" placeholder="Last Name"
+        class="w-full px-4 py-2 border rounded-lg" />
+      <input id="email" type="email" placeholder="Email"
+        class="w-full px-4 py-2 border rounded-lg" />
+      <input id="phone" placeholder="Phone (optional)"
         class="w-full px-4 py-2 border rounded-lg" />
 
-      <input id="lastName" type="text" placeholder="Last Name"
-        class="w-full px-4 py-2 border rounded-lg" />
+      <!-- PASSWORD -->
+      <div class="relative">
+        <input id="password" type="password" placeholder="Password"
+          class="w-full px-4 py-2 border rounded-lg pr-10" />
+        <span onclick="togglePassword('password')"
+          class="absolute right-3 top-2.5 cursor-pointer">👁</span>
+      </div>
 
-      <input id="email" type="email" placeholder="Email Address"
-        class="w-full px-4 py-2 border rounded-lg" />
+      <div class="relative">
+        <input id="confirmPassword" type="password" placeholder="Confirm Password"
+          class="w-full px-4 py-2 border rounded-lg pr-10" />
+        <span onclick="togglePassword('confirmPassword')"
+          class="absolute right-3 top-2.5 cursor-pointer">👁</span>
+      </div>
 
-      <input id="phone" type="tel" placeholder="Phone Number"
-        class="w-full px-4 py-2 border rounded-lg" />
-
-      <input id="password" type="password" placeholder="Password"
-        class="w-full px-4 py-2 border rounded-lg" />
+      <!-- STRENGTH -->
+      <div class="w-full bg-gray-200 rounded h-2">
+        <div id="strengthBar" class="h-2 rounded w-0"></div>
+      </div>
+      <p id="strengthText" class="text-sm"></p>
 
       <p id="error" class="text-red-600 text-sm"></p>
 
-      <button onclick="signupUser()"
-        class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+      <button id="signupBtn" onclick="signupUser()" disabled
+        class="w-full bg-blue-600 text-white py-2 rounded-lg opacity-50 cursor-not-allowed">
         Sign Up
       </button>
 
-      <p class="text-center text-sm mt-4">
+      <p class="text-center text-sm">
         Already have an account?
         <a href="login.html" class="text-blue-600 font-semibold">Login</a>
       </p>
     </div>
   </div>
-</section>
-    <!-- Forgot Password Modal -->
-   
-    <!-- Success Message Toast -->
-    <div id="successToast" class="hidden fixed top-4 right-4 z-50 animate-slide-down">
-        <div class="bg-success-50 border-l-4 border-success rounded-lg p-4 shadow-modal max-w-md">
-            <div class="flex items-start">
-                <svg class="w-6 h-6 text-success flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-                <div class="ml-3">
-                    <h4 class="font-semibold text-success-700">Success!</h4>
-                    <p id="successMessage" class="text-sm text-success-700 mt-1"></p>
-                </div>
-                <button id="closeToast" class="ml-4 text-success-700 hover:text-success-800 transition-colors duration-200" aria-label="Close notification">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
+
+  <!-- SUCCESS TOAST -->
+  <div id="successToast" class="hidden fixed top-4 right-4">
+    <div class="bg-green-100 border-l-4 border-green-600 p-4 rounded shadow">
+      <p id="successMessage" class="text-green-800 font-semibold"></p>
     </div>
+  </div>
 
-    <!-- Footer -->
-    <footer class="bg-primary-800 text-white">
-        <div class="container-custom py-16">
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-                <!-- Company Info -->
-                <div>
-                    <div class="flex items-center space-x-3 mb-6">
-                        <svg class="w-10 h-10" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="40" height="40" rx="8" fill="#FF6B35"/>
-                            <path d="M20 8L32 16V28L20 36L8 28V16L20 8Z" fill="white"/>
-                        </svg>
-                        <span class="text-2xl font-headline font-bold">Remote<span class="text-accent">Roofers</span></span>
-                    </div>
-                    <p class="text-white/70 leading-relaxed mb-4">Professional roof measurement and aerial analytics for contractors who demand precision.</p>
-                    <div class="flex space-x-4">
-                        <a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200" aria-label="Facebook">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                        </a>
-                        <a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200" aria-label="Twitter">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
-                        </a>
-                        <a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200" aria-label="LinkedIn">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                        </a>
-                    </div>
-                </div>
+  <!-- UI + VALIDATION -->
+  <script>
+    const passwordEl = document.getElementById("password");
+    const confirmPasswordEl = document.getElementById("confirmPassword");
+    const signupBtn = document.getElementById("signupBtn");
+    const strengthBar = document.getElementById("strengthBar");
+    const strengthText = document.getElementById("strengthText");
 
-                <!-- Services -->
-                <div>
-                    <h4 class="text-lg font-headline font-bold mb-6">Services</h4>
-                    <ul class="space-y-3">
-                        <li><a href="order_portal.html" class="text-white/70 hover:text-accent transition-colors duration-200">Roof Measurements</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Aerial Analytics</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">3D Modeling</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Material Calculations</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Express Service</a></li>
-                    </ul>
-                </div>
+    const firstNameEl = document.getElementById("firstName");
+    const lastNameEl = document.getElementById("lastName");
+    const emailEl = document.getElementById("email");
+    const phoneEl = document.getElementById("phone");
 
-                <!-- Company -->
-                <div>
-                    <h4 class="text-lg font-headline font-bold mb-6">Company</h4>
-                    <ul class="space-y-3">
-                        <li><a href="about_us.html" class="text-white/70 hover:text-accent transition-colors duration-200">About Us</a></li>
-                        <li><a href="pricing.html" class="text-white/70 hover:text-accent transition-colors duration-200">Pricing</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Case Studies</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Blog</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Careers</a></li>
-                    </ul>
-                </div>
+    function togglePassword(id) {
+      const input = document.getElementById(id);
+      input.type = input.type === "password" ? "text" : "password";
+    }
 
-                <!-- Support -->
-                <div>
-                    <h4 class="text-lg font-headline font-bold mb-6">Support</h4>
-                    <ul class="space-y-3">
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Help Center</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Contact Us</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">API Documentation</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Privacy Policy</a></li>
-                        <li><a href="javascript:void(0)" class="text-white/70 hover:text-accent transition-colors duration-200">Terms of Service</a></li>
-                    </ul>
-                </div>
-            </div>
+    function validatePassword() {
+      const password = passwordEl.value;
+      const confirm = confirmPasswordEl.value;
+      let score = 0;
 
-            <div class="border-t border-white/10 pt-8">
-                <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-                    <p class="text-white/60 text-sm">© 2026 Remote Roofers Measurement Solutions. All Rights Reserved.</p>
-                    <div class="flex items-center space-x-6 text-sm text-white/60">
-                        <a href="javascript:void(0)" class="hover:text-accent transition-colors duration-200">Privacy</a>
-                        <a href="javascript:void(0)" class="hover:text-accent transition-colors duration-200">Terms</a>
-                        <a href="javascript:void(0)" class="hover:text-accent transition-colors duration-200">Cookies</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
+      if (password.length >= 8) score++;
+      if (/[A-Z]/.test(password)) score++;
+      if (/[0-9]/.test(password)) score++;
+      if (/[^A-Za-z0-9]/.test(password)) score++;
 
-    <script>
-        // Mobile Menu Toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
+      const levels = [
+        ["25%", "bg-red-500", "Weak"],
+        ["50%", "bg-yellow-500", "Fair"],
+        ["75%", "bg-blue-500", "Good"],
+        ["100%", "bg-green-600", "Strong"]
+      ];
 
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+      if (score > 0) {
+        strengthBar.style.width = levels[score - 1][0];
+        strengthBar.className = `h-2 rounded ${levels[score - 1][1]}`;
+        strengthText.textContent = levels[score - 1][2];
+      } else {
+        strengthBar.style.width = "0";
+        strengthText.textContent = "";
+      }
 
-        // Password Toggle
-        const togglePassword = document.getElementById('togglePassword');
-        const passwordInput = document.getElementById('password');
-        const eyeIcon = document.getElementById('eyeIcon');
-        const eyeOffIcon = document.getElementById('eyeOffIcon');
+      const valid = score === 4 && password === confirm;
+      signupBtn.disabled = !valid;
+      signupBtn.classList.toggle("opacity-50", !valid);
+      signupBtn.classList.toggle("cursor-not-allowed", !valid);
+    }
 
-        togglePassword.addEventListener('click', () => {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            eyeIcon.classList.toggle('hidden');
-            eyeOffIcon.classList.toggle('hidden');
-        });
+    passwordEl.addEventListener("input", validatePassword);
+    confirmPasswordEl.addEventListener("input", validatePassword);
 
-        // Form Validation
-        const loginForm = document.getElementById('loginForm');
-        const emailInput = document.getElementById('email');
-        const emailError = document.getElementById('emailError');
-        const passwordError = document.getElementById('passwordError');
-
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
-        }
-
-        function validatePassword(password) {
-            return password.length >= 8;
-        }
-
-        emailInput.addEventListener('blur', () => {
-            if (!validateEmail(emailInput.value)) {
-                emailInput.classList.add('input-error');
-                emailError.classList.remove('hidden');
-            } else {
-                emailInput.classList.remove('input-error');
-                emailError.classList.add('hidden');
-            }
-        });
-
-        passwordInput.addEventListener('blur', () => {
-            if (!validatePassword(passwordInput.value)) {
-                passwordInput.classList.add('input-error');
-                passwordError.classList.remove('hidden');
-            } else {
-                passwordInput.classList.remove('input-error');
-                passwordError.classList.add('hidden');
-            }
-        });
-
-        // Login Form Submission
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const email = emailInput.value;
-            const password = passwordInput.value;
-            const rememberMe = document.getElementById('rememberMe').checked;
-
-            if (validateEmail(email) && validatePassword(password)) {
-                // Show success message
-                showSuccessToast('Login successful! Redirecting to dashboard...');
-                
-                // Simulate login delay
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 1500);
-            }
-        });
-
-        // Forgot Password Modal
-        const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
-        const forgotPasswordModal = document.getElementById('forgotPasswordModal');
-        const closeForgotModal = document.getElementById('closeForgotModal');
-        const backToLogin = document.getElementById('backToLogin');
-        const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-
-        forgotPasswordBtn.addEventListener('click', () => {
-            forgotPasswordModal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        });
-
-        closeForgotModal.addEventListener('click', () => {
-            forgotPasswordModal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        });
-
-        backToLogin.addEventListener('click', () => {
-            forgotPasswordModal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        });
-
-        forgotPasswordModal.addEventListener('click', (e) => {
-            if (e.target === forgotPasswordModal) {
-                forgotPasswordModal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
-            }
-        });
-
-        forgotPasswordForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const resetEmail = document.getElementById('resetEmail').value;
-            
-            if (validateEmail(resetEmail)) {
-                showSuccessToast('Password reset instructions sent to your email!');
-                forgotPasswordModal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
-                forgotPasswordForm.reset();
-            }
-        });
-
-        // Success Toast
-        function showSuccessToast(message) {
-            const successToast = document.getElementById('successToast');
-            const successMessage = document.getElementById('successMessage');
-            
-            successMessage.textContent = message;
-            successToast.classList.remove('hidden');
-            
-            setTimeout(() => {
-                successToast.classList.add('hidden');
-            }, 5000);
-        }
-
-        const closeToast = document.getElementById('closeToast');
-        closeToast.addEventListener('click', () => {
-            document.getElementById('successToast').classList.add('hidden');
-        });
-
-        // Social Login Handlers
-        document.querySelectorAll('button[aria-label^="Sign in with"]').forEach(button => {
-            button.addEventListener('click', () => {
-                const provider = button.getAttribute('aria-label').replace('Sign in with ', '');
-                showSuccessToast(`Redirecting to ${provider} authentication...`);
-                // In production, this would redirect to OAuth provider
-            });
-        });
-
-        // Keyboard Navigation
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                if (!forgotPasswordModal.classList.contains('hidden')) {
-                    forgotPasswordModal.classList.add('hidden');
-                    document.body.style.overflow = 'auto';
-                }
-            }
-        });
-
-        // Auto-focus email field on page load
-        window.addEventListener('load', () => {
-            emailInput.focus();
-        });
-    </script>
+    function signupSuccess(message) {
+      document.getElementById("successMessage").textContent = message;
+      document.getElementById("successToast").classList.remove("hidden");
+      setTimeout(() => window.location.href = "login.html", 2500);
+    }
+  </script>
 
 </body>
 </html>
