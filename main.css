@@ -2588,6 +2588,36 @@ code, pre, .code{
   border-color: #2563eb; /* blue */
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
+/* Base input style */
+.input-field {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 2px solid #e5e7eb; /* light gray */
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
 
+/* Highlight on focus */
+.input-field:focus {
+  border-color: #2563eb; /* blue */
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+}
+
+/* Required field invalid */
+.input-field:invalid {
+  border-color: #dc2626; /* red */
+}
+
+/* Valid field */
+.input-field:valid {
+  border-color: #16a34a; /* green */
+}
+
+/* Textarea same behavior */
+textarea.input-field {
+  resize: vertical;
+}
 
 }
