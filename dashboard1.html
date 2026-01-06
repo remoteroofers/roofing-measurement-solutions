@@ -5,163 +5,179 @@
   <title>Dashboard | Roofing Measurement Solutions</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Tailwind CSS -->
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Firebase -->
+  <!-- Firebase Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      setDoc,
+      collection,
+      getDocs,
+      orderBy,
+      query,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // 🔥 REPLACE WITH YOUR FIREBASE CONFIG
+    /* 🔥 FIREBASE CONFIG */
     const firebaseConfig = {
-    apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
-    authDomain: "remoteroofers-51826.firebaseapp.com",
-    projectId: "remoteroofers-51826",
-    storageBucket: "remoteroofers-51826.firebasestorage.app",
-    messagingSenderId: "901240361996",
-    appId: "1:901240361996:web:2a209986f74f15618aca29",
-    measurementId: "G-XGZ0MZ97BD"
+      apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
+      authDomain: "remoteroofers-51826.firebaseapp.com",
+      projectId: "remoteroofers-51826",
+      storageBucket: "remoteroofers-51826.appspot.com",
+      messagingSenderId: "901240361996",
+      appId: "1:901240361996:web:2a209986f74f15618aca29"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    window.logout = async function () {
+    /* 🔐 ADMIN EMAIL WHITELIST */
+    const ADMIN_EMAILS = [
+      "admin@remoteroofers.com",
+      "owner@remoteroofers.com"
+    ];
+
+    /* 🚪 LOGOUT */
+    window.logout = async () => {
       await signOut(auth);
       window.location.href = "login.html";
     };
 
+    /* 🔐 AUTH CHECK */
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         window.location.href = "login.html";
         return;
       }
 
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      if (!userDoc.exists()) return;
+      const userRef = doc(db, "users", user.uid);
+      const snap = await getDoc(userRef);
 
-      const data = userDoc.data();
+      /* AUTO-CREATE USER DOC IF MISSING */
+      if (!snap.exists()) {
+        const role = ADMIN_EMAILS.includes(user.email) ? "admin" : "client";
+        await setDoc(userRef, {
+          firstName: "User",
+          lastName: "",
+          email: user.email,
+          role,
+          createdAt: serverTimestamp()
+        });
+      }
+
+      const data = (await getDoc(userRef)).data();
+      const role = data.role || "client";
+
       document.getElementById("userName").textContent =
-        `${data.firstName} ${data.lastName}`;
+        `${data.firstName} ${data.lastName}`.trim();
 
-      if (data.role === "admin") {
+      document.getElementById("roleBadge").textContent =
+        role === "admin" ? "ADMIN" : "CLIENT";
+
+      if (role === "admin") {
         document.getElementById("adminPanel").classList.remove("hidden");
+        loadOrders(true);
       } else {
         document.getElementById("clientPanel").classList.remove("hidden");
+        loadOrders(false, user.uid);
       }
     });
+
+    /* 📦 LOAD ORDERS */
+    async function loadOrders(isAdmin, uid = null) {
+      const ordersRef = collection(db, "orders");
+      const q = query(ordersRef, orderBy("createdAt", "desc"));
+      const snap = await getDocs(q);
+      const container = document.getElementById("ordersList");
+
+      container.innerHTML = "";
+
+      snap.forEach(docSnap => {
+        const o = docSnap.data();
+        if (!isAdmin && o.userId !== uid) return;
+
+        container.innerHTML += `
+          <div class="bg-white p-4 rounded shadow">
+            <p><strong>Address:</strong> ${o.address}</p>
+            <p><strong>Plan:</strong> ${o.plan}</p>
+            <p><strong>Status:</strong> ${o.status}</p>
+          </div>
+        `;
+      });
+    }
+
+    /* 📤 GOOGLE SHEETS EXPORT */
+    window.exportToSheets = async () => {
+      const snap = await getDocs(collection(db, "orders"));
+
+      for (const docSnap of snap.docs) {
+        const o = docSnap.data();
+        await fetch("YOUR_GOOGLE_APPS_SCRIPT_URL", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orderId: docSnap.id,
+            address: o.address,
+            plan: o.plan,
+            status: o.status
+          })
+        });
+      }
+      alert("Orders exported to Google Sheets");
+    };
   </script>
 </head>
 
 <body class="bg-gray-100 min-h-screen">
 
-  <!-- Header -->
+  <!-- HEADER -->
   <header class="bg-white shadow px-6 py-4 flex justify-between items-center">
     <h1 class="text-xl font-bold">Roofing Measurement Dashboard</h1>
     <div class="flex items-center gap-4">
       <span id="userName" class="font-semibold"></span>
-      <button onclick="logout()"
-        class="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700">
+      <span id="roleBadge" class="text-xs bg-gray-200 px-2 py-1 rounded"></span>
+      <button onclick="logout()" class="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700">
         Logout
       </button>
     </div>
   </header>
 
-  <!-- CLIENT DASHBOARD -->
+  <!-- CLIENT PANEL -->
   <main id="clientPanel" class="hidden p-6">
     <h2 class="text-2xl font-bold mb-4">Client Dashboard</h2>
 
-    <div class="grid md:grid-cols-3 gap-6">
-
-      <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="font-semibold text-lg mb-2">Place New Order</h3>
-        <p class="text-sm text-gray-600 mb-4">
-          Submit a roof measurement order with property details.
-        </p>
-        <a href="order_portal.html"
-          class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-          New Order
-        </a>
-      </div>
-
-      <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="font-semibold text-lg mb-2">Pricing Plans</h3>
-        <p class="text-sm text-gray-600 mb-4">
-          View Bronze, Silver & Gold measurement packages.
-        </p>
-        <a href="pricing.html"
-          class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-          View Pricing
-        </a>
-      </div>
-
-      <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="font-semibold text-lg mb-2">Support</h3>
-        <p class="text-sm text-gray-600 mb-4">
-          Need help with your orders?
-        </p>
-        <a href="contact.html"
-          class="inline-block bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900">
-          Contact Us
-        </a>
-      </div>
-
+    <div class="grid md:grid-cols-3 gap-6 mb-6">
+      <a href="order_portal.html" class="bg-blue-600 text-white p-6 rounded shadow">New Order</a>
+      <a href="pricing.html" class="bg-green-600 text-white p-6 rounded shadow">Pricing</a>
+      <a href="contact.html" class="bg-gray-800 text-white p-6 rounded shadow">Support</a>
     </div>
+
+    <h3 class="text-xl font-semibold mb-2">My Orders</h3>
+    <div id="ordersList" class="grid gap-4"></div>
   </main>
 
-  <!-- ADMIN DASHBOARD -->
+  <!-- ADMIN PANEL -->
   <main id="adminPanel" class="hidden p-6">
     <h2 class="text-2xl font-bold mb-4 text-red-600">Admin Dashboard</h2>
 
-    <div class="grid md:grid-cols-4 gap-6">
-
-      <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="font-semibold mb-2">All Orders</h3>
-        <p class="text-sm text-gray-600 mb-4">
-          Review incoming measurement orders.
-        </p>
-        <a href="admin-orders.html"
-          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-          View Orders
-        </a>
-      </div>
-
-      <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="font-semibold mb-2">Clients</h3>
-        <p class="text-sm text-gray-600 mb-4">
-          Manage registered contractors.
-        </p>
-        <a href="admin-users.html"
-          class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-          View Users
-        </a>
-      </div>
-
-      <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="font-semibold mb-2">Pricing Control</h3>
-        <p class="text-sm text-gray-600 mb-4">
-          Update plans and bulk pricing.
-        </p>
-        <a href="admin-pricing.html"
-          class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
-          Edit Pricing
-        </a>
-      </div>
-
-      <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="font-semibold mb-2">Reports</h3>
-        <p class="text-sm text-gray-600 mb-4">
-          Export orders to Google Sheets.
-        </p>
-        <button class="bg-gray-800 text-white px-4 py-2 rounded">
-          Export Data
-        </button>
-      </div>
-
+    <div class="grid md:grid-cols-4 gap-6 mb-6">
+      <a href="admin-orders.html" class="bg-blue-600 text-white p-6 rounded shadow">All Orders</a>
+      <a href="admin-users.html" class="bg-green-600 text-white p-6 rounded shadow">Manage Users</a>
+      <a href="admin-pricing.html" class="bg-purple-600 text-white p-6 rounded shadow">Pricing Control</a>
+      <button onclick="exportToSheets()" class="bg-gray-800 text-white p-6 rounded shadow">
+        Export to Google Sheets
+      </button>
     </div>
+
+    <h3 class="text-xl font-semibold mb-2">Recent Orders</h3>
+    <div id="ordersList" class="grid gap-4"></div>
   </main>
 
 </body>
