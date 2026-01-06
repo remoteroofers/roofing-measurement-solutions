@@ -1,216 +1,323 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Dashboard | Roofing Measurement Solutions</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>Roofing Measurement Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Stripe -->
-  <script src="https://js.stripe.com/v3/"></script>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Stripe -->
+<script src="https://js.stripe.com/v3/"></script>
+<!-- PayPal -->
+<script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, doc, getDoc, addDoc, updateDoc, serverTimestamp, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-    // 🔥 FIREBASE CONFIG
-    const firebaseConfig = {
-      apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
-      authDomain: "remoteroofers-51826.firebaseapp.com",
-      projectId: "remoteroofers-51826",
-      storageBucket: "remoteroofers-51826.appspot.com",
-      messagingSenderId: "901240361996",
-      appId: "1:901240361996:web:2a209986f74f15618aca29"
-    };
+// ===== FIREBASE CONFIG =====
+const firebaseConfig = {
+  apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
+  authDomain: "remoteroofers-51826.firebaseapp.com",
+  projectId: "remoteroofers-51826",
+  storageBucket: "remoteroofers-51826.appspot.com",
+  messagingSenderId: "901240361996",
+  appId: "1:901240361996:web:2a209986f74f15618aca29"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-    const ADMIN_EMAILS = ["admin@remoteroofers.com","owner@remoteroofers.com"];
+// ===== LOGOUT =====
+window.logout = async ()=>{ await signOut(auth); window.location.href="login.html"; }
 
-    // LOGOUT
-    window.logout = async () => { await signOut(auth); window.location.href="login.html"; };
+// ===== GLOBALS =====
+let userData = null;
+let orderData = {};
+let orderId = null;
+let previousStatuses = {};
+let currentStep = 1;
 
-    // AUTH & ROLE CHECK
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) { window.location.href = "login.html"; return; }
+// ===== STEP NAVIGATION =====
+function showStep(step){
+  currentStep = step;
+  document.querySelectorAll(".step").forEach(el=>el.classList.add("hidden"));
+  document.getElementById(`step${step}`).classList.remove("hidden");
+  document.querySelectorAll(".stepper-item").forEach((el,i)=>{
+    el.classList.remove("bg-blue-600","bg-blue-400","bg-gray-300","text-white","text-gray-500");
+    if(i+1 === step) el.classList.add("bg-blue-600","text-white");
+    else if(i+1 < step) el.classList.add("bg-blue-400","text-white");
+    else el.classList.add("bg-gray-300","text-gray-500");
+  });
+}
 
-      const userRef = doc(db, "users", user.uid);
-      let snap = await getDoc(userRef);
+// ===== ON LOAD =====
+onAuthStateChanged(auth, async user=>{
+  if(!user) window.location.href="login.html";
+  else {
+    const userDoc = await getDoc(doc(db,"users",user.uid));
+    if(!userDoc.exists()) return;
+    userData = userDoc.data();
+    document.getElementById("userName").textContent = `${userData.firstName} ${userData.lastName}`;
 
-      // CREATE USER DOC IF MISSING
-      if (!snap.exists()) {
-        const role = ADMIN_EMAILS.includes(user.email) ? "admin" : "client";
-        await setDoc(userRef, { firstName:"User", lastName:"", email:user.email, role, createdAt:serverTimestamp() });
-        snap = await getDoc(userRef);
-      }
+    if(userData.role==="admin"){
+      document.getElementById("adminPanel").classList.remove("hidden");
+      loadAdminOrders();
+    } else {
+      document.getElementById("clientPanel").classList.remove("hidden");
+      loadClientOrders(user.uid);
+    }
+  }
+});
 
-      const data = snap.data();
-      const role = data.role || "client";
-      document.getElementById("userName").textContent = `${data.firstName} ${data.lastName}`.trim();
-      document.getElementById("roleBadge").textContent = role === "admin" ? "ADMIN" : "CLIENT";
+// ===== CLIENT MULTI-STEP PORTAL =====
+window.nextStep1 = ()=>{
+  const name = document.getElementById("customerName").value.trim();
+  const address = document.getElementById("propertyAddress").value.trim();
+  const notes = document.getElementById("projectNotes").value.trim();
+  if(!name || !address) return alert("Name & Address required");
+  orderData.firstName=name; orderData.address=address; orderData.notes=notes||"";
+  showStep(2);
+}
+window.selectService=(service,price)=>{
+  orderData.plan=service; orderData.amount=price;
+  renderSummary();
+  showStep(3);
+}
+function renderSummary(){
+  document.getElementById("summaryName").textContent=orderData.firstName;
+  document.getElementById("summaryAddress").textContent=orderData.address;
+  document.getElementById("summaryNotes").textContent=orderData.notes||"None";
+  document.getElementById("summaryService").textContent=orderData.plan;
+  document.getElementById("summaryPrice").textContent=`$${(orderData.amount/100).toFixed(2)}`;
+}
 
-      if(role==="admin") {
-        document.getElementById("adminPanel").classList.remove("hidden");
-        loadOrders(true); renderAnalytics();
-      } else {
-        document.getElementById("clientPanel").classList.remove("hidden");
-        loadOrders(false, user.uid);
-      }
+// ===== UPLOAD PDF =====
+async function uploadPDF(file){
+  if(!file) return null;
+  const storageRef = ref(storage, `orders/${Date.now()}_${file.name}`);
+  await uploadBytes(storageRef,file);
+  return await getDownloadURL(storageRef);
+}
+
+// ===== CREATE ORDER =====
+async function createOrder(pdfUrl){
+  const docRef = await addDoc(collection(db,"orders"),{
+    userId: auth.currentUser.uid,
+    firstName: orderData.firstName,
+    address: orderData.address,
+    notes: orderData.notes,
+    plan: orderData.plan,
+    amount: orderData.amount,
+    pdfUrl: pdfUrl||null,
+    status:"Pending",
+    paid:false,
+    createdAt: serverTimestamp()
+  });
+  orderId=docRef.id;
+  return docRef.id;
+}
+
+// ===== PAYMENT =====
+window.payStripe = async ()=>{
+  const file=document.getElementById("pdfUpload").files[0];
+  const pdfUrl=await uploadPDF(file);
+  if(!orderId) await createOrder(pdfUrl);
+
+  const stripe=Stripe("YOUR_STRIPE_PUBLISHABLE_KEY");
+  const res=await fetch("/create-checkout-session",{method:"POST",body:JSON.stringify({orderId,amount:orderData.amount})});
+  const session=await res.json();
+  await stripe.redirectToCheckout({sessionId:session.id});
+}
+function renderPayPal(){
+  paypal.Buttons({
+    createOrder: async (data,actions)=>{
+      const file=document.getElementById("pdfUpload").files[0];
+      const pdfUrl=await uploadPDF(file);
+      if(!orderId) await createOrder(pdfUrl);
+      return actions.order.create({purchase_units:[{amount:{value:(orderData.amount/100).toFixed(2)},description:orderData.plan}]});
+    },
+    onApprove: async (data,actions)=>{
+      await actions.order.capture();
+      if(orderId) await updateDoc(doc(db,"orders",orderId),{paid:true,status:"Completed"});
+      alert("Payment Successful!"); window.location.href="dashboard.html";
+    },
+    onError: err=>{console.error(err); alert("PayPal failed");}
+  }).render("#paypal-button-container");
+}
+
+// ===== CLIENT ORDERS =====
+function loadClientOrders(uid){
+  const tbody=document.getElementById("clientOrdersBody");
+  const q=query(collection(db,"orders"), where("userId","==",uid), orderBy("createdAt","desc"));
+  onSnapshot(q,snapshot=>{
+    tbody.innerHTML="";
+    snapshot.forEach(doc=>{
+      const order=doc.data();
+      const id=doc.id;
+      // STATUS TOAST
+      if(previousStatuses[id] && previousStatuses[id]!==order.status)
+        showToast(`Order "${order.plan}" status: ${order.status}`);
+      previousStatuses[id]=order.status;
+
+      const tr=document.createElement("tr");
+      tr.classList.add("border-b");
+      tr.innerHTML=`
+        <td class="px-4 py-2">${order.plan}</td>
+        <td class="px-4 py-2">$${(order.amount/100).toFixed(2)}</td>
+        <td class="px-4 py-2">${order.status}</td>
+        <td class="px-4 py-2">${order.pdfUrl?`<a href="${order.pdfUrl}" target="_blank" class="text-blue-600 underline">Download</a>`:"N/A"}</td>`;
+      tbody.appendChild(tr);
     });
+  });
+}
 
-    // LOAD ORDERS
-    async function loadOrders(isAdmin, uid=null) {
-      const ordersRef = collection(db,"orders");
-      const q = query(ordersRef, orderBy("createdAt","desc"));
-      const snap = await getDocs(q);
-      const container = document.getElementById("ordersList");
-      container.innerHTML = "";
+// ===== ADMIN ORDERS =====
+function loadAdminOrders(){
+  const tbody=document.getElementById("adminOrdersBody");
+  const q=query(collection(db,"orders"), orderBy("createdAt","desc"));
+  onSnapshot(q,snapshot=>{
+    tbody.innerHTML="";
+    snapshot.forEach(doc=>{
+      const order=doc.data(); const id=doc.id;
+      const tr=document.createElement("tr"); tr.classList.add("border-b");
+      tr.innerHTML=`
+        <td class="px-4 py-2">${order.firstName}</td>
+        <td class="px-4 py-2">${order.plan}</td>
+        <td class="px-4 py-2">$${(order.amount/100).toFixed(2)}</td>
+        <td class="px-4 py-2">
+          <select onchange="updateOrderStatus('${id}',this.value)" class="border px-2 py-1 rounded">
+            <option value="Pending" ${order.status==='Pending'?'selected':''}>Pending</option>
+            <option value="Completed" ${order.status==='Completed'?'selected':''}>Completed</option>
+          </select>
+        </td>
+        <td class="px-4 py-2">
+          ${order.pdfUrl?`<a href="${order.pdfUrl}" target="_blank" class="text-blue-600 underline">Download</a>`:
+          `<input type="file" onchange="uploadAdminPDF('${id}',this.files[0])" accept=".pdf">`}
+        </td>`;
+      tbody.appendChild(tr);
+    });
+  });
+}
 
-      snap.forEach(docSnap=>{
-        const o = docSnap.data();
-        if(!isAdmin && o.userId!==uid) return;
+// ===== ADMIN FUNCTIONS =====
+window.updateOrderStatus=async(id,status)=>{ await updateDoc(doc(db,"orders",id),{status}); }
+window.uploadAdminPDF=async(id,file)=>{
+  const storageRef=ref(storage, `orders/${id}_${file.name}`);
+  await uploadBytes(storageRef,file);
+  const url=await getDownloadURL(storageRef);
+  await updateDoc(doc(db,"orders",id),{pdfUrl:url});
+  alert("PDF uploaded!");
+}
 
-        const statusText = o.status || "Pending";
-        const paymentText = o.paid ? "Paid" : "Unpaid";
+// ===== TOAST =====
+function showToast(msg){
+  const toast=document.createElement("div");
+  toast.className="fixed bottom-6 right-6 bg-green-600 text-white px-4 py-2 rounded shadow-lg animate-slide-in";
+  toast.textContent=msg; document.body.appendChild(toast);
+  setTimeout(()=>{toast.remove();},5000);
+}
+const style=document.createElement("style");
+style.innerHTML=`@keyframes slide-in{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}.animate-slide-in{animation:slide-in 0.5s ease-out;}`;
+document.head.appendChild(style);
 
-        container.innerHTML += `
-        <div class="bg-white p-4 rounded shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <p><strong>Address:</strong> ${o.address}</p>
-            <p><strong>Plan:</strong> ${o.plan}</p>
-            <p><strong>Status:</strong> <span id="status-${docSnap.id}">${statusText}</span></p>
-            <p><strong>Payment:</strong> <span id="payment-${docSnap.id}">${paymentText}</span></p>
-            ${o.reportURL ? `<p><a href="${o.reportURL}" target="_blank" class="text-blue-600 underline">View Report</a></p>` : ""}
-          </div>
-          <div class="flex flex-col gap-2">
-            ${isAdmin && statusText!=="Completed" ? `<button onclick="updateOrderStatus('${docSnap.id}','Completed')" class="bg-green-600 text-white px-3 py-1 rounded">Mark Completed</button>` : ""}
-            ${isAdmin ? `<input type="file" id="file-${docSnap.id}" accept="application/pdf" class="border p-1 rounded">
-            <button onclick="uploadPDF('${docSnap.id}','file-${docSnap.id}')" class="bg-blue-600 text-white px-3 py-1 rounded">Upload PDF</button>` : ""}
-            ${!o.paid ? `<button onclick="payOrder('${docSnap.id}',${o.amount||5000})" class="bg-yellow-600 text-white px-3 py-1 rounded">Collect Payment ($${o.amount/100||50})</button>` : ""}
-          </div>
-        </div>
-        `;
-      });
-    }
-
-    // UPDATE STATUS
-    async function updateOrderStatus(orderId,status) {
-      await updateDoc(doc(db,"orders",orderId),{status});
-      alert(`Order marked as ${status}`);
-      loadOrders(true);
-      renderAnalytics();
-    }
-
-    // PDF UPLOAD
-    async function uploadPDF(orderId,fileInputId){
-      const file = document.getElementById(fileInputId).files[0];
-      if(!file) return alert("Select a PDF file");
-      const pdfRef = ref(storage, `reports/${orderId}.pdf`);
-      await uploadBytes(pdfRef,file);
-      const url = await getDownloadURL(pdfRef);
-      await updateDoc(doc(db,"orders",orderId),{reportURL:url});
-      alert("PDF uploaded successfully");
-      loadOrders(true);
-    }
-
-    // STRIPE PAYMENT
-    async function payOrder(orderId,amount){
-      const stripe = Stripe("YOUR_STRIPE_PUBLISHABLE_KEY");
-      const res = await fetch("/create-checkout-session",{method:"POST",body:JSON.stringify({orderId,amount})});
-      const session = await res.json();
-      await stripe.redirectToCheckout({ sessionId: session.id });
-    }
-
-    // GOOGLE SHEETS EXPORT
-    window.exportToSheets = async () => {
-      const snap = await getDocs(collection(db,"orders"));
-      for(const docSnap of snap.docs){
-        const o = docSnap.data();
-        await fetch("YOUR_GOOGLE_APPS_SCRIPT_URL",{
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({orderId:docSnap.id,address:o.address,plan:o.plan,status:o.status})
-        });
-      }
-      alert("Orders exported to Google Sheets");
-    }
-
-    // ADMIN ANALYTICS
-    async function renderAnalytics(){
-      const snap = await getDocs(collection(db,"orders"));
-      let pending=0, completed=0, paid=0, revenue=0;
-      snap.forEach(docSnap=>{
-        const o=docSnap.data();
-        if(o.status==="Pending") pending++;
-        if(o.status==="Completed") completed++;
-        if(o.paid) paid++;
-        if(o.amount) revenue+=o.amount;
-      });
-      const ctx = document.getElementById("analyticsChart").getContext("2d");
-      new Chart(ctx,{
-        type:"bar",
-        data:{
-          labels:["Pending Orders","Completed Orders","Paid Orders","Total Revenue ($)"],
-          datasets:[{label:"Stats",data:[pending,completed,paid,revenue/100],backgroundColor:["#FBBF24","#10B981","#3B82F6","#8B5CF6"]}]
-        },
-        options:{responsive:true}
-      });
-    }
-
-  </script>
+window.onload=()=>{ renderPayPal(); showStep(1); }
+</script>
 </head>
 
 <body class="bg-gray-100 min-h-screen">
 
-  <!-- HEADER -->
-  <header class="bg-white shadow px-6 py-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold">Roofing Measurement Dashboard</h1>
-    <div class="flex items-center gap-4">
-      <span id="userName" class="font-semibold"></span>
-      <span id="roleBadge" class="text-xs bg-gray-200 px-2 py-1 rounded"></span>
-      <button onclick="logout()" class="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700">Logout</button>
+<!-- HEADER -->
+<header class="bg-white shadow px-6 py-4 flex justify-between items-center">
+<h1 class="text-xl font-bold">Roofing Measurement Dashboard</h1>
+<div class="flex items-center gap-4">
+  <span id="userName" class="font-semibold"></span>
+  <button onclick="logout()" class="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700">Logout</button>
+</div>
+</header>
+
+<!-- CLIENT PANEL -->
+<main id="clientPanel" class="hidden p-6">
+<h2 class="text-2xl font-bold mb-4 text-blue-600">Client Dashboard</h2>
+
+<!-- MULTI-STEP PORTAL -->
+<div class="mb-6">
+  <div class="flex justify-between mb-4">
+    <div class="stepper-item px-4 py-2 rounded text-center font-semibold">Step 1: Info</div>
+    <div class="stepper-item px-4 py-2 rounded text-center font-semibold">Step 2: Service</div>
+    <div class="stepper-item px-4 py-2 rounded text-center font-semibold">Step 3: Summary</div>
+  </div>
+
+  <!-- Step 1 -->
+  <div id="step1" class="step bg-white p-6 rounded shadow">
+    <label>Name:</label><input type="text" id="customerName" class="w-full border p-2 rounded mb-4">
+    <label>Property Address:</label><input type="text" id="propertyAddress" class="w-full border p-2 rounded mb-4">
+    <label>Project Notes:</label><textarea id="projectNotes" class="w-full border p-2 rounded mb-4"></textarea>
+    <button onclick="nextStep1()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Next</button>
+  </div>
+
+  <!-- Step 2 -->
+  <div id="step2" class="step hidden grid md:grid-cols-3 gap-6">
+    <div class="bg-white p-6 rounded shadow text-center">
+      <h3 class="font-semibold mb-2">Aerial Square Roof Report</h3>
+      <p class="mb-4">$10</p>
+      <button onclick="selectService('Aerial Square Roof Report',1000)" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Select</button>
     </div>
-  </header>
-
-  <!-- CLIENT DASHBOARD -->
-  <main id="clientPanel" class="hidden p-6">
-    <h2 class="text-2xl font-bold mb-4">Client Dashboard</h2>
-
-    <div class="grid md:grid-cols-3 gap-6 mb-6">
-      <a href="order1.html" class="bg-blue-600 text-white p-6 rounded shadow text-center">New Order</a>
-      <a href="pricing.html" class="bg-green-600 text-white p-6 rounded shadow text-center">Pricing</a>
-      <a href="contact.html" class="bg-gray-800 text-white p-6 rounded shadow text-center">Support</a>
+    <div class="bg-white p-6 rounded shadow text-center">
+      <h3 class="font-semibold mb-2">Residential Roof Report</h3>
+      <p class="mb-4">$17</p>
+      <button onclick="selectService('Residential Roof Report',1700)" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Select</button>
     </div>
-
-    <h3 class="text-xl font-semibold mb-2">My Orders</h3>
-    <div id="ordersList" class="grid gap-4"></div>
-  </main>
-
-  <!-- ADMIN DASHBOARD -->
-  <main id="adminPanel" class="hidden p-6">
-    <h2 class="text-2xl font-bold mb-4 text-red-600">Admin Dashboard</h2>
-
-    <div class="grid md:grid-cols-4 gap-6 mb-6">
-      <a href="admin-orders.html" class="bg-blue-600 text-white p-6 rounded shadow text-center">All Orders</a>
-      <a href="admin-users.html" class="bg-green-600 text-white p-6 rounded shadow text-center">Manage Users</a>
-      <a href="admin-pricing.html" class="bg-purple-600 text-white p-6 rounded shadow text-center">Pricing Control</a>
-      <button onclick="exportToSheets()" class="bg-gray-800 text-white p-6 rounded shadow">Export to Google Sheets</button>
+    <div class="bg-white p-6 rounded shadow text-center">
+      <h3 class="font-semibold mb-2">Commercial Roof Report</h3>
+      <p class="mb-4">$35</p>
+      <button onclick="selectService('Commercial Roof Report',3500)" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Select</button>
     </div>
+  </div>
 
-    <h3 class="text-xl font-semibold mb-2">Recent Orders</h3>
-    <div id="ordersList" class="grid gap-4"></div>
+  <!-- Step 3 -->
+  <div id="step3" class="step hidden bg-white p-6 rounded shadow">
+    <h3 class="font-bold mb-2">Order Summary</h3>
+    <p><strong>Name:</strong> <span id="summaryName"></span></p>
+    <p><strong>Address:</strong> <span id="summaryAddress"></span></p>
+    <p><strong>Notes:</strong> <span id="summaryNotes"></span></p>
+    <p><strong>Service:</strong> <span id="summaryService"></span></p>
+    <p><strong>Price:</strong> <span id="summaryPrice"></span></p>
+    <label>Upload PDF (Optional):</label>
+    <input type="file" id="pdfUpload" accept=".pdf" class="w-full border p-2 rounded mb-4">
 
-    <h3 class="text-xl font-semibold mt-6 mb-2">Analytics</h3>
-    <canvas id="analyticsChart" class="bg-white rounded shadow p-4"></canvas>
-  </main>
+    <button onclick="payStripe()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Pay with Stripe</button>
+    <div id="paypal-button-container" class="mt-2"></div>
+  </div>
+
+  <!-- CLIENT ORDERS TABLE -->
+  <h3 class="text-xl font-bold mt-8">My Orders</h3>
+  <table class="w-full table-auto border border-gray-300">
+    <thead class="bg-gray-200"><tr><th class="px-4 py-2 border">Service</th><th class="px-4 py-2 border">Amount</th><th class="px-4 py-2 border">Status</th><th class="px-4 py-2 border">PDF</th></tr></thead>
+    <tbody id="clientOrdersBody"></tbody>
+  </table>
+</div>
+</main>
+
+<!-- ADMIN PANEL -->
+<main id="adminPanel" class="hidden p-6">
+<h2 class="text-2xl font-bold mb-4 text-red-600">Admin Dashboard</h2>
+<table class="w-full table-auto border border-gray-300">
+  <thead class="bg-gray-200"><tr>
+    <th class="border px-4 py-2">Client Name</th>
+    <th class="border px-4 py-2">Service</th>
+    <th class="border px-4 py-2">Amount</th>
+    <th class="border px-4 py-2">Status</th>
+    <th class="border px-4 py-2">PDF Report</th>
+  </tr></thead>
+  <tbody id="adminOrdersBody"></tbody>
+</table>
+</main>
 
 </body>
 </html>
