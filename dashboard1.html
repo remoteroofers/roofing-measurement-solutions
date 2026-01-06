@@ -80,15 +80,17 @@ window.nextStep1 = ()=>{
   const name = document.getElementById("customerName").value.trim();
   const address = document.getElementById("propertyAddress").value.trim();
   const notes = document.getElementById("projectNotes").value.trim();
-  if(!name || !address) return alert("Name & Address required");
+  if(!name || !address) return alert("Name & Address are required!");
   orderData.firstName=name; orderData.address=address; orderData.notes=notes||"";
   showStep(2);
 }
+
 window.selectService=(service,price)=>{
   orderData.plan=service; orderData.amount=price;
   renderSummary();
   showStep(3);
 }
+
 function renderSummary(){
   document.getElementById("summaryName").textContent=orderData.firstName;
   document.getElementById("summaryAddress").textContent=orderData.address;
@@ -97,9 +99,11 @@ function renderSummary(){
   document.getElementById("summaryPrice").textContent=`$${(orderData.amount/100).toFixed(2)}`;
 }
 
-// ===== UPLOAD PDF =====
+// ===== PDF UPLOAD =====
 async function uploadPDF(file){
   if(!file) return null;
+  if(file.type !== "application/pdf") return alert("Only PDF files are allowed!");
+  if(file.size > 5*1024*1024) return alert("File size must be under 5MB!");
   const storageRef = ref(storage, `orders/${Date.now()}_${file.name}`);
   await uploadBytes(storageRef,file);
   return await getDownloadURL(storageRef);
@@ -123,31 +127,39 @@ async function createOrder(pdfUrl){
   return docRef.id;
 }
 
-// ===== PAYMENT =====
+// ===== STRIPE PAYMENT =====
 window.payStripe = async ()=>{
   const file=document.getElementById("pdfUpload").files[0];
   const pdfUrl=await uploadPDF(file);
+  if(pdfUrl===false) return; // stop if invalid
   if(!orderId) await createOrder(pdfUrl);
 
-  const stripe=Stripe("YOUR_STRIPE_PUBLISHABLE_KEY");
-  const res=await fetch("/create-checkout-session",{method:"POST",body:JSON.stringify({orderId,amount:orderData.amount})});
-  const session=await res.json();
-  await stripe.redirectToCheckout({sessionId:session.id});
+  const stripe = Stripe("YOUR_STRIPE_PUBLISHABLE_KEY");
+  
+  // Simulated client-only Stripe checkout (no server)
+  alert("Stripe Checkout simulated! Replace this with real backend session for production.");
 }
+
+// ===== PAYPAL PAYMENT =====
 function renderPayPal(){
   paypal.Buttons({
     createOrder: async (data,actions)=>{
       const file=document.getElementById("pdfUpload").files[0];
       const pdfUrl=await uploadPDF(file);
       if(!orderId) await createOrder(pdfUrl);
-      return actions.order.create({purchase_units:[{amount:{value:(orderData.amount/100).toFixed(2)},description:orderData.plan}]});
+      return actions.order.create({
+        purchase_units:[{
+          amount:{value:(orderData.amount/100).toFixed(2)},
+          description:orderData.plan
+        }]
+      });
     },
     onApprove: async (data,actions)=>{
       await actions.order.capture();
       if(orderId) await updateDoc(doc(db,"orders",orderId),{paid:true,status:"Completed"});
       alert("Payment Successful!"); window.location.href="dashboard.html";
     },
-    onError: err=>{console.error(err); alert("PayPal failed");}
+    onError: err=>{console.error(err); alert("PayPal payment failed.");}
   }).render("#paypal-button-container");
 }
 
@@ -158,9 +170,7 @@ function loadClientOrders(uid){
   onSnapshot(q,snapshot=>{
     tbody.innerHTML="";
     snapshot.forEach(doc=>{
-      const order=doc.data();
-      const id=doc.id;
-      // STATUS TOAST
+      const order=doc.data(); const id=doc.id;
       if(previousStatuses[id] && previousStatuses[id]!==order.status)
         showToast(`Order "${order.plan}" status: ${order.status}`);
       previousStatuses[id]=order.status;
@@ -218,7 +228,7 @@ window.uploadAdminPDF=async(id,file)=>{
 // ===== TOAST =====
 function showToast(msg){
   const toast=document.createElement("div");
-  toast.className="fixed bottom-6 right-6 bg-green-600 text-white px-4 py-2 rounded shadow-lg animate-slide-in";
+  toast.className="fixed bottom-6 right-6 bg-green-600 text-white px-4 py-2 rounded shadow-lg animate-slide-in z-50";
   toast.textContent=msg; document.body.appendChild(toast);
   setTimeout(()=>{toast.remove();},5000);
 }
@@ -227,12 +237,11 @@ style.innerHTML=`@keyframes slide-in{from{transform:translateX(100%);opacity:0;}
 document.head.appendChild(style);
 
 window.onload=()=>{ renderPayPal(); showStep(1); }
+
 </script>
 </head>
-
 <body class="bg-gray-100 min-h-screen">
 
-<!-- HEADER -->
 <header class="bg-white shadow px-6 py-4 flex justify-between items-center">
 <h1 class="text-xl font-bold">Roofing Measurement Dashboard</h1>
 <div class="flex items-center gap-4">
@@ -245,7 +254,6 @@ window.onload=()=>{ renderPayPal(); showStep(1); }
 <main id="clientPanel" class="hidden p-6">
 <h2 class="text-2xl font-bold mb-4 text-blue-600">Client Dashboard</h2>
 
-<!-- MULTI-STEP PORTAL -->
 <div class="mb-6">
   <div class="flex justify-between mb-4">
     <div class="stepper-item px-4 py-2 rounded text-center font-semibold">Step 1: Info</div>
@@ -295,7 +303,6 @@ window.onload=()=>{ renderPayPal(); showStep(1); }
     <div id="paypal-button-container" class="mt-2"></div>
   </div>
 
-  <!-- CLIENT ORDERS TABLE -->
   <h3 class="text-xl font-bold mt-8">My Orders</h3>
   <table class="w-full table-auto border border-gray-300">
     <thead class="bg-gray-200"><tr><th class="px-4 py-2 border">Service</th><th class="px-4 py-2 border">Amount</th><th class="px-4 py-2 border">Status</th><th class="px-4 py-2 border">PDF</th></tr></thead>
