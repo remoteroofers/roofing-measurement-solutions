@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Place New Order | Remote Roofers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
+      authDomain: "remoteroofers-51826.firebaseapp.com",
+      projectId: "remoteroofers-51826",
+      storageBucket: "remoteroofers-51826.appspot.com",
+      messagingSenderId: "901240361996",
+      appId: "1:901240361996:web:2a209986f74f15618aca29"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, user => {
+      if(!user) window.location.href="login.html";
+    });
+
+    function nextStep1() {
+      const name = document.getElementById("customerName").value.trim();
+      const address = document.getElementById("propertyAddress").value.trim();
+      const notes = document.getElementById("projectNotes").value.trim();
+
+      if(!name || !address) return alert("Name and Address are required");
+
+      const orderData = { name, address, notes };
+      sessionStorage.setItem("orderStep1", JSON.stringify(orderData));
+      window.location.href="order_service.html";
+    }
+  </script>
+</head>
+<body class="bg-gray-100 min-h-screen flex justify-center items-center">
+  <div class="bg-white p-6 rounded shadow w-full max-w-lg">
+    <h2 class="text-xl font-bold mb-4">New Roof Measurement Order</h2>
+
+    <label class="block mb-2">Name of Customer</label>
+    <input type="text" id="customerName" class="w-full border p-2 rounded mb-4">
+
+    <label class="block mb-2">Property Address</label>
+    <input type="text" id="propertyAddress" class="w-full border p-2 rounded mb-4">
+
+    <label class="block mb-2">Project Notes (Optional)</label>
+    <textarea id="projectNotes" class="w-full border p-2 rounded mb-4"></textarea>
+
+    <button onclick="nextStep1()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Next</button>
+  </div>
+</body>
+</html>
