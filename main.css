@@ -2577,5 +2577,17 @@ code, pre, .code{
   .center-text {
     text-align: center;
 }
+  .input-field {
+  border: 2px solid #ccc;
+  padding: 10px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-field:focus {
+  border-color: #2563eb; /* blue */
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
 
 }
