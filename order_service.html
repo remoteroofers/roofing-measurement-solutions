@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Select Service Type</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module">
+    function selectService(service, price){
+      sessionStorage.setItem("orderService", JSON.stringify({service, price}));
+      window.location.href="order_summary.html";
+    }
+  </script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+  <h2 class="text-2xl font-bold mb-6">Choose Service Type</h2>
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="bg-white p-6 rounded shadow text-center">
+      <h3 class="font-semibold mb-2">Aerial Square Roof Report</h3>
+      <p class="mb-4">$10</p>
+      <button onclick="selectService('Aerial Square Roof Report',1000)" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Select</button>
+    </div>
+    <div class="bg-white p-6 rounded shadow text-center">
+      <h3 class="font-semibold mb-2">Residential Roof Report</h3>
+      <p class="mb-4">$17</p>
+      <button onclick="selectService('Residential Roof Report',1700)" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Select</button>
+    </div>
+    <div class="bg-white p-6 rounded shadow text-center">
+      <h3 class="font-semibold mb-2">Commercial Roof Report</h3>
+      <p class="mb-4">$35</p>
+      <button onclick="selectService('Commercial Roof Report',3500)" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Select</button>
+    </div>
+  </div>
+</body>
+</html>
