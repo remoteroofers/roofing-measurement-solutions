@@ -3,28 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <title>Dashboard | Roofing Measurement Solutions</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />   
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Tailwind -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Stripe -->
+  <script src="https://js.stripe.com/v3/"></script>
 
-  <!-- Firebase Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import {
-      getFirestore,
-      doc,
-      getDoc,
-      setDoc,
-      collection,
-      getDocs,
-      orderBy,
-      query,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-    /* 🔥 FIREBASE CONFIG */
+    // 🔥 FIREBASE CONFIG
     const firebaseConfig = {
       apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
       authDomain: "remoteroofers-51826.firebaseapp.com",
@@ -37,101 +31,140 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    const storage = getStorage(app);
 
-    /* 🔐 ADMIN EMAIL WHITELIST */
-    const ADMIN_EMAILS = [
-      "admin@remoteroofers.com",
-      "owner@remoteroofers.com"
-    ];
+    const ADMIN_EMAILS = ["admin@remoteroofers.com","owner@remoteroofers.com"];
 
-    /* 🚪 LOGOUT */
-    window.logout = async () => {
-      await signOut(auth);
-      window.location.href = "login.html";
-    };
+    // LOGOUT
+    window.logout = async () => { await signOut(auth); window.location.href="login.html"; };
 
-    /* 🔐 AUTH CHECK */
+    // AUTH & ROLE CHECK
     onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location.href = "login.html";
-        return;
-      }
+      if (!user) { window.location.href = "login.html"; return; }
 
       const userRef = doc(db, "users", user.uid);
-      const snap = await getDoc(userRef);
+      let snap = await getDoc(userRef);
 
-      /* AUTO-CREATE USER DOC IF MISSING */
+      // CREATE USER DOC IF MISSING
       if (!snap.exists()) {
         const role = ADMIN_EMAILS.includes(user.email) ? "admin" : "client";
-        await setDoc(userRef, {
-          firstName: "User",
-          lastName: "",
-          email: user.email,
-          role,
-          createdAt: serverTimestamp()
-        });
+        await setDoc(userRef, { firstName:"User", lastName:"", email:user.email, role, createdAt:serverTimestamp() });
+        snap = await getDoc(userRef);
       }
 
-      const data = (await getDoc(userRef)).data();
+      const data = snap.data();
       const role = data.role || "client";
+      document.getElementById("userName").textContent = `${data.firstName} ${data.lastName}`.trim();
+      document.getElementById("roleBadge").textContent = role === "admin" ? "ADMIN" : "CLIENT";
 
-      document.getElementById("userName").textContent =
-        `${data.firstName} ${data.lastName}`.trim();
-
-      document.getElementById("roleBadge").textContent =
-        role === "admin" ? "ADMIN" : "CLIENT";
-
-      if (role === "admin") {
+      if(role==="admin") {
         document.getElementById("adminPanel").classList.remove("hidden");
-        loadOrders(true);
+        loadOrders(true); renderAnalytics();
       } else {
         document.getElementById("clientPanel").classList.remove("hidden");
         loadOrders(false, user.uid);
       }
     });
 
-    /* 📦 LOAD ORDERS */
-    async function loadOrders(isAdmin, uid = null) {
-      const ordersRef = collection(db, "orders");
-      const q = query(ordersRef, orderBy("createdAt", "desc"));
+    // LOAD ORDERS
+    async function loadOrders(isAdmin, uid=null) {
+      const ordersRef = collection(db,"orders");
+      const q = query(ordersRef, orderBy("createdAt","desc"));
       const snap = await getDocs(q);
       const container = document.getElementById("ordersList");
-
       container.innerHTML = "";
 
-      snap.forEach(docSnap => {
+      snap.forEach(docSnap=>{
         const o = docSnap.data();
-        if (!isAdmin && o.userId !== uid) return;
+        if(!isAdmin && o.userId!==uid) return;
+
+        const statusText = o.status || "Pending";
+        const paymentText = o.paid ? "Paid" : "Unpaid";
 
         container.innerHTML += `
-          <div class="bg-white p-4 rounded shadow">
+        <div class="bg-white p-4 rounded shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
             <p><strong>Address:</strong> ${o.address}</p>
             <p><strong>Plan:</strong> ${o.plan}</p>
-            <p><strong>Status:</strong> ${o.status}</p>
+            <p><strong>Status:</strong> <span id="status-${docSnap.id}">${statusText}</span></p>
+            <p><strong>Payment:</strong> <span id="payment-${docSnap.id}">${paymentText}</span></p>
+            ${o.reportURL ? `<p><a href="${o.reportURL}" target="_blank" class="text-blue-600 underline">View Report</a></p>` : ""}
           </div>
+          <div class="flex flex-col gap-2">
+            ${isAdmin && statusText!=="Completed" ? `<button onclick="updateOrderStatus('${docSnap.id}','Completed')" class="bg-green-600 text-white px-3 py-1 rounded">Mark Completed</button>` : ""}
+            ${isAdmin ? `<input type="file" id="file-${docSnap.id}" accept="application/pdf" class="border p-1 rounded">
+            <button onclick="uploadPDF('${docSnap.id}','file-${docSnap.id}')" class="bg-blue-600 text-white px-3 py-1 rounded">Upload PDF</button>` : ""}
+            ${!o.paid ? `<button onclick="payOrder('${docSnap.id}',${o.amount||5000})" class="bg-yellow-600 text-white px-3 py-1 rounded">Collect Payment ($${o.amount/100||50})</button>` : ""}
+          </div>
+        </div>
         `;
       });
     }
 
-    /* 📤 GOOGLE SHEETS EXPORT */
-    window.exportToSheets = async () => {
-      const snap = await getDocs(collection(db, "orders"));
+    // UPDATE STATUS
+    async function updateOrderStatus(orderId,status) {
+      await updateDoc(doc(db,"orders",orderId),{status});
+      alert(`Order marked as ${status}`);
+      loadOrders(true);
+      renderAnalytics();
+    }
 
-      for (const docSnap of snap.docs) {
+    // PDF UPLOAD
+    async function uploadPDF(orderId,fileInputId){
+      const file = document.getElementById(fileInputId).files[0];
+      if(!file) return alert("Select a PDF file");
+      const pdfRef = ref(storage, `reports/${orderId}.pdf`);
+      await uploadBytes(pdfRef,file);
+      const url = await getDownloadURL(pdfRef);
+      await updateDoc(doc(db,"orders",orderId),{reportURL:url});
+      alert("PDF uploaded successfully");
+      loadOrders(true);
+    }
+
+    // STRIPE PAYMENT
+    async function payOrder(orderId,amount){
+      const stripe = Stripe("YOUR_STRIPE_PUBLISHABLE_KEY");
+      const res = await fetch("/create-checkout-session",{method:"POST",body:JSON.stringify({orderId,amount})});
+      const session = await res.json();
+      await stripe.redirectToCheckout({ sessionId: session.id });
+    }
+
+    // GOOGLE SHEETS EXPORT
+    window.exportToSheets = async () => {
+      const snap = await getDocs(collection(db,"orders"));
+      for(const docSnap of snap.docs){
         const o = docSnap.data();
-        await fetch("YOUR_GOOGLE_APPS_SCRIPT_URL", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            orderId: docSnap.id,
-            address: o.address,
-            plan: o.plan,
-            status: o.status
-          })
+        await fetch("YOUR_GOOGLE_APPS_SCRIPT_URL",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({orderId:docSnap.id,address:o.address,plan:o.plan,status:o.status})
         });
       }
       alert("Orders exported to Google Sheets");
-    };
+    }
+
+    // ADMIN ANALYTICS
+    async function renderAnalytics(){
+      const snap = await getDocs(collection(db,"orders"));
+      let pending=0, completed=0, paid=0, revenue=0;
+      snap.forEach(docSnap=>{
+        const o=docSnap.data();
+        if(o.status==="Pending") pending++;
+        if(o.status==="Completed") completed++;
+        if(o.paid) paid++;
+        if(o.amount) revenue+=o.amount;
+      });
+      const ctx = document.getElementById("analyticsChart").getContext("2d");
+      new Chart(ctx,{
+        type:"bar",
+        data:{
+          labels:["Pending Orders","Completed Orders","Paid Orders","Total Revenue ($)"],
+          datasets:[{label:"Stats",data:[pending,completed,paid,revenue/100],backgroundColor:["#FBBF24","#10B981","#3B82F6","#8B5CF6"]}]
+        },
+        options:{responsive:true}
+      });
+    }
+
   </script>
 </head>
 
@@ -143,41 +176,40 @@
     <div class="flex items-center gap-4">
       <span id="userName" class="font-semibold"></span>
       <span id="roleBadge" class="text-xs bg-gray-200 px-2 py-1 rounded"></span>
-      <button onclick="logout()" class="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700">
-        Logout
-      </button>
+      <button onclick="logout()" class="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700">Logout</button>
     </div>
   </header>
 
-  <!-- CLIENT PANEL -->
+  <!-- CLIENT DASHBOARD -->
   <main id="clientPanel" class="hidden p-6">
     <h2 class="text-2xl font-bold mb-4">Client Dashboard</h2>
 
     <div class="grid md:grid-cols-3 gap-6 mb-6">
-      <a href="order_portal.html" class="bg-blue-600 text-white p-6 rounded shadow">New Order</a>
-      <a href="pricing.html" class="bg-green-600 text-white p-6 rounded shadow">Pricing</a>
-      <a href="contact.html" class="bg-gray-800 text-white p-6 rounded shadow">Support</a>
+      <a href="order_portal.html" class="bg-blue-600 text-white p-6 rounded shadow text-center">New Order</a>
+      <a href="pricing.html" class="bg-green-600 text-white p-6 rounded shadow text-center">Pricing</a>
+      <a href="contact.html" class="bg-gray-800 text-white p-6 rounded shadow text-center">Support</a>
     </div>
 
     <h3 class="text-xl font-semibold mb-2">My Orders</h3>
     <div id="ordersList" class="grid gap-4"></div>
   </main>
 
-  <!-- ADMIN PANEL -->
+  <!-- ADMIN DASHBOARD -->
   <main id="adminPanel" class="hidden p-6">
     <h2 class="text-2xl font-bold mb-4 text-red-600">Admin Dashboard</h2>
 
     <div class="grid md:grid-cols-4 gap-6 mb-6">
-      <a href="admin-orders.html" class="bg-blue-600 text-white p-6 rounded shadow">All Orders</a>
-      <a href="admin-users.html" class="bg-green-600 text-white p-6 rounded shadow">Manage Users</a>
-      <a href="admin-pricing.html" class="bg-purple-600 text-white p-6 rounded shadow">Pricing Control</a>
-      <button onclick="exportToSheets()" class="bg-gray-800 text-white p-6 rounded shadow">
-        Export to Google Sheets
-      </button>
+      <a href="admin-orders.html" class="bg-blue-600 text-white p-6 rounded shadow text-center">All Orders</a>
+      <a href="admin-users.html" class="bg-green-600 text-white p-6 rounded shadow text-center">Manage Users</a>
+      <a href="admin-pricing.html" class="bg-purple-600 text-white p-6 rounded shadow text-center">Pricing Control</a>
+      <button onclick="exportToSheets()" class="bg-gray-800 text-white p-6 rounded shadow">Export to Google Sheets</button>
     </div>
 
     <h3 class="text-xl font-semibold mb-2">Recent Orders</h3>
     <div id="ordersList" class="grid gap-4"></div>
+
+    <h3 class="text-xl font-semibold mt-6 mb-2">Analytics</h3>
+    <canvas id="analyticsChart" class="bg-white rounded shadow p-4"></canvas>
   </main>
 
 </body>
