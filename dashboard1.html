@@ -48,7 +48,7 @@ function showStep(step){
   currentStep = step;
   document.querySelectorAll(".step").forEach(el=>el.classList.add("hidden"));
   document.getElementById(`step${step}`).classList.remove("hidden");
-  document.querySelectorAll(".stepper-item").forEach((el,i)=>{
+  document.querySelectorAll(".stepper-step").forEach((el,i)=>{
     el.classList.remove("bg-blue-600","bg-blue-400","bg-gray-300","text-white","text-gray-500");
     if(i+1 === step) el.classList.add("bg-blue-600","text-white");
     else if(i+1 < step) el.classList.add("bg-blue-400","text-white");
@@ -81,7 +81,7 @@ window.nextStep1 = ()=>{
   const address = document.getElementById("propertyAddress").value.trim();
   const notes = document.getElementById("projectNotes").value.trim();
   if(!name || !address) return alert("Name & Address are required!");
-  orderData.firstName=name; orderData.address=address; orderData.notes=notes||"";
+  orderData.customerName=name; orderData.address=address; orderData.notes=notes||"";
   showStep(2);
 }
 
@@ -92,7 +92,7 @@ window.selectService=(service,price)=>{
 }
 
 function renderSummary(){
-  document.getElementById("summaryName").textContent=orderData.firstName;
+  document.getElementById("summaryName").textContent=orderData.customerName;
   document.getElementById("summaryAddress").textContent=orderData.address;
   document.getElementById("summaryNotes").textContent=orderData.notes||"None";
   document.getElementById("summaryService").textContent=orderData.plan;
@@ -113,7 +113,7 @@ async function uploadPDF(file){
 async function createOrder(pdfUrl){
   const docRef = await addDoc(collection(db,"orders"),{
     userId: auth.currentUser.uid,
-    firstName: orderData.firstName,
+    firstName: orderData.customerName,
     address: orderData.address,
     notes: orderData.notes,
     plan: orderData.plan,
@@ -236,7 +236,11 @@ const style=document.createElement("style");
 style.innerHTML=`@keyframes slide-in{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}.animate-slide-in{animation:slide-in 0.5s ease-out;}`;
 document.head.appendChild(style);
 
-window.onload=()=>{ renderPayPal(); showStep(1); }
+window.onload = ()=>{
+  showStep(1);
+  if(document.getElementById("clientPanel") && !document.getElementById("clientPanel").classList.contains("hidden")){
+    renderPayPal();
+  }
 
 </script>
 </head>
