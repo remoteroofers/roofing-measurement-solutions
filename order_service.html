@@ -1,114 +1,834 @@
-<!-- ===== Property Details ===== -->
-<div id="property-details">
-  <h2>Property Details</h2>
-  <label for="property-type">Property Type *</label>
-  <select id="property-type">
-    <option value="" selected disabled>Select property type</option>
-    <option value="aerial">Aerial Square Roof Report</option>
-    <option value="residential">Residential Roof Report</option>
-    <option value="commercial">Commercial Roof Report</option>
-  </select>
-</div>
 
-<!-- ===== Service Selection ===== -->
-<div id="service-selection">
-  <h2>Service Selection</h2>
-  <label>
-    <input type="radio" name="tier" value="standard"> Standard
-  </label>
-  <label>
-    <input type="radio" name="tier" value="express"> Express
-  </label>
-  <label>
-    <input type="radio" name="tier" value="rush"> Rush
-  </label>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Portal - Roofing Measurement Solutions</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
+    
+    <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .step-hidden {
+            display: none;
+        }
+        
+        .service-card {
+            transition: all 0.3s ease;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .service-card.selected {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Progress Indicator -->
+    <section class="bg-white py-6 border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-between max-w-4xl mx-auto">
+                <!-- Step 1 -->
+                <div class="flex items-center space-x-3 flex-1">
+                    <div id="step1Indicator" class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold transition-all duration-300">
+                        1
+                    </div>
+                    <div class="hidden sm:block">
+                        <div class="text-sm font-semibold text-gray-900">Property Details</div>
+                        <div class="text-xs text-gray-500">Address & Type</div>
+                    </div>
+                </div>
+                <div class="flex-1 h-1 bg-gray-200 mx-2">
+                    <div id="progress1" class="h-full bg-blue-600 transition-all duration-300" style="width: 0%"></div>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="flex items-center space-x-3 flex-1">
+                    <div id="step2Indicator" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-500 font-bold transition-all duration-300">
+                        2
+                    </div>
+                    <div class="hidden sm:block">
+                        <div class="text-sm font-semibold text-gray-500">Service Selection</div>
+                        <div class="text-xs text-gray-500">Choose Plan</div>
+                    </div>
+                </div>
+                <div class="flex-1 h-1 bg-gray-200 mx-2">
+                    <div id="progress2" class="h-full bg-blue-600 transition-all duration-300" style="width: 0%"></div>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="flex items-center space-x-3 flex-1">
+                    <div id="step3Indicator" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-500 font-bold transition-all duration-300">
+                        3
+                    </div>
+                    <div class="hidden sm:block">
+                        <div class="text-sm font-semibold text-gray-500">Review</div>
+                        <div class="text-xs text-gray-500">Order Summary</div>
+                    </div>
+                </div>
+                <div class="flex-1 h-1 bg-gray-200 mx-2">
+                    <div id="progress3" class="h-full bg-blue-600 transition-all duration-300" style="width: 0%"></div>
+                </div>
+                
+                <!-- Step 4 -->
+                <div class="flex items-center space-x-3 flex-1">
+                    <div id="step4Indicator" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-500 font-bold transition-all duration-300">
+                        4
+                    </div>
+                    <div class="hidden sm:block">
+                        <div class="text-sm font-semibold text-gray-500">Payment</div>
+                        <div class="text-xs text-gray-500">PayPal Checkout</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<!-- ===== Order Summary ===== -->
-<div id="order-summary">
-  <h3>Order Summary</h3>
-  <p>Property Type: <span id="summary-type">-</span></p>
-  <p>Service Tier: <span id="summary-tier">-</span></p>
-  <p>Total: $<span id="summary-price">0</span></p>
-</div>
+    <!-- Main Content -->
+    <section class="py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                
+                <!-- Step 1: Property Details -->
+                <div id="step1" class="animate-fade-in">
+                    <div class="text-center mb-12">
+                        <h1 class="text-4xl font-bold text-gray-900 mb-4">Start Your Measurement Order</h1>
+                        <p class="text-xl text-gray-600">Enter your property details to get started</p>
+                    </div>
 
-<!-- ===== PayPal Checkout ===== -->
-<div id="paypal-button-container"></div>
+                    <div class="bg-white rounded-lg shadow-lg p-8 lg:p-12">
+                        <form id="propertyForm" class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                    Property Address *
+                                </label>
+                                <input
+                                    type="text"
+                                    id="propertyAddress"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="123 Main Street, Austin, TX 78701"
+                                    required
+                                />
+                            </div>
 
-<script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                        Property Type *
+                                    </label>
+                                    <select
+                                        id="propertyType"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        required
+                                    >
+                                        <option value="">Select property type</option>
+                                        <option value="residential-single">Aerial Square Roof Report</option>
+                                        <option value="residential-multi">Residential Roof Report</option>
+                                        <option value="commercial-small">Commercial Roof Report</option>
+                                    </select>
+                                </div>
 
-<script>
-  const pricing = {
-    aerial: { standard: 10, express: 20, rush: 30 },
-    residential: { standard: 17, express: 25, rush: 30 },
-    commercial: { standard: 30, express: 35, rush: 45 }
-  };
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                        Estimated Roof Size (sq ft)
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="estimatedSize"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="2500"
+                                        min="100"
+                                    />
+                                </div>
+                            </div>
 
-  const propertyTypeEl = document.getElementById('property-type');
-  const tierEls = document.getElementsByName('tier');
-  const summaryTypeEl = document.getElementById('summary-type');
-  const summaryTierEl = document.getElementById('summary-tier');
-  const summaryPriceEl = document.getElementById('summary-price');
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                        Contact Name *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="contactName"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="John Smith"
+                                        required
+                                    />
+                                </div>
 
-  let selectedType = "";
-  let selectedTier = "";
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                        Email Address *
+                                    </label>
+                                    <input
+                                        type="email"
+                                        id="contactEmail"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="contractor@example.com"
+                                        required
+                                    />
+                                </div>
+                            </div>
 
-  function updateSummary() {
-    summaryTypeEl.textContent = selectedType ? selectedType.replace(/^\w/, c => c.toUpperCase()) : "-";
-    summaryTierEl.textContent = selectedTier ? selectedTier.charAt(0).toUpperCase() + selectedTier.slice(1) : "-";
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                        Phone Number *
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        id="contactPhone"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="(555) 123-4567"
+                                        required
+                                    />
+                                </div>
 
-    if (selectedType && selectedTier) {
-      const price = pricing[selectedType][selectedTier];
-      summaryPriceEl.textContent = price.toFixed(2);
-    } else {
-      summaryPriceEl.textContent = "0";
-    }
-  }
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                        Company Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="companyName"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="ABC Roofing Co."
+                                    />
+                                </div>
+                            </div>
 
-  propertyTypeEl.addEventListener('change', (e) => {
-    selectedType = e.target.value;
-    updateSummary();
-  });
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-900 mb-2">
+                                    Project Notes (Optional)
+                                </label>
+                                <textarea
+                                    id="projectNotes"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    rows="4"
+                                    placeholder="Any specific requirements or details about this project..."
+                                ></textarea>
+                            </div>
 
-  tierEls.forEach(radio => {
-    radio.addEventListener('change', (e) => {
-      selectedTier = e.target.value;
-      updateSummary();
-    });
-  });
+                            <div class="flex justify-end pt-6">
+                                <button
+                                    type="submit"
+                                    class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                                >
+                                    Continue to Service Selection →
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
-  // PayPal Buttons
-  paypal.Buttons({
-    style: {
-      layout: 'vertical',
-      color:  'blue',
-      shape:  'rect',
-      label:  'pay'
-    },
-    createOrder: function(data, actions) {
-      if (!selectedType || !selectedTier) {
-        alert("Please select a property type and service tier.");
-        return;
-      }
-      const amount = pricing[selectedType][selectedTier].toFixed(2);
-      return actions.order.create({
-        purchase_units: [{
-          description: selectedType + " - " + selectedTier,
-          amount: {
-            value: amount
-          }
-        }]
-      });
-    },
-    onApprove: function(data, actions) {
-      return actions.order.capture().then(function(details) {
-        alert("Payment completed by " + details.payer.name.given_name + "!");
-        // Here you can redirect to a confirmation page or submit your form
-      });
-    },
-    onError: function(err) {
-      console.error(err);
-      alert("Payment could not be completed.");
-    }
-  }).render('#paypal-button-container');
-</script>
+                <!-- Step 2: Service Selection -->
+                <div id="step2" class="animate-fade-in step-hidden">
+                    <div class="text-center mb-12">
+                        <h2 class="text-4xl font-bold text-gray-900 mb-4">Choose Your Service Tier</h2>
+                        <p class="text-xl text-gray-600">Select the turnaround time that fits your project needs</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-6 mb-8">
+                        <!-- Standard Service -->
+                        <div class="service-card bg-white rounded-lg shadow-lg p-6 cursor-pointer border-2 border-transparent" data-service="standard">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-bold text-gray-900">Standard</h3>
+                                <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                                    <div class="w-3 h-3 rounded-full bg-blue-600 hidden service-radio"></div>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-bold text-blue-600 mb-2 service-price">$10</div>
+                            <div class="text-sm text-gray-600 mb-6">8-12 hours</div>
+                            <ul class="space-y-3 text-sm">
+                                <li class="flex items-start">
+                                    <span class="text-green-500 mr-2">✓</span>
+                                    <span>Complete roof measurements</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-green-500 mr-2">✓</span>
+                                    <span>3D visualization</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-green-500 mr-2">✓</span>
+                                    <span>Material calculations</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-green-500 mr-2">✓</span>
+                                    <span>PDF & CAD formats</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Express Service -->
+                        <div class="service-card bg-white rounded-lg shadow-lg p-6 cursor-pointer border-2 border-transparent relative" data-service="express">
+                            <div class="absolute -top-3 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                                POPULAR
+                            </div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-bold text-gray-900">Express</h3>
+                                <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                                    <div class="w-3 h-3 rounded-full bg-blue-600 hidden service-radio"></div>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-bold text-blue-600 mb-2 service-price">$20</div>
+                            <div class="text-sm text-gray-600 mb-6">6-8 hours</div>
+                            <ul class="space-y-3 text-sm">
+                                <li class="flex items-start">
+                                    <span class="text-green-500 mr-2">✓</span>
+                                    <span>Everything in Standard</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-green-500 mr-2">✓</span>
+                                    <span>Priority processing</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-green-500 mr-2">✓</span>
+                                    <span>Enhanced 3D models</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-green-500 mr-2">✓</span>
+                                    <span>Dedicated support</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Rush Service -->
+                        <div class="service-card bg-white rounded-lg shadow-lg p-6 cursor-pointer border-2 border-transparent" data-service="rush">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-bold text-gray-900">Rush</h3>
+                                <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                                    <div class="w-3 h-3 rounded-full bg-blue-600 hidden service-radio"></div>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-bold text-blue-600 mb-2 service-price">$30</div>
+                            <div class="text-sm text-gray-600 mb-6">3-6 hours</div>
+                            <ul class="space-y-3 text-sm">
+                                <li class="flex items-start">
+                                    <span class="text-green-500 mr-2">✓</span>
+                                    <span>Everything in Express</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-green-500 mr-2">✓</span>
+                                    <span>Immediate processing</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-green-500 mr-2">✓</span>
+                                    <span>Premium 3D models</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-green-500 mr-2">✓</span>
+                                    <span>24/7 priority support</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div id="selectedServiceInfo" class="bg-blue-50 border-l-4 border-blue-600 p-6 rounded-lg mb-8 hidden">
+                        <h4 class="font-semibold text-gray-900 mb-1">
+                            Selected Service: <span id="selectedServiceName" class="text-blue-600">-</span>
+                        </h4>
+                        <p class="text-sm text-gray-600 mb-2">
+                            Estimated delivery: <span id="selectedServiceDelivery">-</span>
+                        </p>
+                        <p class="text-2xl font-bold text-blue-600">
+                            Base Price: $<span id="selectedServicePrice">0</span>
+                        </p>
+                    </div>
+
+                    <div class="flex justify-between pt-6">
+                        <button
+                            id="backToStep1"
+                            class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+                        >
+                            ← Back to Property Details
+                        </button>
+                        <button
+                            id="continueToStep3"
+                            class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                            disabled
+                        >
+                            Continue to Review →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Review Order -->
+                <div id="step3" class="animate-fade-in step-hidden">
+                    <div class="text-center mb-12">
+                        <h2 class="text-4xl font-bold text-gray-900 mb-4">Review Your Order</h2>
+                        <p class="text-xl text-gray-600">Verify your details before proceeding to payment</p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-lg p-8 lg:p-12 mb-8">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">Order Summary</h3>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between py-2 border-b">
+                                <span class="text-gray-600">Property Address:</span>
+                                <span id="summaryAddress" class="font-semibold text-gray-900">-</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b">
+                                <span class="text-gray-600">Property Type:</span>
+                                <span id="summaryType" class="font-semibold text-gray-900">-</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b">
+                                <span class="text-gray-600">Service Tier:</span>
+                                <span id="summaryService" class="font-semibold text-gray-900">-</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b">
+                                <span class="text-gray-600">Delivery Time:</span>
+                                <span id="summaryDelivery" class="font-semibold text-gray-900">-</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b">
+                                <span class="text-gray-600">Contact:</span>
+                                <span id="summaryContact" class="font-semibold text-gray-900">-</span>
+                            </div>
+                            <div class="pt-4 space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Base Price:</span>
+                                    <span id="summaryBasePrice" class="font-semibold text-gray-900">$0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Processing Fee (3%):</span>
+                                    <span id="summaryProcessingFee" class="font-semibold text-gray-900">$0</span>
+                                </div>
+                                <div class="border-t pt-3 mt-3">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-lg font-bold text-gray-900">Total Amount:</span>
+                                        <span id="summaryTotal" class="text-2xl font-bold text-blue-600">$0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between pt-6">
+                        <button
+                            id="backToStep2"
+                            class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+                        >
+                            ← Back to Service Selection
+                        </button>
+                        <button
+                            id="continueToStep4"
+                            class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                        >
+                            Continue to Payment →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Payment -->
+                <div id="step4" class="animate-fade-in step-hidden">
+                    <div class="text-center mb-12">
+                        <h2 class="text-4xl font-bold text-gray-900 mb-4">Secure Payment</h2>
+                        <p class="text-xl text-gray-600">Complete your order with PayPal</p>
+                    </div>
+
+                    <div class="grid lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-2">
+                            <div class="bg-white rounded-lg shadow-lg p-8">
+                                <div class="mb-6">
+                                    <h3 class="text-lg font-bold text-gray-900 mb-4">Payment Method</h3>
+                                    <div class="flex items-center space-x-3 mb-6">
+                                        <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" alt="PayPal" class="h-8" />
+                                        <span class="text-gray-600">Pay securely with PayPal</span>
+                                    </div>
+                                </div>
+
+                                <!-- PayPal Buttons Container -->
+                                <div id="paypal-button-container"></div>
+
+                                <div class="mt-6 pt-6 border-t border-gray-200">
+                                    <button
+                                        id="backToStep3"
+                                        class="w-full border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+                                    >
+                                        ← Back to Review
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-1">
+                            <div class="bg-white rounded-lg shadow-lg p-6 sticky top-24">
+                                <h3 class="text-lg font-bold text-gray-900 mb-4">Order Summary</h3>
+                                <div class="space-y-3 text-sm mb-6">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Service:</span>
+                                        <span id="checkoutService" class="font-semibold text-gray-900">-</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Subtotal:</span>
+                                        <span id="checkoutSubtotal" class="font-semibold text-gray-900">$0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Processing Fee:</span>
+                                        <span id="checkoutFee" class="font-semibold text-gray-900">$0</span>
+                                    </div>
+                                    <div class="border-t border-gray-200 pt-3">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-lg font-bold text-gray-900">Total:</span>
+                                            <span id="checkoutTotal" class="text-2xl font-bold text-blue-600">$0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-xs text-gray-500 text-center pt-4 border-t border-gray-200">
+                                    Your payment is secured by PayPal's encryption.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: Success Confirmation -->
+                <div id="step5" class="animate-fade-in step-hidden">
+                    <div class="text-center py-12">
+                        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 mb-6">
+                            <svg class="w-10 h-10 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <h2 class="text-4xl font-bold text-gray-900 mb-4">Order Confirmed!</h2>
+                        <p class="text-xl text-gray-600 mb-8">Your measurement order has been successfully placed</p>
+                        
+                        <div class="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto mb-8">
+                            <div class="bg-blue-50 border-l-4 border-blue-600 p-6 rounded-lg mb-6">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-semibold text-gray-900">Order Number:</span>
+                                    <span id="orderNumber" class="text-lg font-bold text-blue-600">-</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-semibold text-gray-900">Estimated Delivery:</span>
+                                    <span id="orderDelivery" class="text-lg font-bold text-gray-900">-</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4 text-left">
+                                <div class="flex items-start space-x-3">
+                                    <span class="text-green-600 text-xl">✓</span>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">Confirmation Email Sent</h4>
+                                        <p class="text-sm text-gray-600">Check your inbox for order details</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <span class="text-green-600 text-xl">✓</span>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">Processing Started</h4>
+                                        <p class="text-sm text-gray-600">Our team is working on your measurement</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <span class="text-green-600 text-xl">✓</span>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">Payment Confirmed</h4>
+                                        <p class="text-sm text-gray-600">Your payment has been processed successfully</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <button
+                                onclick="window.location.reload()"
+                                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                            >
+                                Place Another Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Badges -->
+    <section class="py-8 bg-white border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="flex flex-col items-center">
+                        <div class="bg-green-100 rounded-full p-4 mb-4">
+                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-gray-900 mb-2">Secure Payment</h3>
+                        <p class="text-sm text-gray-600">PayPal encryption protects your data</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="bg-blue-100 rounded-full p-4 mb-4">
+                            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-gray-900 mb-2">99.8% Accuracy</h3>
+                        <p class="text-sm text-gray-600">Industry-leading precision</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="bg-purple-100 rounded-full p-4 mb-4">
+                            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-gray-900 mb-2">24/7 Support</h3>
+                        <p class="text-sm text-gray-600">Expert assistance anytime</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Pricing structure
+        const PRICING = {
+            'residential-single': { // Aerial Square Roof Report
+                standard: 10,
+                express: 20,
+                rush: 30
+            },
+            'residential-multi': { // Residential Roof Report
+                standard: 17,
+                express: 25,
+                rush: 30
+            },
+            'commercial-small': { // Commercial Roof Report
+                standard: 30,
+                express: 35,
+                rush: 45
+            }
+        };
+
+        const DELIVERY_TIMES = {
+            standard: '8-12 hours',
+            express: '6-8 hours',
+            rush: '3-6 hours'
+        };
+
+        const PROPERTY_TYPE_LABELS = {
+            'residential-single': 'Aerial Square Roof Report',
+            'residential-multi': 'Residential Roof Report',
+            'commercial-small': 'Commercial Roof Report'
+        };
+
+        // Order data
+        let orderData = {
+            propertyDetails: {},
+            serviceSelection: {},
+            calculatedPrice: {}
+        };
+
+        let currentStep = 1;
+
+        // Update progress indicator
+        function updateProgressIndicator(step) {
+            for (let i = 1; i <= 4; i++) {
+                const indicator = document.getElementById(`step${i}Indicator`);
+                const progress = document.getElementById(`progress${i}`);
+                
+                if (i < step) {
+                    indicator.classList.remove('bg-gray-200', 'text-gray-500');
+                    indicator.classList.add('bg-blue-600', 'text-white');
+                    if (progress) progress.style.width = '100%';
+                } else if (i === step) {
+                    indicator.classList.remove('bg-gray-200', 'text-gray-500');
+                    indicator.classList.add('bg-blue-600', 'text-white');
+                } else {
+                    indicator.classList.remove('bg-blue-600', 'text-white');
+                    indicator.classList.add('bg-gray-200', 'text-gray-500');
+                    if (progress) progress.style.width = '0%';
+                }
+            }
+        }
+
+        // Show/hide steps
+        function goToStep(step) {
+            document.querySelectorAll('[id^="step"]').forEach(el => {
+                if (el.id.includes('Indicator') || el.id.includes('progress')) return;
+                el.classList.add('step-hidden');
+            });
+            
+            document.getElementById(`step${step}`).classList.remove('step-hidden');
+            currentStep = step;
+            updateProgressIndicator(step);
+            window.scrollTo(0, 0);
+        }
+
+        // Step 1: Property Form Submit
+        document.getElementById('propertyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            orderData.propertyDetails = {
+                address: document.getElementById('propertyAddress').value,
+                propertyType: document.getElementById('propertyType').value,
+                estimatedSize: document.getElementById('estimatedSize').value,
+                contactName: document.getElementById('contactName').value,
+                contactEmail: document.getElementById('contactEmail').value,
+                contactPhone: document.getElementById('contactPhone').value,
+                companyName: document.getElementById('companyName').value,
+                projectNotes: document.getElementById('projectNotes').value
+            };
+            
+            // Update pricing based on property type
+            updateServicePricing(orderData.propertyDetails.propertyType);
+            
+            goToStep(2);
+        });
+
+        // Update service pricing display
+        function updateServicePricing(propertyType) {
+            const serviceCards = document.querySelectorAll('.service-card');
+            serviceCards.forEach(card => {
+                const serviceTier = card.dataset.service;
+                const price = PRICING[propertyType][serviceTier];
+                card.querySelector('.service-price').textContent = `$${price}`;
+            });
+        }
+
+        // Service selection
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Remove selection from all cards
+                document.querySelectorAll('.service-card').forEach(c => {
+                    c.classList.remove('selected');
+                    c.querySelector('.service-radio').classList.add('hidden');
+                });
+                
+                // Add selection to clicked card
+                this.classList.add('selected');
+                this.querySelector('.service-radio').classList.remove('hidden');
+                
+                const serviceTier = this.dataset.service;
+                const propertyType = orderData.propertyDetails.propertyType;
+                const basePrice = PRICING[propertyType][serviceTier];
+                
+                orderData.serviceSelection = {
+                    serviceTier: serviceTier,
+                    basePrice: basePrice
+                };
+                
+                // Calculate total
+                const processingFee = (basePrice * 0.03).toFixed(2);
+                const total = (basePrice + parseFloat(processingFee)).toFixed(2);
+                
+                orderData.calculatedPrice = {
+                    basePrice: basePrice,
+                    processingFee: parseFloat(processingFee),
+                    total: parseFloat(total)
+                };
+                
+                // Update selected service info
+                document.getElementById('selectedServiceInfo').classList.remove('hidden');
+                document.getElementById('selectedServiceName').textContent = serviceTier.toUpperCase();
+                document.getElementById('selectedServiceDelivery').textContent = DELIVERY_TIMES[serviceTier];
+                document.getElementById('selectedServicePrice').textContent = basePrice;
+                
+                // Enable continue button
+                document.getElementById('continueToStep3').disabled = false;
+            });
+        });
+
+        // Navigation buttons
+        document.getElementById('backToStep1').addEventListener('click', () => goToStep(1));
+        
+        document.getElementById('continueToStep3').addEventListener('click', function() {
+            // Update review summary
+            document.getElementById('summaryAddress').textContent = orderData.propertyDetails.address;
+            document.getElementById('summaryType').textContent = PROPERTY_TYPE_LABELS[orderData.propertyDetails.propertyType];
+            document.getElementById('summaryService').textContent = orderData.serviceSelection.serviceTier.toUpperCase();
+            document.getElementById('summaryDelivery').textContent = DELIVERY_TIMES[orderData.serviceSelection.serviceTier];
+            document.getElementById('summaryContact').textContent = `${orderData.propertyDetails.contactName} (${orderData.propertyDetails.contactEmail})`;
+            document.getElementById('summaryBasePrice').textContent = `$${orderData.calculatedPrice.basePrice}`;
+            document.getElementById('summaryProcessingFee').textContent = `$${orderData.calculatedPrice.processingFee}`;
+            document.getElementById('summaryTotal').textContent = `$${orderData.calculatedPrice.total}`;
+            
+            goToStep(3);
+        });
+        
+        document.getElementById('backToStep2').addEventListener('click', () => goToStep(2));
+        
+        document.getElementById('continueToStep4').addEventListener('click', function() {
+            // Update checkout summary
+            document.getElementById('checkoutService').textContent = orderData.serviceSelection.serviceTier.toUpperCase();
+            document.getElementById('checkoutSubtotal').textContent = `$${orderData.calculatedPrice.basePrice}`;
+            document.getElementById('checkoutFee').textContent = `$${orderData.calculatedPrice.processingFee}`;
+            document.getElementById('checkoutTotal').textContent = `$${orderData.calculatedPrice.total}`;
+            
+            goToStep(4);
+            
+            // Initialize PayPal buttons
+            initializePayPalButtons();
+        });
+        
+        document.getElementById('backToStep3').addEventListener('click', () => goToStep(3));
+
+        // PayPal Integration
+        function initializePayPalButtons() {
+            // Clear existing buttons
+            document.getElementById('paypal-button-container').innerHTML = '';
+            
+            paypal.Buttons({
+                createOrder: function(data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: orderData.calculatedPrice.total.toFixed(2)
+                            },
+                            description: `${PROPERTY_TYPE_LABELS[orderData.propertyDetails.propertyType]} - ${orderData.serviceSelection.serviceTier.toUpperCase()}`
+                        }]
+                    });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(details) {
+                        // Payment successful
+                        const orderNumber = 'RM-' + new Date().getFullYear() + '-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+                        
+                        document.getElementById('orderNumber').textContent = orderNumber;
+                        document.getElementById('orderDelivery').textContent = DELIVERY_TIMES[orderData.serviceSelection.serviceTier];
+                        
+                        // Show success page
+                        goToStep(5);
+                        
+                        // Here you would send order data to your backend
+                        console.log('Order completed:', {
+                            orderNumber: orderNumber,
+                            orderData: orderData,
+                            paymentDetails: details
+                        });
+                    });
+                },
+                onError: function(err) {
+                    console.error('PayPal error:', err);
+                    alert('Payment failed. Please try again.');
+                }
+            }).render('#paypal-button-container');
+        }
+    </script>
+</body>
+</html>
