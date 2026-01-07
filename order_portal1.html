@@ -100,7 +100,7 @@ function renderSummary(){
   document.getElementById("summaryAddress").textContent=orderData.address;
   document.getElementById("summaryNotes").textContent=orderData.notes||"None";
   document.getElementById("summaryService").textContent=orderData.plan;
-  document.getElementById("summaryPrice").textContent=`$${(orderData.amount/100).toFixed(2)}`;
+  document.getElementById("summaryPrice").textContent=`$${(orderData.amount/1).toFixed(2)}`;
 }
 
 // ===== PDF UPLOAD =====
