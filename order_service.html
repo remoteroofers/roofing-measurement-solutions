@@ -1,111 +1,114 @@
-<!-- Start of edited order_portal1.html -->
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <!-- retain original CSS/JS -->
-  <meta charset="UTF-8">
-  <title>Order Portal - Remote Roofers</title>
-  <link rel="stylesheet" href="styles.css"> <!-- RETAINED -->
-  <script src="scripts.js"></script> <!-- RETAINED -->
-</head>
-<body>
-
-<!-- Property Details -->
+<!-- ===== Property Details ===== -->
 <div id="property-details">
   <h2>Property Details</h2>
-  <label>Property Address*</label>
-  <input type="text" id="addr" required>
-
-  <label>Property Type*</label>
-  <select id="reportType" onchange="updatePrices()">
-    <option value="">Select report type</option>
+  <label for="property-type">Property Type *</label>
+  <select id="property-type">
+    <option value="" selected disabled>Select property type</option>
     <option value="aerial">Aerial Square Roof Report</option>
     <option value="residential">Residential Roof Report</option>
     <option value="commercial">Commercial Roof Report</option>
   </select>
 </div>
 
-<!-- Service Selection -->
+<!-- ===== Service Selection ===== -->
 <div id="service-selection">
-  <h2>Choose Your Service Tier</h2>
-
-  <button onclick="selectService('standard')">Standard</button>
-  <button onclick="selectService('express')">Express</button>
-  <button onclick="selectService('rush')">Rush</button>
-
-  <p id="selectedService">Selected Service: None</p>
-  <p id="estimatedDelivery">Estimated Delivery: -</p>
-  <p id="priceDisplay">Total: $0</p>
+  <h2>Service Selection</h2>
+  <label>
+    <input type="radio" name="tier" value="standard"> Standard
+  </label>
+  <label>
+    <input type="radio" name="tier" value="express"> Express
+  </label>
+  <label>
+    <input type="radio" name="tier" value="rush"> Rush
+  </label>
 </div>
 
-<!-- Upload & Review (unchanged; retained UI) -->
-<div id="upload-review">
-  <h2>Upload Property Images</h2>
-  <input type="file" id="images" multiple accept="image/*">
-  <div id="order-summary"></div>
+<!-- ===== Order Summary ===== -->
+<div id="order-summary">
+  <h3>Order Summary</h3>
+  <p>Property Type: <span id="summary-type">-</span></p>
+  <p>Service Tier: <span id="summary-tier">-</span></p>
+  <p>Total: $<span id="summary-price">0</span></p>
 </div>
 
-<!-- Secure Payment -->
-<div id="payment-section">
-  <h2>Secure Payment (PayPal)</h2>
+<!-- ===== PayPal Checkout ===== -->
+<div id="paypal-button-container"></div>
 
-  <!-- PAYPAL BUTTON -->
-  <div id="paypal-button-container"></div>
-</div>
+<script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
 
 <script>
-  let selectedService = "";
-  let selectedReport = "";
-  let pricing = {
-    aerial:    {standard:10, express:20, rush:30},
-    residential:{standard:17, express:25, rush:30},
-    commercial:{standard:30, express:35, rush:45}
+  const pricing = {
+    aerial: { standard: 10, express: 20, rush: 30 },
+    residential: { standard: 17, express: 25, rush: 30 },
+    commercial: { standard: 30, express: 35, rush: 45 }
   };
 
-  function updatePrices() {
-    selectedReport = document.getElementById("reportType").value;
-    calculateTotal();
-  }
+  const propertyTypeEl = document.getElementById('property-type');
+  const tierEls = document.getElementsByName('tier');
+  const summaryTypeEl = document.getElementById('summary-type');
+  const summaryTierEl = document.getElementById('summary-tier');
+  const summaryPriceEl = document.getElementById('summary-price');
 
-  function selectService(service) {
-    selectedService = service;
-    document.getElementById("selectedService").textContent = "Selected Service: " + service.charAt(0).toUpperCase()+service.slice(1);
-    calculateTotal();
-  }
+  let selectedType = "";
+  let selectedTier = "";
 
-  function calculateTotal() {
-    if (!selectedReport || !selectedService) {
-      document.getElementById("priceDisplay").textContent = "Total: $0";
-      return;
+  function updateSummary() {
+    summaryTypeEl.textContent = selectedType ? selectedType.replace(/^\w/, c => c.toUpperCase()) : "-";
+    summaryTierEl.textContent = selectedTier ? selectedTier.charAt(0).toUpperCase() + selectedTier.slice(1) : "-";
+
+    if (selectedType && selectedTier) {
+      const price = pricing[selectedType][selectedTier];
+      summaryPriceEl.textContent = price.toFixed(2);
+    } else {
+      summaryPriceEl.textContent = "0";
     }
-    let price = pricing[selectedReport][selectedService];
-    document.getElementById("priceDisplay").textContent = "Total: $" + price;
   }
-</script>
 
-<!-- Load the PayPal Checkout JS -->
-<script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID"></script>
+  propertyTypeEl.addEventListener('change', (e) => {
+    selectedType = e.target.value;
+    updateSummary();
+  });
 
-<script>
+  tierEls.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      selectedTier = e.target.value;
+      updateSummary();
+    });
+  });
+
+  // PayPal Buttons
   paypal.Buttons({
-    style: { layout: 'vertical' },
+    style: {
+      layout: 'vertical',
+      color:  'blue',
+      shape:  'rect',
+      label:  'pay'
+    },
     createOrder: function(data, actions) {
-      // Set up transaction amount based on selected pricing
-      let amt = pricing[selectedReport] ? pricing[selectedReport][selectedService] : 0;
+      if (!selectedType || !selectedTier) {
+        alert("Please select a property type and service tier.");
+        return;
+      }
+      const amount = pricing[selectedType][selectedTier].toFixed(2);
       return actions.order.create({
         purchase_units: [{
-          amount: { value: amt.toString() }
+          description: selectedType + " - " + selectedTier,
+          amount: {
+            value: amount
+          }
         }]
       });
     },
     onApprove: function(data, actions) {
       return actions.order.capture().then(function(details) {
-        alert('Payment completed by ' + details.payer.name.given_name);
+        alert("Payment completed by " + details.payer.name.given_name + "!");
+        // Here you can redirect to a confirmation page or submit your form
       });
+    },
+    onError: function(err) {
+      console.error(err);
+      alert("Payment could not be completed.");
     }
   }).render('#paypal-button-container');
 </script>
-
-</body>
-</html>
