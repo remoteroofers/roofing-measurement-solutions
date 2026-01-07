@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Secure payment processing for your roofing measurement order with PayPal integration and comprehensive order review">
+    <title>Payment Processing - Roofing Order Portal</title>
+    <link rel="stylesheet" href="../css/main.css">
+  
+  <script type="module" async src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Froofingor3232back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.12"></script>
+  <script type="module" defer src="https://static.rocket.new/rocket-shot.js?v=0.0.2"></script>
+  </head>
+<body class="bg-background min-h-screen">
+    <!-- Header Navigation -->
+    <header class="bg-surface border-b border-border-light sticky top-0 z-nav shadow-sm">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <svg class="w-10 h-10" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 4L4 14V26L20 36L36 26V14L20 4Z" fill="#2563EB" opacity="0.2"/>
+                        <path d="M20 4L4 14L20 24L36 14L20 4Z" fill="#2563EB"/>
+                        <path d="M4 14V26L20 36V24L4 14Z" fill="#1D4ED8"/>
+                        <path d="M36 14V26L20 36V24L36 14Z" fill="#3B82F6"/>
+                    </svg>
+                    <div>
+                        <h1 class="text-xl font-heading font-bold text-primary">RoofMetrics</h1>
+                        <p class="text-xs text-text-secondary">Professional Measurement Services</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="service_selection.html" class="text-text-secondary hover:text-primary transition-colors">Service Selection</a>
+                    <a href="payment_processing.html" class="text-primary font-medium border-b-2 border-primary pb-1">Payment</a>
+                    <a href="order_confirmation.html" class="text-text-secondary hover:text-primary transition-colors">Confirmation</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg hover:bg-secondary-100 transition-colors" aria-label="Toggle mobile menu">
+                    <svg class="w-6 h-6 text-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="hidden md:hidden pb-4 border-t border-border-light mt-2 pt-4">
+                <div class="flex flex-col gap-3">
+                    <a href="service_selection.html" class="text-text-secondary hover:text-primary py-2 px-4 hover:bg-secondary-50 rounded-lg transition-colors">Service Selection</a>
+                    <a href="payment_processing.html" class="text-primary font-medium py-2 px-4 bg-primary-50 rounded-lg">Payment</a>
+                    <a href="order_confirmation.html" class="text-text-secondary hover:text-primary py-2 px-4 hover:bg-secondary-50 rounded-lg transition-colors">Confirmation</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Progress Indicator -->
+    <section class="bg-surface border-b border-border-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between max-w-2xl mx-auto">
+                <!-- Step 1 - Completed -->
+                <div class="flex items-center gap-3 flex-1">
+                    <div class="w-10 h-10 rounded-full bg-success flex items-center justify-center text-white shadow-md">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="hidden sm:block">
+                        <p class="text-sm font-medium text-success">Service Selection</p>
+                        <p class="text-xs text-text-secondary">Completed</p>
+                    </div>
+                </div>
+                <div class="h-0.5 bg-primary flex-1 mx-2"></div>
+                
+                <!-- Step 2 - Active -->
+                <div class="flex items-center gap-3 flex-1">
+                    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-semibold shadow-md">
+                        2
+                    </div>
+                    <div class="hidden sm:block">
+                        <p class="text-sm font-medium text-primary">Payment</p>
+                        <p class="text-xs text-text-secondary">Secure checkout</p>
+                    </div>
+                </div>
+                <div class="h-0.5 bg-border-light flex-1 mx-2"></div>
+                
+                <!-- Step 3 - Inactive -->
+                <div class="flex items-center gap-3 flex-1">
+                    <div class="w-10 h-10 rounded-full bg-secondary-200 flex items-center justify-center text-secondary-600 font-semibold">
+                        3
+                    </div>
+                    <div class="hidden sm:block">
+                        <p class="text-sm font-medium text-text-secondary">Confirmation</p>
+                        <p class="text-xs text-text-secondary">Order complete</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Left Column - Payment Form -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Page Header -->
+                <div class="space-y-2">
+                    <h2 class="text-h2 text-text-primary">Secure Payment</h2>
+                    <p class="text-text-secondary">Complete your order with our secure PayPal payment processing</p>
+                </div>
+
+                <!-- Security Notice -->
+                <div class="bg-success-50 border border-success-200 rounded-xl p-5 flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-full bg-success-100 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-success-700 mb-1">Secure SSL Encrypted Payment</h4>
+                        <p class="text-sm text-success-600">Your payment information is protected with industry-standard 256-bit SSL encryption. We never store your payment details on our servers.</p>
+                    </div>
+                </div>
+
+                <!-- Payment Method Selection -->
+                <section class="card">
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-h4 text-text-primary">Payment Method</h3>
+                                <p class="text-sm text-text-secondary">Choose your preferred payment option</p>
+                            </div>
+                        </div>
+
+                        <!-- PayPal Option -->
+                        <label class="payment-method-card cursor-pointer group">
+                            <input type="radio" name="paymentMethod" value="paypal" checked class="hidden payment-method-input">
+                            <div class="border-2 border-primary bg-primary-50 rounded-xl p-6 transition-all shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-16 h-16 bg-white rounded-lg flex items-center justify-center p-2">
+                                            <img src="https://img.rocket.new/generatedImages/rocket_gen_img_18dd11182-1764898174502.png" alt="PayPal logo with credit card acceptance marks showing secure payment options" class="w-full h-full object-contain">
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-text-primary mb-1">PayPal</h4>
+                                            <p class="text-sm text-text-secondary">Pay securely with PayPal or credit card</p>
+                                        </div>
+                                    </div>
+                                    <div class="w-6 h-6 rounded-full border-2 border-primary bg-primary flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <!-- PayPal Benefits -->
+                        <div class="bg-secondary-50 rounded-xl p-5">
+                            <h5 class="font-semibold text-text-primary mb-3">Why choose PayPal?</h5>
+                            <ul class="space-y-2">
+                                <li class="flex items-start gap-2 text-sm text-text-secondary">
+                                    <svg class="w-5 h-5 text-success flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Buyer protection on eligible purchases</span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-text-secondary">
+                                    <svg class="w-5 h-5 text-success flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>No need to share financial information</span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-text-secondary">
+                                    <svg class="w-5 h-5 text-success flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Fast and secure checkout process</span>
+                                </li>
+                                <li class="flex items-start gap-2 text-sm text-text-secondary">
+                                    <svg class="w-5 h-5 text-success flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Pay with PayPal balance or linked cards</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Billing Information Review -->
+                <section class="card">
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-8 h-8 rounded-full bg-secondary-100 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-h4 text-text-primary">Billing Information</h3>
+                                <p class="text-sm text-text-secondary">Review your billing details</p>
+                            </div>
+                        </div>
+
+                        <div id="billingInfo" class="bg-secondary-50 rounded-xl p-5 space-y-3">
+                            <!-- Billing info will be populated by JavaScript -->
+                        </div>
+
+                        <button id="editBillingBtn" class="text-sm text-primary hover:text-primary-700 font-medium flex items-center gap-2 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            <span>Edit Billing Information</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Terms and Conditions -->
+                <div class="card bg-secondary-50">
+                    <label class="flex items-start gap-3 cursor-pointer">
+                        <input type="checkbox" id="termsCheckbox" class="mt-1 w-5 h-5 rounded border-border-medium text-primary focus:ring-3 focus:ring-primary-300">
+                        <div class="text-sm text-text-secondary">
+                            <span>I agree to the </span>
+                            <a href="javascript:void(0)" class="text-primary hover:underline font-medium">Terms and Conditions</a>
+                            <span> and </span>
+                            <a href="javascript:void(0)" class="text-primary hover:underline font-medium">Privacy Policy</a>
+                            <span>. I understand that my payment will be processed securely through PayPal and I authorize RoofMetrics to charge the total amount shown.</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="service_selection.html" class="btn btn-outline flex-1">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
+                        </svg>
+                        <span>Back to Selection</span>
+                    </a>
+                    <button id="processPaymentBtn" disabled class="btn btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span>Process Payment with PayPal</span>
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Column - Order Summary -->
+            <div class="lg:col-span-1">
+                <div class="sticky top-24">
+                    <div class="card bg-gradient-to-br from-primary-50 to-accent-50 border-2 border-primary-200">
+                        <div class="space-y-6">
+                            <!-- Header -->
+                            <div class="flex items-center gap-3 pb-4 border-b border-primary-200">
+                                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-h5 text-text-primary font-bold">Order Summary</h3>
+                                    <p class="text-sm text-text-secondary">Review your order details</p>
+                                </div>
+                            </div>
+
+                            <!-- Order Details -->
+                            <div class="space-y-4">
+                                <div class="bg-white rounded-lg p-4 border border-primary-200">
+                                    <p class="text-xs text-text-secondary mb-1">Report Type</p>
+                                    <p id="summaryReportType" class="text-base font-semibold text-text-primary">-</p>
+                                </div>
+
+                                <div class="bg-white rounded-lg p-4 border border-primary-200">
+                                    <p class="text-xs text-text-secondary mb-1">Service Tier</p>
+                                    <p id="summaryServiceTier" class="text-base font-semibold text-text-primary">-</p>
+                                </div>
+
+                                <div class="bg-white rounded-lg p-4 border border-primary-200">
+                                    <p class="text-xs text-text-secondary mb-1">Property Address</p>
+                                    <p id="summaryAddress" class="text-sm text-text-primary">-</p>
+                                </div>
+                            </div>
+
+                            <!-- Pricing Breakdown -->
+                            <div class="space-y-3 pt-4 border-t border-primary-200">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-text-secondary">Subtotal</span>
+                                    <span id="summarySubtotal" class="text-base font-medium text-text-primary">$0.00</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-text-secondary">Processing Fee</span>
+                                    <span class="text-base font-medium text-text-primary">$0.00</span>
+                                </div>
+                            </div>
+
+                            <!-- Total -->
+                            <div class="bg-primary rounded-xl p-5 text-center">
+                                <p class="text-sm text-primary-100 mb-1">Total Amount</p>
+                                <p id="summaryTotal" class="text-h2 font-bold text-white">$0.00</p>
+                            </div>
+
+                            <!-- Trust Signals -->
+                            <div class="space-y-3 pt-4 border-t border-primary-200">
+                                <div class="flex items-center gap-2 text-sm text-text-secondary">
+                                    <svg class="w-5 h-5 text-success flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>256-bit SSL encryption</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-text-secondary">
+                                    <svg class="w-5 h-5 text-success flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>PayPal buyer protection</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-text-secondary">
+                                    <svg class="w-5 h-5 text-success flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>Money-back guarantee</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-secondary-900 text-white mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid md:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div class="md:col-span-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <svg class="w-10 h-10" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 4L4 14V26L20 36L36 26V14L20 4Z" fill="#3B82F6" opacity="0.3"/>
+                            <path d="M20 4L4 14L20 24L36 14L20 4Z" fill="#60A5FA"/>
+                            <path d="M4 14V26L20 36V24L4 14Z" fill="#2563EB"/>
+                            <path d="M36 14V26L20 36V24L36 14Z" fill="#93C5FD"/>
+                        </svg>
+                        <div>
+                            <h3 class="text-xl font-heading font-bold">RoofMetrics</h3>
+                            <p class="text-sm text-secondary-400">Professional Measurement Services</p>
+                        </div>
+                    </div>
+                    <p class="text-secondary-300 text-sm mb-4">Providing accurate roofing measurements for residential and commercial properties with industry-leading precision and fast turnaround times.</p>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="service_selection.html" class="text-secondary-300 hover:text-white transition-colors">Services</a></li>
+                        <li><a href="javascript:void(0)" class="text-secondary-300 hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="javascript:void(0)" class="text-secondary-300 hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="javascript:void(0)" class="text-secondary-300 hover:text-white transition-colors">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div>
+                    <h4 class="font-semibold mb-4">Contact Us</h4>
+                    <ul class="space-y-2 text-sm text-secondary-300">
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            <span>support@roofmetrics.com</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                            </svg>
+                            <span>(555) 123-4567</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-secondary-700 mt-8 pt-8 text-center text-sm text-secondary-400">
+                <p>© 2026 RoofMetrics. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Processing Modal -->
+    <div id="processingModal" class="modal-backdrop hidden">
+        <div class="modal-content max-w-md">
+            <div class="p-8 text-center">
+                <div class="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-10 h-10 text-primary animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-h4 text-text-primary mb-2">Processing Payment</h3>
+                <p class="text-text-secondary mb-4">Please wait while we securely process your payment through PayPal...</p>
+                <div class="flex items-center justify-center gap-2 text-sm text-text-secondary">
+                    <svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                    <span>Secure connection established</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="errorModal" class="modal-backdrop hidden">
+        <div class="modal-content max-w-md">
+            <div class="p-8">
+                <div class="w-16 h-16 bg-error-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-8 h-8 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-h4 text-text-primary mb-2 text-center">Payment Error</h3>
+                <p id="errorMessage" class="text-text-secondary text-center mb-6">An error occurred while processing your payment. Please try again.</p>
+                <button id="closeErrorBtn" class="btn btn-primary w-full">
+                    <span>Try Again</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Load order data from localStorage
+        let orderData = JSON.parse(localStorage.getItem('roofingOrder') || '{}');
+
+        // Report type names
+        const reportTypeNames = {
+            aerial: 'Aerial Square Roof Report',
+            residential: 'Residential Roof Report',
+            commercial: 'Commercial Roof Report'
+        };
+
+        // Service tier names
+        const tierNames = {
+            standard: 'Standard (5-7 business days)',
+            express: 'Express (2-3 business days)',
+            rush: 'Rush (24 hours)'
+        };
+
+        // Check if order data exists, redirect if not
+        if (!orderData.reportType || !orderData.serviceTier || !orderData.clientInfo) {
+            window.location.href = 'service_selection.html';
+        }
+
+        // Populate billing information
+        function populateBillingInfo() {
+            const billingInfoDiv = document.getElementById('billingInfo');
+            
+            if (!orderData.clientInfo) {
+                billingInfoDiv.innerHTML = '<p class="text-text-secondary">No billing information available</p>';
+                return;
+            }
+
+            const { firstName, lastName, email, phone, propertyAddress, city, state, zipCode } = orderData.clientInfo;
+            
+            billingInfoDiv.innerHTML = `
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-xs text-text-secondary mb-1">Full Name</p>
+                        <p class="text-sm font-medium text-text-primary">${firstName} ${lastName}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-text-secondary mb-1">Email</p>
+                        <p class="text-sm font-medium text-text-primary">${email}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-text-secondary mb-1">Phone</p>
+                        <p class="text-sm font-medium text-text-primary">${phone}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-text-secondary mb-1">Property Address</p>
+                        <p class="text-sm font-medium text-text-primary">${propertyAddress}</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <p class="text-xs text-text-secondary mb-1">City, State ZIP</p>
+                        <p class="text-sm font-medium text-text-primary">${city}, ${state} ${zipCode}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Populate order summary
+        function populateOrderSummary() {
+            if (!orderData.reportType || !orderData.serviceTier) {
+                return;
+            }
+
+            document.getElementById('summaryReportType').textContent = reportTypeNames[orderData.reportType] || '-';
+            document.getElementById('summaryServiceTier').textContent = tierNames[orderData.serviceTier] || '-';
+            
+            if (orderData.clientInfo) {
+                const { propertyAddress, city, state, zipCode } = orderData.clientInfo;
+                document.getElementById('summaryAddress').textContent = `${propertyAddress}, ${city}, ${state} ${zipCode}`;
+            }
+
+            const totalPrice = orderData.totalPrice || 0;
+            document.getElementById('summarySubtotal').textContent = `$${totalPrice.toFixed(2)}`;
+            document.getElementById('summaryTotal').textContent = `$${totalPrice.toFixed(2)}`;
+        }
+
+        // Terms checkbox validation
+        const termsCheckbox = document.getElementById('termsCheckbox');
+        const processPaymentBtn = document.getElementById('processPaymentBtn');
+
+        termsCheckbox.addEventListener('change', () => {
+            processPaymentBtn.disabled = !termsCheckbox.checked;
+        });
+
+        // Edit billing button
+        document.getElementById('editBillingBtn').addEventListener('click', () => {
+            window.location.href = 'service_selection.html';
+        });
+
+        // Process payment
+        processPaymentBtn.addEventListener('click', () => {
+            if (!termsCheckbox.checked) {
+                showError('Please accept the terms and conditions to continue');
+                return;
+            }
+
+            // Validate order data
+            if (!orderData.reportType || !orderData.serviceTier || !orderData.clientInfo) {
+                showError('Order information is incomplete. Please return to service selection.');
+                return;
+            }
+
+            // Show processing modal
+            document.getElementById('processingModal').classList.remove('hidden');
+
+            // Simulate PayPal payment processing (2-3 seconds)
+            setTimeout(() => {
+                // Simulate random success/failure for demo (90% success rate)
+                const paymentSuccess = Math.random() > 0.1;
+
+                if (paymentSuccess) {
+                    // Generate order ID
+                    const orderId = 'RM' + Date.now().toString().slice(-8);
+                    
+                    // Store order confirmation data
+                    const confirmationData = {
+                        ...orderData,
+                        orderId: orderId,
+                        orderDate: new Date().toISOString(),
+                        paymentMethod: 'PayPal',
+                        paymentStatus: 'Completed',
+                        transactionId: 'PP' + Math.random().toString(36).substr(2, 9).toUpperCase()
+                    };
+
+                    localStorage.setItem('roofingOrderConfirmation', JSON.stringify(confirmationData));
+                    
+                    // Redirect to confirmation page
+                    window.location.href = 'order_confirmation.html';
+                } else {
+                    // Hide processing modal
+                    document.getElementById('processingModal').classList.add('hidden');
+                    
+                    // Show error
+                    showError('Payment processing failed. Please check your PayPal account and try again.');
+                }
+            }, 2500);
+        });
+
+        // Error handling
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorModal').classList.remove('hidden');
+        }
+
+        document.getElementById('closeErrorBtn').addEventListener('click', () => {
+            document.getElementById('errorModal').classList.add('hidden');
+        });
+
+        // Close modals on backdrop click
+        document.getElementById('errorModal').addEventListener('click', (e) => {
+            if (e.target.id === 'errorModal') {
+                document.getElementById('errorModal').classList.add('hidden');
+            }
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            populateBillingInfo();
+            populateOrderSummary();
+        });
+
+        // Prevent accidental page navigation
+        window.addEventListener('beforeunload', (e) => {
+            if (!document.getElementById('processingModal').classList.contains('hidden')) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>
