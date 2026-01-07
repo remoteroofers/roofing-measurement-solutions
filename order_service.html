@@ -738,13 +738,9 @@
                 };
                 
                 // Calculate total
-                const processingFee = (basePrice * 0.03).toFixed(2);
-                const total = (basePrice + parseFloat(processingFee)).toFixed(2);
-                
                 orderData.calculatedPrice = {
-                    basePrice: basePrice,
-                    processingFee: parseFloat(processingFee),
-                    total: parseFloat(total)
+                basePrice: basePrice,
+                total: basePrice
                 };
                 
                 // Update selected service info
@@ -769,7 +765,7 @@
             document.getElementById('summaryDelivery').textContent = DELIVERY_TIMES[orderData.serviceSelection.serviceTier];
             document.getElementById('summaryContact').textContent = `${orderData.propertyDetails.contactName} (${orderData.propertyDetails.contactEmail})`;
             document.getElementById('summaryBasePrice').textContent = `$${orderData.calculatedPrice.basePrice}`;
-            document.getElementById('summaryProcessingFee').textContent = `$${orderData.calculatedPrice.processingFee}`;
+            
             document.getElementById('summaryTotal').textContent = `$${orderData.calculatedPrice.total}`;
             
             goToStep(3);
@@ -781,7 +777,7 @@
             // Update checkout summary
             document.getElementById('checkoutService').textContent = orderData.serviceSelection.serviceTier.toUpperCase();
             document.getElementById('checkoutSubtotal').textContent = `$${orderData.calculatedPrice.basePrice}`;
-            document.getElementById('checkoutFee').textContent = `$${orderData.calculatedPrice.processingFee}`;
+          
             document.getElementById('checkoutTotal').textContent = `$${orderData.calculatedPrice.total}`;
             
             goToStep(4);
