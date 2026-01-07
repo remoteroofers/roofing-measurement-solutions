@@ -153,7 +153,7 @@ function renderPayPal(){
       if(!orderId) await createOrder(pdfUrl);
       return actions.order.create({
         purchase_units:[{
-          amount:{value:(orderData.amount/100).toFixed(2)},
+          amount:{value:(orderData.amount/1).toFixed(2)},
           description:orderData.plan
         }]
       });
@@ -183,7 +183,7 @@ function loadClientOrders(uid){
       tr.classList.add("border-b");
       tr.innerHTML=`
         <td class="px-4 py-2">${order.plan}</td>
-        <td class="px-4 py-2">$${(order.amount/100).toFixed(2)}</td>
+        <td class="px-4 py-2">$${(order.amount/1).toFixed(2)}</td>
         <td class="px-4 py-2">${order.status}</td>
         <td class="px-4 py-2">${order.pdfUrl?`<a href="${order.pdfUrl}" target="_blank" class="text-blue-600 underline">Download</a>`:"N/A"}</td>`;
       tbody.appendChild(tr);
@@ -203,7 +203,7 @@ function loadAdminOrders(){
       tr.innerHTML=`
         <td class="px-4 py-2">${order.firstName}</td>
         <td class="px-4 py-2">${order.plan}</td>
-        <td class="px-4 py-2">$${(order.amount/100).toFixed(2)}</td>
+        <td class="px-4 py-2">$${(order.amount/1).toFixed(2)}</td>
         <td class="px-4 py-2">
           <select onchange="updateOrderStatus('${id}',this.value)" class="border px-2 py-1 rounded">
             <option value="Pending" ${order.status==='Pending'?'selected':''}>Pending</option>
