@@ -1,330 +1,155 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
 <meta charset="UTF-8">
-<title>Roofing Measurement Dashboard</title>
+<title>Order Roof Measurement | Remote Roofers</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Tailwind CSS -->
+<!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com"></script>
-<!-- Stripe -->
-<script src="https://js.stripe.com/v3/"></script>
-<!-- PayPal -->
-<script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, doc, getDoc, addDoc, updateDoc, serverTimestamp, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
-
-// ===== FIREBASE CONFIG =====
-const firebaseConfig = {
-  apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
-  authDomain: "remoteroofers-51826.firebaseapp.com",
-  projectId: "remoteroofers-51826",
-  storageBucket: "remoteroofers-51826.appspot.com",
-  messagingSenderId: "901240361996",
-  appId: "1:901240361996:web:2a209986f74f15618aca29"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
-
-// ===== LOGOUT =====
-window.logout = async ()=>{ await signOut(auth); window.location.href="login.html"; }
-
-// ===== GLOBALS =====
-let userData = null;
-let orderData = {};
-let orderId = null;
-let previousStatuses = {};
-let currentStep = 1;
-
-// ===== STEP NAVIGATION =====
-function showStep(step){
-  currentStep = step;
-  document.querySelectorAll(".step").forEach(el=>el.classList.add("hidden"));
-  document.getElementById(`step${step}`).classList.remove("hidden");
-  document.querySelectorAll(".stepper-item").forEach((el,i)=>{
-    el.classList.remove("bg-blue-600","bg-blue-400","bg-gray-300","text-white","text-gray-500");
-    if(i+1 === step) el.classList.add("bg-blue-600","text-white");
-    else if(i+1 < step) el.classList.add("bg-blue-400","text-white");
-    else el.classList.add("bg-gray-300","text-gray-500");
-  });
+<style>
+.fade-enter {
+  animation: fadeIn .35s ease-in-out;
 }
-
-// ===== ON LOAD =====
-onAuthStateChanged(auth, async user=>{
-  if(!user) window.location.href="login.html";
-  else {
-    const userDoc = await getDoc(doc(db,"users",user.uid));
-    if(!userDoc.exists()) return;
-    userData = userDoc.data();
-    document.getElementById("userName").textContent = `${userData.firstName} ${userData.lastName}`;
-
-    if(userData.role==="admin"){
-      document.getElementById("adminPanel").classList.remove("hidden");
-      loadAdminOrders();
-    } else {
-      document.getElementById("clientPanel").classList.remove("hidden");
-      loadClientOrders(user.uid);
-    }
-  }
-});
-
-// ===== CLIENT MULTI-STEP PORTAL =====
-window.nextStep1 = ()=>{
-  const name = document.getElementById("customerName").value.trim();
-  const address = document.getElementById("propertyAddress").value.trim();
-  const notes = document.getElementById("projectNotes").value.trim();
-  if(!name || !address) return alert("Name & Address are required!");
-  orderData.firstName=name; orderData.address=address; orderData.notes=notes||"";
-  showStep(2);
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(10px); }
+  to { opacity:1; transform:translateY(0); }
 }
-
-window.selectService=(service,price)=>{
-  orderData.plan=service; orderData.amount=price;
-  renderSummary();
-  showStep(3);
-}
-
-function renderSummary(){
-  document.getElementById("summaryName").textContent=orderData.firstName;
-  document.getElementById("summaryAddress").textContent=orderData.address;
-  document.getElementById("summaryNotes").textContent=orderData.notes||"None";
-  document.getElementById("summaryService").textContent=orderData.plan;
-  document.getElementById("summaryPrice").textContent=`$${(orderData.amount/100).toFixed(2)}`;
-}
-
-// ===== PDF UPLOAD =====
-async function uploadPDF(file){
-  if(!file) return null;
-  if(file.type !== "application/pdf") return alert("Only PDF files are allowed!");
-  if(file.size > 5*1024*1024) return alert("File size must be under 5MB!");
-  const storageRef = ref(storage, `orders/${Date.now()}_${file.name}`);
-  await uploadBytes(storageRef,file);
-  return await getDownloadURL(storageRef);
-}
-
-// ===== CREATE ORDER =====
-async function createOrder(pdfUrl){
-  const docRef = await addDoc(collection(db,"orders"),{
-    userId: auth.currentUser.uid,
-    firstName: orderData.firstName,
-    address: orderData.address,
-    notes: orderData.notes,
-    plan: orderData.plan,
-    amount: orderData.amount,
-    pdfUrl: pdfUrl||null,
-    status:"Pending",
-    paid:false,
-    createdAt: serverTimestamp()
-  });
-  orderId=docRef.id;
-  return docRef.id;
-}
-
-// ===== STRIPE PAYMENT =====
-window.payStripe = async ()=>{
-  const file=document.getElementById("pdfUpload").files[0];
-  const pdfUrl=await uploadPDF(file);
-  if(pdfUrl===false) return; // stop if invalid
-  if(!orderId) await createOrder(pdfUrl);
-
-  const stripe = Stripe("YOUR_STRIPE_PUBLISHABLE_KEY");
-  
-  // Simulated client-only Stripe checkout (no server)
-  alert("Stripe Checkout simulated! Replace this with real backend session for production.");
-}
-
-// ===== PAYPAL PAYMENT =====
-function renderPayPal(){
-  paypal.Buttons({
-    createOrder: async (data,actions)=>{
-      const file=document.getElementById("pdfUpload").files[0];
-      const pdfUrl=await uploadPDF(file);
-      if(!orderId) await createOrder(pdfUrl);
-      return actions.order.create({
-        purchase_units:[{
-          amount:{value:(orderData.amount/100).toFixed(2)},
-          description:orderData.plan
-        }]
-      });
-    },
-    onApprove: async (data,actions)=>{
-      await actions.order.capture();
-      if(orderId) await updateDoc(doc(db,"orders",orderId),{paid:true,status:"Completed"});
-      alert("Payment Successful!"); window.location.href="dashboard.html";
-    },
-    onError: err=>{console.error(err); alert("PayPal payment failed.");}
-  }).render("#paypal-button-container");
-}
-
-// ===== CLIENT ORDERS =====
-function loadClientOrders(uid){
-  const tbody=document.getElementById("clientOrdersBody");
-  const q=query(collection(db,"orders"), where("userId","==",uid), orderBy("createdAt","desc"));
-  onSnapshot(q,snapshot=>{
-    tbody.innerHTML="";
-    snapshot.forEach(doc=>{
-      const order=doc.data(); const id=doc.id;
-      if(previousStatuses[id] && previousStatuses[id]!==order.status)
-        showToast(`Order "${order.plan}" status: ${order.status}`);
-      previousStatuses[id]=order.status;
-
-      const tr=document.createElement("tr");
-      tr.classList.add("border-b");
-      tr.innerHTML=`
-        <td class="px-4 py-2">${order.plan}</td>
-        <td class="px-4 py-2">$${(order.amount/100).toFixed(2)}</td>
-        <td class="px-4 py-2">${order.status}</td>
-        <td class="px-4 py-2">${order.pdfUrl?`<a href="${order.pdfUrl}" target="_blank" class="text-blue-600 underline">Download</a>`:"N/A"}</td>`;
-      tbody.appendChild(tr);
-    });
-  });
-}
-
-// ===== ADMIN ORDERS =====
-function loadAdminOrders(){
-  const tbody=document.getElementById("adminOrdersBody");
-  const q=query(collection(db,"orders"), orderBy("createdAt","desc"));
-  onSnapshot(q,snapshot=>{
-    tbody.innerHTML="";
-    snapshot.forEach(doc=>{
-      const order=doc.data(); const id=doc.id;
-      const tr=document.createElement("tr"); tr.classList.add("border-b");
-      tr.innerHTML=`
-        <td class="px-4 py-2">${order.firstName}</td>
-        <td class="px-4 py-2">${order.plan}</td>
-        <td class="px-4 py-2">$${(order.amount/100).toFixed(2)}</td>
-        <td class="px-4 py-2">
-          <select onchange="updateOrderStatus('${id}',this.value)" class="border px-2 py-1 rounded">
-            <option value="Pending" ${order.status==='Pending'?'selected':''}>Pending</option>
-            <option value="Completed" ${order.status==='Completed'?'selected':''}>Completed</option>
-          </select>
-        </td>
-        <td class="px-4 py-2">
-          ${order.pdfUrl?`<a href="${order.pdfUrl}" target="_blank" class="text-blue-600 underline">Download</a>`:
-          `<input type="file" onchange="uploadAdminPDF('${id}',this.files[0])" accept=".pdf">`}
-        </td>`;
-      tbody.appendChild(tr);
-    });
-  });
-}
-
-// ===== ADMIN FUNCTIONS =====
-window.updateOrderStatus=async(id,status)=>{ await updateDoc(doc(db,"orders",id),{status}); }
-window.uploadAdminPDF=async(id,file)=>{
-  const storageRef=ref(storage, `orders/${id}_${file.name}`);
-  await uploadBytes(storageRef,file);
-  const url=await getDownloadURL(storageRef);
-  await updateDoc(doc(db,"orders",id),{pdfUrl:url});
-  alert("PDF uploaded!");
-}
-
-// ===== TOAST =====
-function showToast(msg){
-  const toast=document.createElement("div");
-  toast.className="fixed bottom-6 right-6 bg-green-600 text-white px-4 py-2 rounded shadow-lg animate-slide-in z-50";
-  toast.textContent=msg; document.body.appendChild(toast);
-  setTimeout(()=>{toast.remove();},5000);
-}
-const style=document.createElement("style");
-style.innerHTML=`@keyframes slide-in{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}.animate-slide-in{animation:slide-in 0.5s ease-out;}`;
-document.head.appendChild(style);
-
-window.onload=()=>{ renderPayPal(); showStep(1); }
-
-</script>
+</style>
 </head>
-<body class="bg-gray-100 min-h-screen">
 
-<header class="bg-white shadow px-6 py-4 flex justify-between items-center">
-<h1 class="text-xl font-bold">Roofing Measurement Dashboard</h1>
-<div class="flex items-center gap-4">
-  <span id="userName" class="font-semibold"></span>
-  <button onclick="logout()" class="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700">Logout</button>
-</div>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+<!-- HEADER -->
+<header class="bg-white shadow-sm">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-blue-700">Remote Roofers</h1>
+    <span class="text-sm text-gray-500">Secure Order Portal</span>
+  </div>
 </header>
 
-<!-- CLIENT PANEL -->
-<main id="clientPanel" class="hidden p-6">
-<h2 class="text-2xl font-bold mb-4 text-blue-600">Client Dashboard</h2>
+<!-- MAIN -->
+<main class="flex-1 max-w-5xl mx-auto px-6 py-10">
 
-<div class="mb-6">
-  <div class="flex justify-between mb-4">
-    <div class="stepper-item px-4 py-2 rounded text-center font-semibold">Step 1: Info</div>
-    <div class="stepper-item px-4 py-2 rounded text-center font-semibold">Step 2: Service</div>
-    <div class="stepper-item px-4 py-2 rounded text-center font-semibold">Step 3: Summary</div>
+<!-- PROGRESS -->
+<div class="flex items-center justify-between mb-10">
+  <div class="flex-1 text-center">
+    <div id="p1" class="w-10 h-10 mx-auto rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">1</div>
+    <p class="mt-2 text-sm font-semibold">Property Info</p>
+  </div>
+  <div class="flex-1 h-1 bg-gray-300 mx-2"></div>
+  <div class="flex-1 text-center">
+    <div id="p2" class="w-10 h-10 mx-auto rounded-full bg-gray-300 text-gray-500 flex items-center justify-center font-bold">2</div>
+    <p class="mt-2 text-sm font-semibold">Service</p>
+  </div>
+  <div class="flex-1 h-1 bg-gray-300 mx-2"></div>
+  <div class="flex-1 text-center">
+    <div id="p3" class="w-10 h-10 mx-auto rounded-full bg-gray-300 text-gray-500 flex items-center justify-center font-bold">3</div>
+    <p class="mt-2 text-sm font-semibold">Payment</p>
+  </div>
+</div>
+
+<!-- STEP 1 -->
+<section id="step1" class="fade-enter bg-white p-8 rounded-xl shadow space-y-6">
+  <h2 class="text-2xl font-bold text-gray-700">Property Information</h2>
+
+  <input id="customerName" type="text" placeholder="Full Name"
+    class="w-full p-4 border rounded-lg focus:ring-2 focus:ring-blue-500">
+
+  <input id="propertyAddress" type="text" placeholder="Property Address"
+    class="w-full p-4 border rounded-lg focus:ring-2 focus:ring-blue-500">
+
+  <textarea id="projectNotes" placeholder="Project Notes (optional)"
+    class="w-full p-4 border rounded-lg"></textarea>
+
+  <button onclick="nextStep1()"
+    class="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition">
+    Continue →
+  </button>
+</section>
+
+<!-- STEP 2 -->
+<section id="step2" class="hidden fade-enter grid md:grid-cols-3 gap-6">
+
+  <div onclick="selectService('Aerial Square Roof Report',1000)"
+    class="cursor-pointer bg-white rounded-xl p-6 shadow hover:shadow-lg transition text-center">
+    <h3 class="text-xl font-bold text-gray-700">Aerial Square Roof</h3>
+    <p class="text-blue-600 text-3xl font-bold mt-4">$10</p>
+    <p class="text-gray-500 mt-2">Fast aerial measurement</p>
+    <button class="mt-6 bg-blue-600 text-white px-6 py-2 rounded-lg">Select</button>
   </div>
 
-  <!-- Step 1 -->
-  <div id="step1" class="step bg-white p-6 rounded shadow">
-    <label>Name:</label><input type="text" id="customerName" class="w-full border p-2 rounded mb-4">
-    <label>Property Address:</label><input type="text" id="propertyAddress" class="w-full border p-2 rounded mb-4">
-    <label>Project Notes:</label><textarea id="projectNotes" class="w-full border p-2 rounded mb-4"></textarea>
-    <button onclick="nextStep1()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Next</button>
+  <div onclick="selectService('Residential Roof Report',1700)"
+    class="cursor-pointer bg-white rounded-xl p-6 shadow hover:shadow-lg transition text-center">
+    <h3 class="text-xl font-bold text-gray-700">Residential Roof</h3>
+    <p class="text-green-600 text-3xl font-bold mt-4">$17</p>
+    <p class="text-gray-500 mt-2">Detailed residential report</p>
+    <button class="mt-6 bg-green-600 text-white px-6 py-2 rounded-lg">Select</button>
   </div>
 
-  <!-- Step 2 -->
-  <div id="step2" class="step hidden grid md:grid-cols-3 gap-6">
-    <div class="bg-white p-6 rounded shadow text-center">
-      <h3 class="font-semibold mb-2">Aerial Square Roof Report</h3>
-      <p class="mb-4">$10</p>
-      <button onclick="selectService('Aerial Square Roof Report',1000)" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Select</button>
-    </div>
-    <div class="bg-white p-6 rounded shadow text-center">
-      <h3 class="font-semibold mb-2">Residential Roof Report</h3>
-      <p class="mb-4">$17</p>
-      <button onclick="selectService('Residential Roof Report',1700)" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Select</button>
-    </div>
-    <div class="bg-white p-6 rounded shadow text-center">
-      <h3 class="font-semibold mb-2">Commercial Roof Report</h3>
-      <p class="mb-4">$35</p>
-      <button onclick="selectService('Commercial Roof Report',3500)" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Select</button>
-    </div>
+  <div onclick="selectService('Commercial Roof Report',3500)"
+    class="cursor-pointer bg-white rounded-xl p-6 shadow hover:shadow-lg transition text-center">
+    <h3 class="text-xl font-bold text-gray-700">Commercial Roof</h3>
+    <p class="text-purple-600 text-3xl font-bold mt-4">$35</p>
+    <p class="text-gray-500 mt-2">Large-scale projects</p>
+    <button class="mt-6 bg-purple-600 text-white px-6 py-2 rounded-lg">Select</button>
   </div>
 
-  <!-- Step 3 -->
-  <div id="step3" class="step hidden bg-white p-6 rounded shadow">
-    <h3 class="font-bold mb-2">Order Summary</h3>
+</section>
+
+<!-- STEP 3 -->
+<section id="step3" class="hidden fade-enter bg-white p-8 rounded-xl shadow">
+
+  <h2 class="text-2xl font-bold mb-6 text-gray-700">Order Summary</h2>
+
+  <div class="space-y-2 text-gray-800">
     <p><strong>Name:</strong> <span id="summaryName"></span></p>
     <p><strong>Address:</strong> <span id="summaryAddress"></span></p>
     <p><strong>Notes:</strong> <span id="summaryNotes"></span></p>
     <p><strong>Service:</strong> <span id="summaryService"></span></p>
-    <p><strong>Price:</strong> <span id="summaryPrice"></span></p>
-    <label>Upload PDF (Optional):</label>
-    <input type="file" id="pdfUpload" accept=".pdf" class="w-full border p-2 rounded mb-4">
-
-    <button onclick="payStripe()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Pay with Stripe</button>
-    <div id="paypal-button-container" class="mt-2"></div>
+    <p class="text-xl font-bold text-blue-700 mt-4">Total: <span id="summaryPrice"></span></p>
   </div>
 
-  <h3 class="text-xl font-bold mt-8">My Orders</h3>
-  <table class="w-full table-auto border border-gray-300">
-    <thead class="bg-gray-200"><tr><th class="px-4 py-2 border">Service</th><th class="px-4 py-2 border">Amount</th><th class="px-4 py-2 border">Status</th><th class="px-4 py-2 border">PDF</th></tr></thead>
-    <tbody id="clientOrdersBody"></tbody>
-  </table>
-</div>
+  <label class="block mt-6 font-semibold">Upload PDF (optional)</label>
+  <input id="pdfUpload" type="file" accept=".pdf"
+    class="w-full p-3 border rounded-lg mt-2">
+
+  <div class="mt-8 space-y-4">
+    <button onclick="payStripe()"
+      class="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700">
+      Pay with Card
+    </button>
+
+    <div id="paypal-button-container"></div>
+  </div>
+
+</section>
+
 </main>
 
-<!-- ADMIN PANEL -->
-<main id="adminPanel" class="hidden p-6">
-<h2 class="text-2xl font-bold mb-4 text-red-600">Admin Dashboard</h2>
-<table class="w-full table-auto border border-gray-300">
-  <thead class="bg-gray-200"><tr>
-    <th class="border px-4 py-2">Client Name</th>
-    <th class="border px-4 py-2">Service</th>
-    <th class="border px-4 py-2">Amount</th>
-    <th class="border px-4 py-2">Status</th>
-    <th class="border px-4 py-2">PDF Report</th>
-  </tr></thead>
-  <tbody id="adminOrdersBody"></tbody>
-</table>
-</main>
+<!-- FOOTER -->
+<footer class="text-center py-6 text-sm text-gray-500">
+© Remote Roofers · Secure Payments · Professional Reports
+</footer>
+
+<!-- STEP LOGIC -->
+<script>
+function setProgress(step){
+  ["p1","p2","p3"].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.className=`w-10 h-10 mx-auto rounded-full flex items-center justify-center font-bold ${
+      i+1<=step?"bg-blue-600 text-white":"bg-gray-300 text-gray-500"
+    }`;
+  });
+}
+
+function showStep(step){
+  ["step1","step2","step3"].forEach(s=>document.getElementById(s).classList.add("hidden"));
+  document.getElementById(`step${step}`).classList.remove("hidden");
+  setProgress(step);
+}
+</script>
 
 </body>
 </html>
