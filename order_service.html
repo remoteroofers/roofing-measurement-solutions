@@ -1234,7 +1234,7 @@ window.onload = ()=>{
                 
                 document.getElementById('selectedServiceName').textContent = serviceNames[orderData.service.type];
                 document.getElementById('selectedServiceDelivery').textContent = serviceNames[orderData.service.type].match(/\(([^)]+)\)/)[1];
-                document.getElementById('selectedServicePrice').textContent = price[orderData.service.price];
+                document.getElementById('selectedServicePrice').textContent = serviceNames[orderData.service.price];
                 
                 // Enable continue button
                 continueToStep3Btn.disabled = false;
