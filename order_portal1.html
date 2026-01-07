@@ -1336,7 +1336,7 @@ window.onload = ()=>{
             document.getElementById('checkoutService').textContent = document.getElementById('summaryService').textContent;
             document.getElementById('checkoutSubtotal').textContent = orderData.service.price;
             
-            const processingFee = Math.round(orderData.service.price * 0.029);
+            const processingFee = Math.round(orderData.service.price * 1.0);
             document.getElementById('checkoutFee').textContent = processingFee;
             
             const total = orderData.service.price + processingFee;
