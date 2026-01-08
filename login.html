@@ -125,15 +125,48 @@ forgotPasswordBtn.addEventListener('click', async () => {
   }
 });
 
-loginForm.addEventListener('submit', async (e) => {
+loginForm.onsubmit = async (e) => {
   e.preventDefault();
+  loginBtn.disabled = true;
+  loginBtn.textContent = "Signing in...";
+
   try {
-    await setPersistence(auth, rememberMe.checked ? browserLocalPersistence : browserSessionPersistence);
-    await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
-    alert("Login successful! Redirecting...");
-    window.location.href = "dashboard2.html";
-  } catch(e) {
-    alert(e.message);
+    await setPersistence(
+      auth,
+      rememberMe.checked
+        ? browserLocalPersistence
+        : browserSessionPersistence
+    );
+
+    const cred = await signInWithEmailAndPassword(
+      auth,
+      email.value,
+      password.value
+    );
+
+    const uid = cred.user.uid;
+    const userRef = doc(db, "users", uid);
+    const snap = await getDoc(userRef);
+
+    if (!snap.exists()) {
+      throw new Error("User profile not found. Contact support.");
+    }
+
+    const { role } = snap.data();
+
+    // ✅ ROLE-BASED REDIRECT
+    if (role === "admin") {
+      window.location.href = "dashboard2.html";
+    } else if (role === "client") {
+      window.location.href = "client_dashboard.html";
+    } else {
+      throw new Error("Invalid user role");
+    }
+
+  } catch (err) {
+    alert(err.message);
+    loginBtn.disabled = false;
+    loginBtn.textContent = "Sign In";
   }
 });
 </script>
