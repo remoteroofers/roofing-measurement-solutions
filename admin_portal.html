@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - Remote Roofers</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar" data-testid="admin-navbar">
+        <div class="nav-container">
+            <h2>Remote Roofers - Admin</h2>
+            <button class="btn btn-logout" data-testid="admin-logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="portal-container">
+        <div class="portal-header">
+            <h1 data-testid="admin-heading">Admin Dashboard</h1>
+            <p>Manage orders, users, and view analytics</p>
+        </div>
+
+        <!-- Analytics Section -->
+        <div class="analytics-grid" data-testid="analytics-section">
+            <div class="analytics-card">
+                <h3>Total Orders</h3>
+                <p class="analytics-number" id="totalOrders" data-testid="total-orders">0</p>
+            </div>
+            <div class="analytics-card">
+                <h3>Pending Orders</h3>
+                <p class="analytics-number" id="pendingOrders" data-testid="pending-orders">0</p>
+            </div>
+            <div class="analytics-card">
+                <h3>Total Revenue</h3>
+                <p class="analytics-number" id="totalRevenue" data-testid="total-revenue">$0</p>
+            </div>
+            <div class="analytics-card">
+                <h3>Total Users</h3>
+                <p class="analytics-number" id="totalUsers" data-testid="total-users">0</p>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="admin-tabs" data-testid="admin-tabs">
+            <button class="admin-tab active" data-testid="orders-tab" onclick="showAdminTab('orders')">Orders Management</button>
+            <button class="admin-tab" data-testid="users-tab" onclick="showAdminTab('users')">Users Management</button>
+        </div>
+
+        <!-- Orders Management -->
+        <div id="ordersSection" class="admin-section" data-testid="orders-section">
+            <div class="section-header">
+                <h2>All Orders</h2>
+                <div class="filter-group">
+                    <select id="statusFilter" data-testid="status-filter" onchange="filterOrders()">
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+            </div>
+            <div id="ordersTable" data-testid="orders-table" class="table-container"></div>
+        </div>
+
+        <!-- Users Management -->
+        <div id="usersSection" class="admin-section" style="display: none;" data-testid="users-section">
+            <div class="section-header">
+                <h2>All Users</h2>
+            </div>
+            <div id="usersTable" data-testid="users-table" class="table-container"></div>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div id="orderModal" class="modal" data-testid="order-modal">
+        <div class="modal-content">
+            <span class="modal-close" data-testid="modal-close" onclick="closeModal()">&times;</span>
+            <h2>Order Details</h2>
+            <div id="orderDetails" data-testid="order-details-content"></div>
+            <div class="modal-actions">
+                <select id="modalStatus" data-testid="modal-status-select">
+                    <option value="pending">Pending</option>
+                    <option value="processing">Processing</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <button class="btn btn-primary" data-testid="update-status-btn" onclick="updateOrderStatus()">Update Status</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
+            authDomain: "remoteroofers-51826.firebaseapp.com",
+            projectId: "remoteroofers-51826",
+            storageBucket: "remoteroofers-51826.appspot.com",
+            messagingSenderId: "901240361996",
+            appId: "1:901240361996:web:2a209986f74f15618aca29"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let allOrders = [];
+        let allUsers = [];
+        let currentOrderId = null;
+
+        // Check authentication and role
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const userRole = localStorage.getItem('userRole');
+            if (userRole !== 'admin') {
+                window.location.href = 'client_portal.html';
+                return;
+            }
+
+            loadAnalytics();
+            loadAllOrders();
+            loadAllUsers();
+        });
+
+        async function loadAnalytics() {
+            try {
+                // Get all orders
+                const ordersSnapshot = await db.collection('orders').get();
+                const orders = [];
+                ordersSnapshot.forEach(doc => orders.push(doc.data()));
+
+                // Get all users
+                const usersSnapshot = await db.collection('users').get();
+                const users = usersSnapshot.size;
+
+                // Calculate analytics
+                const totalOrders = orders.length;
+                const pendingOrders = orders.filter(o => o.status === 'pending').length;
+                const totalRevenue = orders.reduce((sum, o) => sum + (o.price || 0), 0);
+
+                document.getElementById('totalOrders').textContent = totalOrders;
+                document.getElementById('pendingOrders').textContent = pendingOrders;
+                document.getElementById('totalRevenue').textContent = `$${totalRevenue}`;
+                document.getElementById('totalUsers').textContent = users;
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+            }
+        }
+
+        async function loadAllOrders() {
+            try {
+                const ordersSnapshot = await db.collection('orders').orderBy('createdAt', 'desc').get();
+                allOrders = [];
+                
+                const userPromises = [];
+                ordersSnapshot.forEach(doc => {
+                    const orderData = { id: doc.id, ...doc.data() };
+                    allOrders.push(orderData);
+                    userPromises.push(db.collection('users').doc(orderData.userId).get());
+                });
+
+                const userDocs = await Promise.all(userPromises);
+                allOrders.forEach((order, index) => {
+                    if (userDocs[index].exists) {
+                        order.userName = userDocs[index].data().name;
+                        order.userEmail = userDocs[index].data().email;
+                    }
+                });
+
+                displayOrders(allOrders);
+            } catch (error) {
+                console.error('Error loading orders:', error);
+            }
+        }
+
+        function displayOrders(orders) {
+            const ordersTable = document.getElementById('ordersTable');
+            
+            if (orders.length === 0) {
+                ordersTable.innerHTML = '<p class="no-data">No orders found.</p>';
+                return;
+            }
+
+            let tableHTML = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Report Type</th>
+                            <th>Service Tier</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            orders.forEach(order => {
+                const statusClass = order.status === 'completed' ? 'status-completed' : 
+                                   order.status === 'processing' ? 'status-processing' : 'status-pending';
+                const date = order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+                
+                tableHTML += `
+                    <tr data-testid="order-row-${order.id}">
+                        <td>${order.id.substring(0, 8)}...</td>
+                        <td>${order.userName || 'Unknown'}</td>
+                        <td>${order.reportType}</td>
+                        <td>${order.serviceTier}</td>
+                        <td>$${order.price}</td>
+                        <td><span class="status-badge ${statusClass}">${order.status}</span></td>
+                        <td>${date}</td>
+                        <td><button class="btn btn-sm" data-testid="view-order-btn-${order.id}" onclick="viewOrder('${order.id}')">View</button></td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += '</tbody></table>';
+            ordersTable.innerHTML = tableHTML;
+        }
+
+        function filterOrders() {
+            const status = document.getElementById('statusFilter').value;
+            if (status === 'all') {
+                displayOrders(allOrders);
+            } else {
+                const filtered = allOrders.filter(o => o.status === status);
+                displayOrders(filtered);
+            }
+        }
+
+        function viewOrder(orderId) {
+            const order = allOrders.find(o => o.id === orderId);
+            if (!order) return;
+
+            currentOrderId = orderId;
+            const date = order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleString() : 'N/A';
+
+            document.getElementById('orderDetails').innerHTML = `
+                <p><strong>Order ID:</strong> ${order.id}</p>
+                <p><strong>Customer:</strong> ${order.userName} (${order.userEmail})</p>
+                <p><strong>Report Type:</strong> ${order.reportType}</p>
+                <p><strong>Service Tier:</strong> ${order.serviceTier}</p>
+                <p><strong>Price:</strong> $${order.price}</p>
+                <p><strong>Payment ID:</strong> ${order.paymentId || 'N/A'}</p>
+                <p><strong>Notes:</strong> ${order.notes || 'None'}</p>
+                <p><strong>Date:</strong> ${date}</p>
+            `;
+
+            document.getElementById('modalStatus').value = order.status;
+            document.getElementById('orderModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('orderModal').style.display = 'none';
+            currentOrderId = null;
+        }
+
+        async function updateOrderStatus() {
+            if (!currentOrderId) return;
+
+            const newStatus = document.getElementById('modalStatus').value;
+            
+            try {
+                await db.collection('orders').doc(currentOrderId).update({
+                    status: newStatus
+                });
+
+                alert('Order status updated successfully!');
+                closeModal();
+                loadAnalytics();
+                loadAllOrders();
+            } catch (error) {
+                alert('Error updating order: ' + error.message);
+            }
+        }
+
+        async function loadAllUsers() {
+            try {
+                const usersSnapshot = await db.collection('users').get();
+                allUsers = [];
+                usersSnapshot.forEach(doc => {
+                    allUsers.push({ id: doc.id, ...doc.data() });
+                });
+                displayUsers(allUsers);
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        function displayUsers(users) {
+            const usersTable = document.getElementById('usersTable');
+            
+            if (users.length === 0) {
+                usersTable.innerHTML = '<p class="no-data">No users found.</p>';
+                return;
+            }
+
+            let tableHTML = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Role</th>
+                            <th>Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            users.forEach(user => {
+                const date = user.createdAt ? new Date(user.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+                
+                tableHTML += `
+                    <tr data-testid="user-row-${user.id}">
+                        <td>${user.name || 'N/A'}</td>
+                        <td>${user.email}</td>
+                        <td>${user.phone || 'N/A'}</td>
+                        <td>${user.address || 'N/A'}</td>
+                        <td><span class="role-badge">${user.role || 'client'}</span></td>
+                        <td>${date}</td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += '</tbody></table>';
+            usersTable.innerHTML = tableHTML;
+        }
+
+        function showAdminTab(tab) {
+            const tabs = document.querySelectorAll('.admin-tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            if (tab === 'orders') {
+                tabs[0].classList.add('active');
+                document.getElementById('ordersSection').style.display = 'block';
+                document.getElementById('usersSection').style.display = 'none';
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('ordersSection').style.display = 'none';
+                document.getElementById('usersSection').style.display = 'block';
+            }
+        }
+
+        function logout() {
+            auth.signOut();
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userRole');
+            window.location.href = 'login.html';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('orderModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
