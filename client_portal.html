@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Portal - Remote Roofers</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar" data-testid="navbar">
+        <div class="nav-container">
+            <h2>Remote Roofers</h2>
+            <button class="btn btn-logout" data-testid="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="portal-container">
+        <div class="portal-header">
+            <h1 data-testid="welcome-heading">Welcome Back!</h1>
+            <p>Manage your profile and orders</p>
+        </div>
+
+        <div class="profile-section">
+            <div class="section-header">
+                <h2>Profile Information</h2>
+                <button class="btn btn-secondary" data-testid="edit-profile-btn" id="editBtn" onclick="toggleEdit()">Edit Profile</button>
+            </div>
+
+            <form id="profileForm" data-testid="profile-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="profileName">Full Name</label>
+                        <input type="text" id="profileName" data-testid="profile-name" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="profileEmail">Email Address</label>
+                        <input type="email" id="profileEmail" data-testid="profile-email" disabled>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="profilePhone">Phone Number</label>
+                        <input type="tel" id="profilePhone" data-testid="profile-phone" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="profileAddress">Address</label>
+                        <input type="text" id="profileAddress" data-testid="profile-address" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="propertyDetails">Property Details</label>
+                    <textarea id="propertyDetails" data-testid="property-details" rows="4" placeholder="Enter property details..." disabled></textarea>
+                </div>
+
+                <div id="editActions" style="display: none;">
+                    <button type="submit" class="btn btn-primary" data-testid="save-profile-btn">Save Changes</button>
+                    <button type="button" class="btn btn-outline" data-testid="cancel-edit-btn" onclick="cancelEdit()">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="action-section">
+            <div class="action-card" data-testid="order-card">
+                <h3>Need Roof Measurements?</h3>
+                <p>Get accurate aerial or residential roof reports with fast turnaround times.</p>
+                <a href="order_portal.html" class="btn btn-primary" data-testid="make-order-btn">Make an Order</a>
+            </div>
+        </div>
+
+        <div class="orders-section">
+            <h2>Your Recent Orders</h2>
+            <div id="ordersList" data-testid="orders-list" class="orders-grid"></div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
+            authDomain: "remoteroofers-51826.firebaseapp.com",
+            projectId: "remoteroofers-51826",
+            storageBucket: "remoteroofers-51826.appspot.com",
+            messagingSenderId: "901240361996",
+            appId: "1:901240361996:web:2a209986f74f15618aca29"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let originalData = {};
+        let isEditing = false;
+
+        // Check authentication
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const userId = localStorage.getItem('userId');
+            const userRole = localStorage.getItem('userRole');
+
+            if (userRole === 'admin') {
+                window.location.href = 'admin_portal.html';
+                return;
+            }
+
+            loadUserProfile(userId);
+            loadUserOrders(userId);
+        });
+
+        async function loadUserProfile(userId) {
+            try {
+                const userDoc = await db.collection('users').doc(userId).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    originalData = userData;
+                    
+                    document.getElementById('profileName').value = userData.name || '';
+                    document.getElementById('profileEmail').value = userData.email || '';
+                    document.getElementById('profilePhone').value = userData.phone || '';
+                    document.getElementById('profileAddress').value = userData.address || '';
+                    document.getElementById('propertyDetails').value = userData.propertyDetails || '';
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        async function loadUserOrders(userId) {
+            try {
+                const ordersSnapshot = await db.collection('orders')
+                    .where('userId', '==', userId)
+                    .orderBy('createdAt', 'desc')
+                    .limit(5)
+                    .get();
+
+                const ordersList = document.getElementById('ordersList');
+                if (ordersSnapshot.empty) {
+                    ordersList.innerHTML = '<p class="no-data">No orders yet. Start by creating your first order!</p>';
+                    return;
+                }
+
+                let ordersHTML = '';
+                ordersSnapshot.forEach(doc => {
+                    const order = doc.data();
+                    const statusClass = order.status === 'completed' ? 'status-completed' : 
+                                       order.status === 'processing' ? 'status-processing' : 'status-pending';
+                    
+                    ordersHTML += `
+                        <div class="order-card" data-testid="order-item-${doc.id}">
+                            <div class="order-header">
+                                <h4>${order.reportType}</h4>
+                                <span class="status-badge ${statusClass}" data-testid="order-status">${order.status}</span>
+                            </div>
+                            <p><strong>Service:</strong> ${order.serviceTier}</p>
+                            <p><strong>Price:</strong> $${order.price}</p>
+                            <p><strong>Date:</strong> ${order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
+                        </div>
+                    `;
+                });
+                ordersList.innerHTML = ordersHTML;
+            } catch (error) {
+                console.error('Error loading orders:', error);
+            }
+        }
+
+        function toggleEdit() {
+            isEditing = true;
+            document.getElementById('profileName').disabled = false;
+            document.getElementById('profilePhone').disabled = false;
+            document.getElementById('profileAddress').disabled = false;
+            document.getElementById('propertyDetails').disabled = false;
+            document.getElementById('editBtn').style.display = 'none';
+            document.getElementById('editActions').style.display = 'block';
+        }
+
+        function cancelEdit() {
+            isEditing = false;
+            document.getElementById('profileName').value = originalData.name || '';
+            document.getElementById('profilePhone').value = originalData.phone || '';
+            document.getElementById('profileAddress').value = originalData.address || '';
+            document.getElementById('propertyDetails').value = originalData.propertyDetails || '';
+            
+            document.getElementById('profileName').disabled = true;
+            document.getElementById('profilePhone').disabled = true;
+            document.getElementById('profileAddress').disabled = true;
+            document.getElementById('propertyDetails').disabled = true;
+            document.getElementById('editBtn').style.display = 'block';
+            document.getElementById('editActions').style.display = 'none';
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userId = localStorage.getItem('userId');
+            
+            try {
+                await db.collection('users').doc(userId).update({
+                    name: document.getElementById('profileName').value,
+                    phone: document.getElementById('profilePhone').value,
+                    address: document.getElementById('profileAddress').value,
+                    propertyDetails: document.getElementById('propertyDetails').value
+                });
+                
+                alert('Profile updated successfully!');
+                cancelEdit();
+                loadUserProfile(userId);
+            } catch (error) {
+                alert('Error updating profile: ' + error.message);
+            }
+        });
+
+        function logout() {
+            auth.signOut();
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userRole');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
