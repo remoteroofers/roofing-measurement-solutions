@@ -1,168 +1,1063 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Dashboard | Roofing Measurement Solutions</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin Dashboard - Manage roofing orders, pricing, and service tracking">
+    <title>Admin Dashboard | RoofMetrics Pro</title>
+    <link rel="stylesheet" href="../css/main.css">
+  
+  <script type="module" async src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Froofingor6285back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.12"></script>
+  <script type="module" defer src="https://static.rocket.new/rocket-shot.js?v=0.0.2"></script>
+  </head>
+<body class="bg-background min-h-screen">
+    
+<!-- Admin Header -->
+<header class="bg-surface border-b border-border-light shadow-custom-sm sticky top-0 z-dropdown">
+    <div class="container-custom">
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-3">
+                <svg class="w-10 h-10" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 4L4 14V26L20 36L36 26V14L20 4Z" fill="#1E3A5F"/>
+                    <path d="M20 12L12 17V27L20 32L28 27V17L20 12Z" fill="#4A90A4"/>
+                    <path d="M20 18L16 20.5V25.5L20 28L24 25.5V20.5L20 18Z" fill="#E67E22"/>
+                </svg>
+                <div>
+                    <h1 class="text-xl font-heading font-bold text-primary">RoofMetrics Pro</h1>
+                    <p class="text-xs text-text-secondary">Admin Dashboard</p>
+                </div>
+            </div>
+            
+            <!-- Admin Actions -->
+            <div class="flex items-center gap-4">
+                <div class="hidden md:flex items-center gap-2 px-3 py-2 bg-primary/10 rounded-lg">
+                    <svg class="w-5 h-5 text-secondary" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="text-sm font-medium text-primary">Admin User</span>
+                </div>
+                <button onclick="refreshDashboard()" class="btn btn-outline flex items-center gap-2 text-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    <span class="hidden md:inline">Refresh</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
+<!-- Main Dashboard Content -->
+<main class="container-custom py-6 lg:py-8">
+    
+    <!-- Dashboard Header -->
+    <div class="mb-6 lg:mb-8">
+        <h2 class="text-3xl lg:text-4xl font-heading font-bold text-primary mb-2">Admin Dashboard</h2>
+        <p class="text-text-secondary text-base lg:text-lg">Monitor orders, manage pricing, and track service delivery</p>
+    </div>
 
-  <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <!-- KPI Cards -->
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
+        <!-- Total Orders -->
+        <div class="card-elevated">
+            <div class="flex items-start justify-between mb-3">
+                <div class="p-3 bg-primary/10 rounded-lg">
+                    <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                </div>
+                <span class="badge bg-primary-100 text-primary-700 text-xs">All Time</span>
+            </div>
+            <h3 class="text-3xl font-heading font-bold text-primary mb-1" id="total-orders">0</h3>
+            <p class="text-sm text-text-secondary">Total Orders</p>
+        </div>
 
-    // 🔥 REPLACE WITH YOUR FIREBASE CONFIG
-    const firebaseConfig = {
-    apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
-    authDomain: "remoteroofers-51826.firebaseapp.com",
-    projectId: "remoteroofers-51826",
-    storageBucket: "remoteroofers-51826.firebasestorage.app",
-    messagingSenderId: "901240361996",
-    appId: "1:901240361996:web:2a209986f74f15618aca29",
-    measurementId: "G-XGZ0MZ97BD"
-    };
+        <!-- Total Revenue -->
+        <div class="card-elevated">
+            <div class="flex items-start justify-between mb-3">
+                <div class="p-3 bg-success/10 rounded-lg">
+                    <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <span class="badge bg-success-100 text-success-700 text-xs">Revenue</span>
+            </div>
+            <h3 class="text-3xl font-heading font-bold text-success mb-1" id="total-revenue">$0</h3>
+            <p class="text-sm text-text-secondary">Total Revenue</p>
+        </div>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+        <!-- Processing Orders -->
+        <div class="card-elevated">
+            <div class="flex items-start justify-between mb-3">
+                <div class="p-3 bg-accent/10 rounded-lg">
+                    <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <span class="badge bg-accent-100 text-accent-700 text-xs">Active</span>
+            </div>
+            <h3 class="text-3xl font-heading font-bold text-accent mb-1" id="processing-orders">0</h3>
+            <p class="text-sm text-text-secondary">Processing Orders</p>
+        </div>
 
-    window.logout = async function () {
-      await signOut(auth);
-      window.location.href = "login.html";
-    };
+        <!-- Completion Rate -->
+        <div class="card-elevated">
+            <div class="flex items-start justify-between mb-3">
+                <div class="p-3 bg-secondary/10 rounded-lg">
+                    <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                </div>
+                <span class="badge bg-secondary-100 text-secondary-700 text-xs">Rate</span>
+            </div>
+            <h3 class="text-3xl font-heading font-bold text-secondary mb-1" id="completion-rate">0%</h3>
+            <p class="text-sm text-text-secondary">Completion Rate</p>
+        </div>
+    </div>
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        window.location.href = "login.html";
+    <!-- Tab Navigation -->
+    <div class="card-elevated mb-6">
+        <div class="border-b border-border-light">
+            <nav class="flex gap-4 overflow-x-auto" id="tab-navigation">
+                <button onclick="switchTab('orders')" class="tab-button active" data-tab="orders">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Order Management
+                </button>
+                <button onclick="switchTab('pricing')" class="tab-button" data-tab="pricing">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Pricing Management
+                </button>
+                <button onclick="switchTab('tracking')" class="tab-button" data-tab="tracking">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                    Service Tracking
+                </button>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Tab Content Container -->
+    <div id="tab-content">
+        
+        <!-- Order Management Tab -->
+        <div id="orders-tab" class="tab-content active">
+            <!-- Search and Filter -->
+            <div class="card-elevated mb-6">
+                <div class="grid md:grid-cols-4 gap-4">
+                    <!-- Search Bar -->
+                    <div class="md:col-span-2">
+                        <label for="admin-search-orders" class="label">Search Orders</label>
+                        <div class="relative">
+                            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            <input 
+                                type="text" 
+                                id="admin-search-orders" 
+                                class="input w-full pl-10" 
+                                placeholder="Search by order ref, customer, or address..."
+                                oninput="filterAdminOrders()"
+                            >
+                        </div>
+                    </div>
+                    
+                    <!-- Status Filter -->
+                    <div>
+                        <label for="admin-status-filter" class="label">Status</label>
+                        <select id="admin-status-filter" class="input w-full" onchange="filterAdminOrders()">
+                            <option value="all">All Statuses</option>
+                            <option value="received">Received</option>
+                            <option value="processing">Processing</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="delivered">Delivered</option>
+                        </select>
+                    </div>
+
+                    <!-- Service Type Filter -->
+                    <div>
+                        <label for="admin-service-filter" class="label">Service Type</label>
+                        <select id="admin-service-filter" class="input w-full" onchange="filterAdminOrders()">
+                            <option value="all">All Services</option>
+                            <option value="aerial">Aerial Report</option>
+                            <option value="residential">Residential Report</option>
+                            <option value="commercial">Commercial Report</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="card-elevated overflow-x-auto">
+                <table class="w-full" id="orders-table">
+                    <thead class="bg-primary/5 border-b border-border-light">
+                        <tr>
+                            <th class="text-left p-4 text-sm font-semibold text-primary">Order ID</th>
+                            <th class="text-left p-4 text-sm font-semibold text-primary">Customer</th>
+                            <th class="text-left p-4 text-sm font-semibold text-primary">Property</th>
+                            <th class="text-left p-4 text-sm font-semibold text-primary">Service Type</th>
+                            <th class="text-left p-4 text-sm font-semibold text-primary">Status</th>
+                            <th class="text-left p-4 text-sm font-semibold text-primary">Amount</th>
+                            <th class="text-left p-4 text-sm font-semibold text-primary">Date</th>
+                            <th class="text-left p-4 text-sm font-semibold text-primary">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table-body">
+                        <!-- Orders will be dynamically inserted here -->
+                    </tbody>
+                </table>
+                
+                <!-- Empty State -->
+                <div id="orders-empty-state" class="hidden text-center py-12">
+                    <svg class="w-24 h-24 mx-auto text-text-tertiary mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <h3 class="text-xl font-heading font-semibold text-primary mb-2">No Orders Found</h3>
+                    <p class="text-text-secondary">No orders match your current filters.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Management Tab -->
+        <div id="pricing-tab" class="tab-content hidden">
+            <div class="grid lg:grid-cols-3 gap-6">
+                
+                <!-- Aerial Report Pricing -->
+                <div class="card-elevated">
+                    <div class="border-b border-border-light pb-4 mb-6">
+                        <h3 class="text-xl font-heading font-semibold text-primary mb-1">Aerial Square Report</h3>
+                        <p class="text-sm text-text-secondary">Basic aerial measurement pricing</p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="label">Standard Service</label>
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg font-semibold text-text-secondary">$</span>
+                                <input 
+                                    type="number" 
+                                    id="aerial-standard" 
+                                    class="input flex-1" 
+                                    value="10"
+                                    min="5"
+                                    step="1"
+                                >
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="label">Express Service</label>
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg font-semibold text-text-secondary">$</span>
+                                <input 
+                                    type="number" 
+                                    id="aerial-express" 
+                                    class="input flex-1" 
+                                    value="20"
+                                    min="10"
+                                    step="1"
+                                >
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="label">Rush Service</label>
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg font-semibold text-text-secondary">$</span>
+                                <input 
+                                    type="number" 
+                                    id="aerial-rush" 
+                                    class="input flex-1" 
+                                    value="30"
+                                    min="15"
+                                    step="1"
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Residential Report Pricing -->
+                <div class="card-elevated">
+                    <div class="border-b border-border-light pb-4 mb-6">
+                        <h3 class="text-xl font-heading font-semibold text-primary mb-1">Residential Roof Report</h3>
+                        <p class="text-sm text-text-secondary">Comprehensive residential pricing</p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="label">Standard Service</label>
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg font-semibold text-text-secondary">$</span>
+                                <input 
+                                    type="number" 
+                                    id="residential-standard" 
+                                    class="input flex-1" 
+                                    value="17"
+                                    min="10"
+                                    step="1"
+                                >
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="label">Express Service</label>
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg font-semibold text-text-secondary">$</span>
+                                <input 
+                                    type="number" 
+                                    id="residential-express" 
+                                    class="input flex-1" 
+                                    value="25"
+                                    min="15"
+                                    step="1"
+                                >
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="label">Rush Service</label>
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg font-semibold text-text-secondary">$</span>
+                                <input 
+                                    type="number" 
+                                    id="residential-rush" 
+                                    class="input flex-1" 
+                                    value="30"
+                                    min="20"
+                                    step="1"
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Commercial Report Pricing -->
+                <div class="card-elevated">
+                    <div class="border-b border-border-light pb-4 mb-6">
+                        <h3 class="text-xl font-heading font-semibold text-primary mb-1">Commercial Roof Report</h3>
+                        <p class="text-sm text-text-secondary">Advanced commercial pricing</p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="label">Standard Service</label>
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg font-semibold text-text-secondary">$</span>
+                                <input 
+                                    type="number" 
+                                    id="commercial-standard" 
+                                    class="input flex-1" 
+                                    value="30"
+                                    min="20"
+                                    step="1"
+                                >
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="label">Express Service</label>
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg font-semibold text-text-secondary">$</span>
+                                <input 
+                                    type="number" 
+                                    id="commercial-express" 
+                                    class="input flex-1" 
+                                    value="35"
+                                    min="25"
+                                    step="1"
+                                >
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="label">Rush Service</label>
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg font-semibold text-text-secondary">$</span>
+                                <input 
+                                    type="number" 
+                                    id="commercial-rush" 
+                                    class="input flex-1" 
+                                    value="45"
+                                    min="30"
+                                    step="1"
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Pricing Button -->
+            <div class="mt-6 flex justify-center">
+                <button onclick="savePricingChanges()" class="btn btn-primary btn-lg flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    Save Pricing Changes
+                </button>
+            </div>
+
+            <!-- Pricing Preview -->
+            <div class="card-elevated mt-6 bg-primary/5">
+                <h4 class="text-lg font-heading font-semibold text-primary mb-4">Current Pricing Summary</h4>
+                <div class="grid md:grid-cols-3 gap-4" id="pricing-summary">
+                    <!-- Pricing summary will be dynamically generated -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Tracking Tab -->
+        <div id="tracking-tab" class="tab-content hidden">
+            
+            <!-- Kanban Board -->
+            <div class="grid lg:grid-cols-4 gap-4 mb-6">
+                
+                <!-- Received Column -->
+                <div class="card bg-background/50 border-2 border-border-light">
+                    <div class="border-b border-border-light pb-3 mb-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-heading font-semibold text-primary">Received</h3>
+                            <span class="badge bg-primary-100 text-primary-700" id="received-count">0</span>
+                        </div>
+                        <p class="text-xs text-text-secondary mt-1">New orders awaiting review</p>
+                    </div>
+                    <div id="received-column" class="space-y-3 min-h-[300px]">
+                        <!-- Orders will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <!-- Processing Column -->
+                <div class="card bg-background/50 border-2 border-border-light">
+                    <div class="border-b border-border-light pb-3 mb-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-heading font-semibold text-accent">Processing</h3>
+                            <span class="badge bg-accent-100 text-accent-700" id="processing-count">0</span>
+                        </div>
+                        <p class="text-xs text-text-secondary mt-1">Orders being reviewed</p>
+                    </div>
+                    <div id="processing-column" class="space-y-3 min-h-[300px]">
+                        <!-- Orders will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <!-- In Progress Column -->
+                <div class="card bg-background/50 border-2 border-border-light">
+                    <div class="border-b border-border-light pb-3 mb-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-heading font-semibold text-secondary">In Progress</h3>
+                            <span class="badge bg-secondary-100 text-secondary-700" id="in-progress-count">0</span>
+                        </div>
+                        <p class="text-xs text-text-secondary mt-1">Reports being created</p>
+                    </div>
+                    <div id="in-progress-column" class="space-y-3 min-h-[300px]">
+                        <!-- Orders will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <!-- Completed Column -->
+                <div class="card bg-background/50 border-2 border-border-light">
+                    <div class="border-b border-border-light pb-3 mb-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-heading font-semibold text-success">Completed</h3>
+                            <span class="badge bg-success-100 text-success-700" id="completed-count">0</span>
+                        </div>
+                        <p class="text-xs text-text-secondary mt-1">Reports ready for delivery</p>
+                    </div>
+                    <div id="completed-column" class="space-y-3 min-h-[300px]">
+                        <!-- Orders will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tracking Info -->
+            <div class="card-elevated bg-primary/5">
+                <h4 class="text-lg font-heading font-semibold text-primary mb-4">Service Tracking Guide</h4>
+                <div class="grid md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-3 h-3 rounded-full bg-primary"></div>
+                            <span class="font-semibold text-primary">Received</span>
+                        </div>
+                        <p class="text-text-secondary">Order submitted and payment confirmed. Awaiting assignment to processing team.</p>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-3 h-3 rounded-full bg-accent"></div>
+                            <span class="font-semibold text-accent">Processing</span>
+                        </div>
+                        <p class="text-text-secondary">Order details being reviewed. Property verification and imagery acquisition in progress.</p>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-3 h-3 rounded-full bg-secondary"></div>
+                            <span class="font-semibold text-secondary">In Progress</span>
+                        </div>
+                        <p class="text-text-secondary">Measurement report being created. Technical analysis and documentation underway.</p>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-3 h-3 rounded-full bg-success"></div>
+                            <span class="font-semibold text-success">Completed</span>
+                        </div>
+                        <p class="text-text-secondary">Report completed and quality checked. Ready for delivery to customer.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-surface border-t border-border-light mt-12">
+    <div class="container-custom py-8">
+        <div class="text-center text-sm text-text-secondary">
+            <p>© 2026 RoofMetrics Pro Admin Dashboard. All Rights Reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Order Details Modal -->
+<div id="order-details-modal" class="fixed inset-0 bg-black/50 z-modal hidden flex items-center justify-center p-4">
+    <div class="bg-surface rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-surface border-b border-border-light p-6 flex items-center justify-between">
+            <h3 class="text-2xl font-heading font-bold text-primary">Order Details</h3>
+            <button onclick="closeOrderModal()" class="text-text-tertiary hover:text-primary transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <div id="order-details-content" class="p-6">
+            <!-- Order details will be dynamically inserted here -->
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+// Admin Pricing Configuration (stored in localStorage)
+const PRICING_STORAGE_KEY = 'adminPricingConfig';
+
+// Default pricing configuration
+let pricingConfig = {
+    aerial: { standard: 10, express: 20, rush: 30 },
+    residential: { standard: 17, express: 25, rush: 30 },
+    commercial: { standard: 30, express: 35, rush: 45 }
+};
+
+// Initialize dashboard on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadPricingConfig();
+    updateKPICards();
+    loadOrdersTable();
+    updatePricingSummary();
+    loadServiceTracking();
+});
+
+// Load pricing configuration from localStorage
+function loadPricingConfig() {
+    const stored = localStorage.getItem(PRICING_STORAGE_KEY);
+    if (stored) {
+        pricingConfig = JSON.parse(stored);
+    }
+    
+    // Update input fields
+    document.getElementById('aerial-standard').value = pricingConfig.aerial.standard;
+    document.getElementById('aerial-express').value = pricingConfig.aerial.express;
+    document.getElementById('aerial-rush').value = pricingConfig.aerial.rush;
+    
+    document.getElementById('residential-standard').value = pricingConfig.residential.standard;
+    document.getElementById('residential-express').value = pricingConfig.residential.express;
+    document.getElementById('residential-rush').value = pricingConfig.residential.rush;
+    
+    document.getElementById('commercial-standard').value = pricingConfig.commercial.standard;
+    document.getElementById('commercial-express').value = pricingConfig.commercial.express;
+    document.getElementById('commercial-rush').value = pricingConfig.commercial.rush;
+}
+
+// Save pricing changes
+function savePricingChanges() {
+    // Collect values from inputs
+    pricingConfig.aerial.standard = parseFloat(document.getElementById('aerial-standard').value);
+    pricingConfig.aerial.express = parseFloat(document.getElementById('aerial-express').value);
+    pricingConfig.aerial.rush = parseFloat(document.getElementById('aerial-rush').value);
+    
+    pricingConfig.residential.standard = parseFloat(document.getElementById('residential-standard').value);
+    pricingConfig.residential.express = parseFloat(document.getElementById('residential-express').value);
+    pricingConfig.residential.rush = parseFloat(document.getElementById('residential-rush').value);
+    
+    pricingConfig.commercial.standard = parseFloat(document.getElementById('commercial-standard').value);
+    pricingConfig.commercial.express = parseFloat(document.getElementById('commercial-express').value);
+    pricingConfig.commercial.rush = parseFloat(document.getElementById('commercial-rush').value);
+    
+    // Save to localStorage
+    localStorage.setItem(PRICING_STORAGE_KEY, JSON.stringify(pricingConfig));
+    
+    // Update pricing summary
+    updatePricingSummary();
+    
+    // Show success message
+    alert('Pricing changes saved successfully! The new pricing will be applied to all new orders.');
+}
+
+// Update pricing summary
+function updatePricingSummary() {
+    const summaryContainer = document.getElementById('pricing-summary');
+    
+    const reportTypes = [
+        { key: 'aerial', name: 'Aerial Square Report', color: 'primary' },
+        { key: 'residential', name: 'Residential Report', color: 'secondary' },
+        { key: 'commercial', name: 'Commercial Report', color: 'accent' }
+    ];
+    
+    summaryContainer.innerHTML = reportTypes.map(type => `
+        <div class="p-4 bg-surface rounded-lg border border-border-light">
+            <h5 class="text-sm font-semibold text-${type.color} mb-3">${type.name}</h5>
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-text-secondary">Standard:</span>
+                    <span class="font-semibold text-primary">${formatCurrency(pricingConfig[type.key].standard)}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-text-secondary">Express:</span>
+                    <span class="font-semibold text-primary">${formatCurrency(pricingConfig[type.key].express)}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-text-secondary">Rush:</span>
+                    <span class="font-semibold text-primary">${formatCurrency(pricingConfig[type.key].rush)}</span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Get all orders from localStorage
+function getOrderHistory() {
+    const orders = localStorage.getItem('roofingOrders');
+    return orders ? JSON.parse(orders) : [];
+}
+
+// Update KPI Cards
+function updateKPICards() {
+    const orders = getOrderHistory();
+    
+    // Total Orders
+    document.getElementById('total-orders').textContent = orders.length;
+    
+    // Total Revenue
+    const totalRevenue = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
+    document.getElementById('total-revenue').textContent = formatCurrency(totalRevenue);
+    
+    // Processing Orders
+    const processingCount = orders.filter(o => o.status === 'processing' || o.status === 'in-progress').length;
+    document.getElementById('processing-orders').textContent = processingCount;
+    
+    // Completion Rate
+    const completedCount = orders.filter(o => o.status === 'completed' || o.status === 'delivered').length;
+    const completionRate = orders.length > 0 ? Math.round((completedCount / orders.length) * 100) : 0;
+    document.getElementById('completion-rate').textContent = completionRate + '%';
+}
+
+// Load orders table
+function loadOrdersTable() {
+    const orders = getOrderHistory();
+    const tbody = document.getElementById('orders-table-body');
+    const emptyState = document.getElementById('orders-empty-state');
+    
+    if (orders.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.classList.remove('hidden');
         return;
-      }
+    }
+    
+    emptyState.classList.add('hidden');
+    tbody.innerHTML = orders.map(order => createOrderRow(order)).join('');
+}
 
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      if (!userDoc.exists()) return;
-
-      const data = userDoc.data();
-      document.getElementById("userName").textContent =
-        `${data.firstName} ${data.lastName}`;
-
-      if (data.role === "admin") {
-        document.getElementById("adminPanel").classList.remove("hidden");
-      } else {
-        document.getElementById("clientPanel").classList.remove("hidden");
-      }
+// Create order table row
+function createOrderRow(order) {
+    const statusColors = {
+        'received': 'bg-primary-100 text-primary-700',
+        'processing': 'bg-accent-100 text-accent-700',
+        'in-progress': 'bg-secondary-100 text-secondary-700',
+        'completed': 'bg-success-100 text-success-700',
+        'delivered': 'bg-primary-100 text-primary-700'
+    };
+    
+    const currentStatus = order.status || 'processing';
+    const orderDate = new Date(order.orderDate).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
     });
-  </script>
-</head>
+    
+    return `
+        <tr class="border-b border-border-light hover:bg-primary/5 transition-colors">
+            <td class="p-4">
+                <span class="font-mono text-sm font-semibold text-primary">${order.orderReference}</span>
+            </td>
+            <td class="p-4">
+                <div class="text-sm">
+                    <p class="font-medium text-primary">${order.formData.contactName}</p>
+                    <p class="text-text-secondary text-xs">${order.formData.contactEmail}</p>
+                </div>
+            </td>
+            <td class="p-4">
+                <div class="text-sm text-text-secondary">
+                    <p>${order.formData.propertyAddress}</p>
+                    <p class="text-xs">${order.formData.city}, ${order.formData.state}</p>
+                </div>
+            </td>
+            <td class="p-4">
+                <span class="text-sm capitalize font-medium text-primary">${order.reportType}</span>
+                <span class="text-xs text-text-tertiary block">${order.serviceTier} tier</span>
+            </td>
+            <td class="p-4">
+                <span class="badge ${statusColors[currentStatus]} text-xs capitalize">${currentStatus.replace('-', ' ')}</span>
+            </td>
+            <td class="p-4">
+                <span class="text-sm font-bold text-success">${formatCurrency(order.totalPrice)}</span>
+            </td>
+            <td class="p-4">
+                <span class="text-sm text-text-secondary">${orderDate}</span>
+            </td>
+            <td class="p-4">
+                <div class="flex gap-2">
+                    <button onclick='viewOrderDetails(${JSON.stringify(order).replace(/'/g, "&#39;")})' class="btn btn-sm btn-secondary">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                    </button>
+                    <button onclick="updateOrderStatus('${order.id}')" class="btn btn-sm btn-primary">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `;
+}
 
-<body class="bg-gray-100 min-h-screen">
+// Filter admin orders
+function filterAdminOrders() {
+    const searchQuery = document.getElementById('admin-search-orders').value.toLowerCase();
+    const statusFilter = document.getElementById('admin-status-filter').value;
+    const serviceFilter = document.getElementById('admin-service-filter').value;
+    
+    const orders = getOrderHistory();
+    
+    const filteredOrders = orders.filter(order => {
+        // Status filter
+        if (statusFilter !== 'all' && order.status !== statusFilter) {
+            return false;
+        }
+        
+        // Service type filter
+        if (serviceFilter !== 'all' && order.reportType !== serviceFilter) {
+            return false;
+        }
+        
+        // Search filter
+        if (searchQuery) {
+            const searchableText = `
+                ${order.orderReference}
+                ${order.formData.contactName}
+                ${order.formData.contactEmail}
+                ${order.formData.propertyAddress}
+                ${order.formData.city}
+            `.toLowerCase();
+            
+            if (!searchableText.includes(searchQuery)) {
+                return false;
+            }
+        }
+        
+        return true;
+    });
+    
+    const tbody = document.getElementById('orders-table-body');
+    const emptyState = document.getElementById('orders-empty-state');
+    
+    if (filteredOrders.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.classList.remove('hidden');
+    } else {
+        emptyState.classList.add('hidden');
+        tbody.innerHTML = filteredOrders.map(order => createOrderRow(order)).join('');
+    }
+}
 
-  <!-- Header -->
-  <header class="bg-white shadow px-6 py-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold">Roofing Measurement Dashboard</h1>
-    <div class="flex items-center gap-4">
-      <span id="userName" class="font-semibold"></span>
-      <button onclick="logout()"
-        class="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700">
-        Logout
-      </button>
-    </div>
-  </header>
+// View order details in modal
+function viewOrderDetails(order) {
+    const modal = document.getElementById('order-details-modal');
+    const content = document.getElementById('order-details-content');
+    
+    const orderDate = new Date(order.orderDate).toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    });
+    
+    content.innerHTML = `
+        <div class="space-y-6">
+            <!-- Order Header -->
+            <div class="bg-primary/5 rounded-lg p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm text-text-tertiary">Order Reference</span>
+                    <span class="font-mono font-bold text-lg text-primary">${order.orderReference}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-text-tertiary">Order Date</span>
+                    <span class="text-sm font-medium text-primary">${orderDate}</span>
+                </div>
+            </div>
 
-  <!-- CLIENT DASHBOARD -->
-  <main id="clientPanel" class="hidden p-6">
-    <h2 class="text-2xl font-bold mb-4">Client Dashboard</h2>
+            <!-- Customer Information -->
+            <div>
+                <h4 class="text-lg font-heading font-semibold text-primary mb-3">Customer Information</h4>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-xs text-text-tertiary uppercase tracking-wide mb-1">Contact Name</p>
+                        <p class="text-sm font-medium text-primary">${order.formData.contactName}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-text-tertiary uppercase tracking-wide mb-1">Email</p>
+                        <p class="text-sm font-medium text-primary">${order.formData.contactEmail}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-text-tertiary uppercase tracking-wide mb-1">Phone</p>
+                        <p class="text-sm font-medium text-primary">${order.formData.contactPhone}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-text-tertiary uppercase tracking-wide mb-1">Property Type</p>
+                        <p class="text-sm font-medium text-primary capitalize">${order.formData.propertyType}</p>
+                    </div>
+                </div>
+            </div>
 
-    <div class="grid md:grid-cols-3 gap-6">
+            <!-- Property Details -->
+            <div>
+                <h4 class="text-lg font-heading font-semibold text-primary mb-3">Property Details</h4>
+                <div class="bg-background rounded-lg p-4">
+                    <p class="text-sm font-medium text-primary mb-1">${order.formData.propertyAddress}</p>
+                    <p class="text-sm text-text-secondary">${order.formData.city}, ${order.formData.state} ${order.formData.zip}</p>
+                    ${order.formData.notes ? `
+                    <div class="mt-3 pt-3 border-t border-border-light">
+                        <p class="text-xs text-text-tertiary uppercase tracking-wide mb-1">Additional Notes</p>
+                        <p class="text-sm text-text-secondary">${order.formData.notes}</p>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
 
-      <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="font-semibold text-lg mb-2">Place New Order</h3>
-        <p class="text-sm text-gray-600 mb-4">
-          Submit a roof measurement order with property details.
-        </p>
-        <a href="order_portal.html"
-          class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-          New Order
-        </a>
-      </div>
+            <!-- Service Details -->
+            <div>
+                <h4 class="text-lg font-heading font-semibold text-primary mb-3">Service Details</h4>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div>
+                        <p class="text-xs text-text-tertiary uppercase tracking-wide mb-1">Report Type</p>
+                        <p class="text-sm font-medium text-primary capitalize">${order.reportType}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-text-tertiary uppercase tracking-wide mb-1">Service Tier</p>
+                        <p class="text-sm font-medium text-primary capitalize">${order.serviceTier}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-text-tertiary uppercase tracking-wide mb-1">Total Amount</p>
+                        <p class="text-sm font-bold text-success">${formatCurrency(order.totalPrice)}</p>
+                    </div>
+                </div>
+            </div>
 
-      <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="font-semibold text-lg mb-2">Pricing Plans</h3>
-        <p class="text-sm text-gray-600 mb-4">
-          View Bronze, Silver & Gold measurement packages.
-        </p>
-        <a href="pricing.html"
-          class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-          View Pricing
-        </a>
-      </div>
+            ${order.paymentDetails ? `
+            <!-- Payment Details -->
+            <div>
+                <h4 class="text-lg font-heading font-semibold text-primary mb-3">Payment Details</h4>
+                <div class="bg-success-50 border border-success-200 rounded-lg p-4">
+                    <div class="grid md:grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <p class="text-xs text-success-700 mb-1">Payment Method</p>
+                            <p class="font-medium text-success-900">PayPal</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-success-700 mb-1">Transaction ID</p>
+                            <p class="font-mono font-medium text-success-900">${order.paymentDetails.transactionId}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-success-700 mb-1">Payer Email</p>
+                            <p class="font-medium text-success-900">${order.paymentDetails.payerEmail}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-success-700 mb-1">Status</p>
+                            <p class="font-medium text-success-900">${order.paymentDetails.status}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+        </div>
+    `;
+    
+    modal.classList.remove('hidden');
+}
 
-      <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="font-semibold text-lg mb-2">Support</h3>
-        <p class="text-sm text-gray-600 mb-4">
-          Need help with your orders?
-        </p>
-        <a href="contact.html"
-          class="inline-block bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900">
-          Contact Us
-        </a>
-      </div>
+// Close order modal
+function closeOrderModal() {
+    document.getElementById('order-details-modal').classList.add('hidden');
+}
 
-    </div>
-  </main>
+// Update order status
+function updateOrderStatus(orderId) {
+    const orders = getOrderHistory();
+    const order = orders.find(o => o.id === orderId);
+    
+    if (!order) return;
+    
+    const statusOptions = ['received', 'processing', 'in-progress', 'completed', 'delivered'];
+    const currentIndex = statusOptions.indexOf(order.status || 'processing');
+    const nextStatus = statusOptions[(currentIndex + 1) % statusOptions.length];
+    
+    order.status = nextStatus;
+    
+    // Save updated orders
+    localStorage.setItem('roofingOrders', JSON.stringify(orders));
+    
+    // Refresh displays
+    updateKPICards();
+    loadOrdersTable();
+    loadServiceTracking();
+}
 
-  <!-- ADMIN DASHBOARD -->
-  <main id="adminPanel" class="hidden p-6">
-    <h2 class="text-2xl font-bold mb-4 text-red-600">Admin Dashboard</h2>
+// Load service tracking Kanban board
+function loadServiceTracking() {
+    const orders = getOrderHistory();
+    
+    const columns = {
+        'received': { id: 'received-column', count: 'received-count' },
+        'processing': { id: 'processing-column', count: 'processing-count' },
+        'in-progress': { id: 'in-progress-column', count: 'in-progress-count' },
+        'completed': { id: 'completed-column', count: 'completed-count' }
+    };
+    
+    // Clear all columns
+    Object.values(columns).forEach(col => {
+        document.getElementById(col.id).innerHTML = '';
+    });
+    
+    // Organize orders by status
+    const ordersByStatus = {
+        'received': [],
+        'processing': [],
+        'in-progress': [],
+        'completed': []
+    };
+    
+    orders.forEach(order => {
+        const status = order.status || 'processing';
+        if (ordersByStatus[status]) {
+            ordersByStatus[status].push(order);
+        }
+    });
+    
+    // Populate columns
+    Object.keys(columns).forEach(status => {
+        const columnOrders = ordersByStatus[status];
+        const columnEl = document.getElementById(columns[status].id);
+        const countEl = document.getElementById(columns[status].count);
+        
+        countEl.textContent = columnOrders.length;
+        
+        if (columnOrders.length === 0) {
+            columnEl.innerHTML = '<p class="text-sm text-text-tertiary text-center py-8">No orders</p>';
+        } else {
+            columnEl.innerHTML = columnOrders.map(order => createKanbanCard(order)).join('');
+        }
+    });
+}
 
-    <div class="grid md:grid-cols-4 gap-6">
+// Create Kanban card
+function createKanbanCard(order) {
+    return `
+        <div class="bg-surface border border-border-light rounded-lg p-4 hover:shadow-custom transition-all cursor-pointer" onclick='viewOrderDetails(${JSON.stringify(order).replace(/'/g, "&#39;")})'>
+            <div class="flex items-center justify-between mb-2">
+                <span class="font-mono text-xs font-semibold text-primary">${order.orderReference}</span>
+                <button onclick="event.stopPropagation(); updateOrderStatus('${order.id}')" class="text-text-tertiary hover:text-primary">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                    </svg>
+                </button>
+            </div>
+            <p class="text-sm font-medium text-primary mb-1">${order.formData.contactName}</p>
+            <p class="text-xs text-text-secondary mb-2">${order.formData.propertyAddress}</p>
+            <div class="flex items-center justify-between text-xs">
+                <span class="badge bg-secondary-100 text-secondary-700 capitalize">${order.reportType}</span>
+                <span class="font-semibold text-success">${formatCurrency(order.totalPrice)}</span>
+            </div>
+        </div>
+    `;
+}
 
-      <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="font-semibold mb-2">All Orders</h3>
-        <p class="text-sm text-gray-600 mb-4">
-          Review incoming measurement orders.
-        </p>
-        <a href="admin-orders.html"
-          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-          View Orders
-        </a>
-      </div>
+// Switch tabs
+function switchTab(tabName) {
+    // Update tab buttons
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+    
+    // Update tab content
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+        content.classList.remove('active');
+    });
+    
+    const activeTab = document.getElementById(`${tabName}-tab`);
+    activeTab.classList.remove('hidden');
+    activeTab.classList.add('active');
+}
 
-      <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="font-semibold mb-2">Clients</h3>
-        <p class="text-sm text-gray-600 mb-4">
-          Manage registered contractors.
-        </p>
-        <a href="admin-users.html"
-          class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-          View Users
-        </a>
-      </div>
+// Refresh dashboard
+function refreshDashboard() {
+    updateKPICards();
+    loadOrdersTable();
+    updatePricingSummary();
+    loadServiceTracking();
+    
+    // Show brief feedback
+    const refreshBtn = event.target.closest('button');
+    const originalContent = refreshBtn.innerHTML;
+    refreshBtn.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>';
+    
+    setTimeout(() => {
+        refreshBtn.innerHTML = originalContent;
+    }, 1000);
+}
 
-      <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="font-semibold mb-2">Pricing Control</h3>
-        <p class="text-sm text-gray-600 mb-4">
-          Update plans and bulk pricing.
-        </p>
-        <a href="admin-pricing.html"
-          class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
-          Edit Pricing
-        </a>
-      </div>
+// Format currency
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    }).format(amount);
+}
 
-      <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="font-semibold mb-2">Reports</h3>
-        <p class="text-sm text-gray-600 mb-4">
-          Export orders to Google Sheets.
-        </p>
-        <button class="bg-gray-800 text-white px-4 py-2 rounded">
-          Export Data
-        </button>
-      </div>
-
-    </div>
-  </main>
-
+// Close modal on background click
+document.getElementById('order-details-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeOrderModal();
+    }
+});
+</script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
 </body>
 </html>
