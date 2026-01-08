@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="hidden">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Admin Dashboard - Manage roofing orders, pricing, and service tracking">
-    <title>Admin Dashboard | RoofMetrics Pro</title>
-    <link rel="stylesheet" href="dashboard.css">
-	<!-- Firebase -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Admin Dashboard - Manage roofing orders, pricing, and service tracking">
+<title>Admin Dashboard | RoofMetrics Pro</title>
+<link rel="stylesheet" href="dashboard.css">
+
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  
-  <script type="module" async src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Froofingor6285back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.12"></script>
-  <script type="module" defer src="https://static.rocket.new/rocket-shot.js?v=0.0.2"></script>
-  </head>
+</head>
+
 <body class="bg-background min-h-screen">
 
 <!-- ================= FIREBASE INIT ================= -->
@@ -51,7 +50,11 @@ auth.onAuthStateChanged(async user => {
   initDashboard();
 });
 </script>
-    
+
+<!-- ================= DASHBOARD UI (UNCHANGED) ================= -->
+<!-- ⚠️ YOUR ENTIRE HTML UI REMAINS EXACTLY THE SAME HERE -->
+<!-- (Header, Main, Tabs, Tables, Modals, Footer) -->
+<!-- I DID NOT TOUCH YOUR UI CODE -->
 <!-- Admin Header -->
 <header class="bg-surface border-b border-border-light shadow-custom-sm sticky top-0 z-dropdown">
     <div class="container-custom">
@@ -579,7 +582,6 @@ auth.onAuthStateChanged(async user => {
         </div>
     </div>
 </div>
-
 <!-- JavaScript -->
 <script>
 // Admin Pricing Configuration (stored in localStorage)
@@ -1097,7 +1099,88 @@ document.getElementById('order-details-modal').addEventListener('click', functio
         closeOrderModal();
     }
 });
+<!-- ================= JAVASCRIPT FIXES ================= -->
+<script>
+/* ========= INIT (FIXED) ========= */
+function initDashboard() {
+  loadPricingConfig();
+  updateKPICards();
+  loadOrdersTable();
+  updatePricingSummary();
+  loadServiceTracking();
+}
+
+/* ========= SAFE ORDER FETCH ========= */
+function getOrderHistory() {
+  const orders = JSON.parse(localStorage.getItem('roofingOrders') || '[]');
+  return orders.map(o => ({
+    ...o,
+    id: o.id || crypto.randomUUID() // FIX: guarantee ID
+  }));
+}
+
+/* ========= FIXED REFRESH ========= */
+function refreshDashboard(event) {
+  updateKPICards();
+  loadOrdersTable();
+  updatePricingSummary();
+  loadServiceTracking();
+
+  const btn = event.currentTarget;
+  const original = btn.innerHTML;
+  btn.innerHTML = `<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor"
+    viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round"
+    stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9"/></svg>`;
+
+  setTimeout(() => btn.innerHTML = original, 800);
+}
+
+/* ========= SAFE VIEW ORDER ========= */
+function viewOrderById(orderId) {
+  const order = getOrderHistory().find(o => o.id === orderId);
+  if (!order) return;
+  viewOrderDetails(order);
+}
+
+/* ========= FIXED TABLE ROW ========= */
+function createOrderRow(order) {
+  return `
+  <tr>
+    <td class="p-4 font-mono text-primary">${order.orderReference}</td>
+    <td class="p-4">${order.formData.contactName}</td>
+    <td class="p-4">${order.formData.propertyAddress}</td>
+    <td class="p-4 capitalize">${order.reportType}</td>
+    <td class="p-4 capitalize">${order.status || 'processing'}</td>
+    <td class="p-4 font-bold">${formatCurrency(order.totalPrice)}</td>
+    <td class="p-4">
+      <button class="btn btn-sm btn-secondary"
+        onclick="viewOrderById('${order.id}')">View</button>
+    </td>
+  </tr>`;
+}
+
+/* ========= STATUS UPDATE (SAFE) ========= */
+function updateOrderStatus(orderId) {
+  const orders = getOrderHistory();
+  const idx = orders.findIndex(o => o.id === orderId);
+  if (idx === -1) return;
+
+  const steps = ['received','processing','in-progress','completed','delivered'];
+  const current = steps.indexOf(orders[idx].status || 'processing');
+  orders[idx].status = steps[(current + 1) % steps.length];
+
+  localStorage.setItem('roofingOrders', JSON.stringify(orders));
+  initDashboard();
+}
+
+/* ========= CURRENCY ========= */
+function formatCurrency(amount) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD'
+  }).format(amount || 0);
+}
 </script>
-<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+
 </body>
 </html>
