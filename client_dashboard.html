@@ -12,6 +12,23 @@
   </head>
 <body class="bg-background min-h-screen">
 
+    <!-- ================= FIREBASE INIT ================= -->
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
+  authDomain: "remoteroofers-51826.firebaseapp.com",
+  projectId: "remoteroofers-51826",
+  storageBucket: "remoteroofers-51826.appspot.com",
+  messagingSenderId: "901240361996",
+  appId: "1:901240361996:web:2a209986f74f15618aca29"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+</script>
+
+
 <!-- Header Section -->
 <header class="bg-surface border-b border-border-light shadow-custom-sm sticky top-0 z-dropdown">
     <div class="container-custom">
