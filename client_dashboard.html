@@ -62,14 +62,23 @@ const db = firebase.firestore();
                     <span class="hidden md:inline">New Order</span>
                 </a>
                 
-                <button onclick="showAccountMenu()" class="flex items-center gap-2 p-2 hover:bg-background rounded-md transition-colors">
-                    <div class="w-8 h-8 bg-secondary rounded-full flex items-center justify-center text-white font-semibold">
-                        <span id="user-initials">CL</span>
-                    </div>
-                    <svg class="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                </button>
+                <div class="relative">
+    <button id="account-btn" class="flex items-center gap-2 p-2 hover:bg-background rounded-md transition-colors">
+        <div class="w-8 h-8 bg-secondary rounded-full flex items-center justify-center text-white font-semibold">
+            <span id="user-initials">CL</span>
+        </div>
+        <svg class="w-4 h-4 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+    </button>
+
+    <div id="account-menu" class="absolute right-0 mt-2 w-40 bg-surface border border-border-light rounded-md shadow-lg hidden">
+        <button onclick="logout()" class="w-full text-left px-4 py-2 hover:bg-background transition-colors">Logout</button>
+    </div>
+</div>
+
+
+                
             </div>
         </div>
     </div>
@@ -778,6 +787,30 @@ function showAccountMenu() {
 document.addEventListener('DOMContentLoaded', function() {
     loadClientProfile();
     loadOrderHistory();
+ }   
+                         // Dropdown
+function showAccountMenu() {
+    const menu = document.getElementById('account-menu');
+    menu.classList.toggle('hidden');
+}
+    
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+
+function logout() {
+    const auth = getAuth();
+    signOut(auth)
+        .then(() => {
+            localStorage.removeItem('clientProfile'); // optional: clear profile
+            window.location.href = "login.html";      // redirect to login
+        })
+        .catch(err => {
+            alert("Logout failed: " + err.message);
+        });
+}
+
+
+
+    
 });
 </script>
 <script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
