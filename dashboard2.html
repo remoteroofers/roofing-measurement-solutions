@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoofMetrics Pro – Admin Dashboard</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script>
+tailwind.config = {
+  darkMode: 'class'
+}
+</script>
+
+<style>
+.tab-btn.active { border-bottom: 2px solid #2563eb; color:#2563eb }
+</style>
+</head>
+
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 hidden">
+
+<!-- HEADER -->
+<header class="bg-white dark:bg-gray-800 shadow sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+    <h1 class="font-bold text-xl">RoofMetrics Pro</h1>
+    <div class="flex items-center gap-3">
+      <button onclick="toggleDarkMode()" class="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700">🌙</button>
+      <button onclick="auth.signOut()" class="px-3 py-1 bg-red-600 text-white rounded">Logout</button>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="max-w-7xl mx-auto p-4">
+
+<!-- KPI -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+  <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+    <p>Total Orders</p>
+    <h2 id="kpi-orders" class="text-3xl font-bold">0</h2>
+  </div>
+  <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+    <p>Total Revenue</p>
+    <h2 id="kpi-revenue" class="text-3xl font-bold">$0</h2>
+  </div>
+  <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+    <p>Active</p>
+    <h2 id="kpi-active" class="text-3xl font-bold">0</h2>
+  </div>
+  <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+    <p>Completed</p>
+    <h2 id="kpi-completed" class="text-3xl font-bold">0</h2>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="flex gap-6 mb-4 border-b">
+  <button class="tab-btn active" onclick="switchTab('orders')">Orders</button>
+  <button class="tab-btn" onclick="switchTab('pricing')">Pricing</button>
+</div>
+
+<!-- ORDERS -->
+<section id="orders-tab">
+  <div class="flex justify-end mb-3">
+    <button onclick="exportCSV()" class="px-4 py-2 bg-green-600 text-white rounded">Export CSV</button>
+  </div>
+
+  <div class="overflow-x-auto bg-white dark:bg-gray-800 rounded shadow">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-200 dark:bg-gray-700">
+        <tr>
+          <th class="p-2">Ref</th>
+          <th>Customer</th>
+          <th>Service</th>
+          <th>Status</th>
+          <th>Amount</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="orders-body"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing-tab" class="hidden">
+  <div class="bg-white dark:bg-gray-800 p-6 rounded shadow max-w-md">
+    <h2 class="font-bold mb-4">Pricing (Admin Only)</h2>
+
+    <label>Aerial Standard</label>
+    <input id="aerial" type="number" class="w-full mb-3 p-2 text-black">
+
+    <label>Residential Standard</label>
+    <input id="residential" type="number" class="w-full mb-3 p-2 text-black">
+
+    <label>Commercial Standard</label>
+    <input id="commercial" type="number" class="w-full mb-3 p-2 text-black">
+
+    <button onclick="savePricing()" class="w-full bg-blue-600 text-white py-2 rounded">Save Pricing</button>
+  </div>
+</section>
+
+</main>
+
+<!-- FIREBASE + LOGIC -->
+<script>
+// 🔥 FIREBASE CONFIG (REPLACE)
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let currentOrders = [];
+let userRole = "";
+
+// 🔐 AUTH GUARD
+auth.onAuthStateChanged(async user => {
+  if (!user) {
+    location.href = "admin-login.html";
+    return;
+  }
+
+  const snap = await db.collection("users").doc(user.uid).get();
+  if (!snap.exists) {
+    alert("Unauthorized");
+    auth.signOut();
+    return;
+  }
+
+  userRole = snap.data().role;
+  document.body.classList.remove("hidden");
+  loadDashboard();
+});
+
+// LOAD DASHBOARD
+async function loadDashboard() {
+  loadPricing();
+  loadOrders();
+}
+
+// LOAD ORDERS (PAID ONLY)
+async function loadOrders() {
+  const snap = await db.collection("orders")
+    .where("paymentVerified","==",true)
+    .get();
+
+  currentOrders = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+  renderOrders();
+  updateKPIs();
+}
+
+// RENDER ORDERS
+function renderOrders() {
+  const tbody = document.getElementById("orders-body");
+  tbody.innerHTML = currentOrders.map(o => `
+    <tr class="border-t">
+      <td class="p-2 font-mono">${o.orderReference}</td>
+      <td>${o.customerName}</td>
+      <td>${o.reportType}</td>
+      <td>${o.status}</td>
+      <td>$${o.totalPrice}</td>
+      <td>
+        <button onclick="advanceStatus('${o.id}')" class="text-blue-600">Next</button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+// UPDATE STATUS
+async function advanceStatus(id) {
+  const order = currentOrders.find(o=>o.id===id);
+  const flow = ["received","processing","completed","delivered"];
+  const next = flow[(flow.indexOf(order.status)+1)%flow.length];
+  await db.collection("orders").doc(id).update({status:next});
+  loadOrders();
+}
+
+// KPI
+function updateKPIs() {
+  document.getElementById("kpi-orders").textContent = currentOrders.length;
+  document.getElementById("kpi-revenue").textContent =
+    "$"+currentOrders.reduce((s,o)=>s+o.totalPrice,0);
+  document.getElementById("kpi-active").textContent =
+    currentOrders.filter(o=>o.status!=="delivered").length;
+  document.getElementById("kpi-completed").textContent =
+    currentOrders.filter(o=>o.status==="delivered").length;
+}
+
+// PRICING
+async function loadPricing() {
+  const snap = await db.collection("config").doc("pricing").get();
+  if (!snap.exists) return;
+  const p = snap.data();
+  aerial.value = p.aerial;
+  residential.value = p.residential;
+  commercial.value = p.commercial;
+
+  if (userRole !== "admin") {
+    document.querySelectorAll("#pricing-tab input, #pricing-tab button")
+      .forEach(e=>e.disabled=true);
+  }
+}
+
+async function savePricing() {
+  if (userRole !== "admin") return alert("Admin only");
+  await db.collection("config").doc("pricing").set({
+    aerial:+aerial.value,
+    residential:+residential.value,
+    commercial:+commercial.value
+  });
+  alert("Pricing synced to client portal");
+}
+
+// EXPORT CSV
+function exportCSV() {
+  let csv = "Ref,Customer,Service,Status,Amount\n";
+  currentOrders.forEach(o=>{
+    csv += `${o.orderReference},${o.customerName},${o.reportType},${o.status},${o.totalPrice}\n`;
+  });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv]));
+  a.download = "orders.csv";
+  a.click();
+}
+
+// UI
+function switchTab(tab) {
+  document.getElementById("orders-tab").classList.toggle("hidden",tab!=="orders");
+  document.getElementById("pricing-tab").classList.toggle("hidden",tab!=="pricing");
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  event.target.classList.add("active");
+}
+
+// DARK MODE
+function toggleDarkMode() {
+  document.documentElement.classList.toggle("dark");
+}
+</script>
+
+</body>
+</html>
