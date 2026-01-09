@@ -103,9 +103,23 @@
                 return;
             }
 
-            const userId = localStorage.getItem('userId');
-            const userRole = localStorage.getItem('userRole');
+            // Set userId from Firebase auth
+            const userId = user.uid;
+            localStorage.setItem('userId', userId);
+            
+            const userDoc = await db.collection('users').doc(userId).get();
+            if (!userDoc.exists) {
+                alert('User profile not found. Redirecting to login...');
+                auth.signOut();
+                window.location.href = 'login.html';
+                return;
+            }
 
+            const userRole = userDoc.data().role || 'client';
+            localStorage.setItem('userRole', userRole);
+
+
+            
             if (userRole === 'admin') {
                 window.location.href = 'admin_portal.html';
                 return;
