@@ -17,7 +17,7 @@
 
     <div class="portal-container">
         <div class="portal-header">
-            <h1 data-testid="welcome-heading">Welcome Back!</h1>
+            <h1 data-testid="welcome-heading">Welcome Back! <span id="userName" style="color: #3b82f6;">Guest</span></h1>
             <p>Manage your profile and orders</p>
         </div>
 
@@ -135,6 +135,8 @@
                 if (userDoc.exists) {
                     const userData = userDoc.data();
                     originalData = userData;
+                    // Update welcome message with user name
+                    document.getElementById('userName').textContent = userData.name || 'User';
                     
                     document.getElementById('profileName').value = userData.name || '';
                     document.getElementById('profileEmail').value = userData.email || '';
