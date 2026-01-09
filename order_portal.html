@@ -111,7 +111,10 @@
         auth.onAuthStateChanged((user) => {
             if (!user) {
                 window.location.href = 'login.html';
+                return;
             }
+            // Set userId from Firebase auth
+            localStorage.setItem('userId', user.uid);
         });
 
         function updatePricing() {
@@ -163,7 +166,13 @@
         }
 
         async function saveOrder(paymentDetails) {
-            const userId = localStorage.getItem('userId');
+           const user = auth.currentUser;
+            if (!user) {
+                document.getElementById('orderError').textContent = 'Session expired. Please login again.';
+                return;
+            }
+            
+            const userId = user.uid;
             const orderNotes = document.getElementById('orderNotes').value;
             
             try {
@@ -183,6 +192,7 @@
                 window.location.href = 'client_portal.html';
             } catch (error) {
                 document.getElementById('orderError').textContent = 'Error saving order: ' + error.message;
+                console.error('Order save error:', error);
             }
         }
 
