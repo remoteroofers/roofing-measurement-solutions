@@ -78,6 +78,11 @@
         </div>
     </div>
 
+    <button id="submitOrderBtn" class="btn btn-primary">
+  Submit Order
+</button>
+
+
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -203,5 +208,43 @@
             window.location.href = 'login.html';
         }
     </script>
+
+    
+    
+<script>
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+/* 🔒 Ensure logged in */
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = 'login.html';
+  }
+});
+
+/* 🧾 Create Order */
+document.getElementById('submitOrderBtn').addEventListener('click', async () => {
+  const user = auth.currentUser;
+  if (!user) return alert('Login required');
+
+  try {
+    await db.collection('orders').add({
+      userId: user.uid,
+      reportType: "Roof Measurement Report",
+      serviceTier: "Standard",
+      price: 35,
+      status: "new",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    alert("✅ Order submitted successfully!");
+    window.location.href = "client_portal.html";
+
+  } catch (err) {
+    alert(err.message);
+  }
+});
+</script>
+
 </body>
 </html>
