@@ -1,211 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Portal - Remote Roofers</title>
-    <link rel="stylesheet" href="styles1.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Portal - Remote Roofers</title>
+
+<link rel="stylesheet" href="styles1.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Minimal inline styles for deploy-ready look */
+body { font-family: 'Inter', sans-serif; margin:0; padding:0; background:#f9f9f9; }
+.navbar { background:#1e40af; color:#fff; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; }
+.navbar a, .navbar button { color:#fff; margin-left:10px; text-decoration:none; padding:6px 12px; border:none; border-radius:4px; cursor:pointer; }
+.navbar button { background:#ef4444; }
+.portal-container { max-width:600px; margin:30px auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+.form-group { margin-bottom:16px; }
+select, textarea { width:100%; padding:8px; border-radius:4px; border:1px solid #ccc; }
+.btn-primary { background:#1e40af; color:#fff; border:none; padding:10px 16px; border-radius:4px; cursor:pointer; }
+.btn-primary:hover { background:#2563eb; }
+.error-message { color:#ef4444; margin-top:8px; }
+.pricing-card { background:#f3f4f6; padding:12px; border-radius:4px; margin-bottom:16px; }
+</style>
 </head>
 <body>
-    <nav class="navbar" data-testid="navbar">
-        <div class="nav-container">
-            <h2>Remote Roofers</h2>
-            <div>
-                <a href="client_portal.html" class="btn btn-outline" data-testid="back-btn">Back to Portal</a>
-                <button class="btn btn-logout" data-testid="logout-btn" onclick="logout()">Logout</button>
-            </div>
-        </div>
-    </nav>
 
-    <div class="portal-container">
-        <div class="portal-header">
-            <h1 data-testid="order-heading">Create New Order</h1>
-            <p>Select your report type and service level</p>
-        </div>
+<nav class="navbar">
+  <h2>Remote Roofers</h2>
+  <div>
+    <a href="client_portal.html">Back to Portal</a>
+    <button onclick="logout()">Logout</button>
+  </div>
+</nav>
 
-        <div class="order-form-section">
-            <form id="orderForm" data-testid="order-form">
-                <div class="form-group">
-                    <label for="reportType">Report Type</label>
-                    <select id="reportType" data-testid="report-type" required onchange="updatePricing()">
-                        <option value="">Select a report type</option>
-                        <option value="Aerial Square Roof Report">Aerial Square Roof Report</option>
-                        <option value="Residential Roof Report">Residential Roof Report</option>
-                        <option value="Commercial Roof Report">Commercial Roof Report</option>
-                    </select>
-                </div>
+<div class="portal-container">
+  <h1>Create New Order</h1>
+  <p>Select your report type and service level</p>
 
-                <div class="form-group">
-                    <label for="serviceTier">Service Tier</label>
-                    <select id="serviceTier" data-testid="service-tier" required onchange="updatePricing()">
-                        <option value="">Select a service tier</option>
-                        <option value="Standard">Standard - Regular Processing 8 hrs or Less</option>
-                        <option value="Express">Express - Faster Turnaround 6 hrs or less </option>
-                        <option value="Rush">Rush - Priority Processing 2-3 hrs </option>
-                    </select>
-                </div>
+  <form id="orderForm">
 
-                <div class="pricing-display" id="pricingDisplay" data-testid="pricing-display">
-                    <div class="pricing-card">
-                        <h3>Order Summary</h3>
-                        <div class="pricing-details">
-                            <div class="pricing-row">
-                                <span>Report Type:</span>
-                                <span id="selectedReport" data-testid="selected-report">-</span>
-                            </div>
-                            <div class="pricing-row">
-                                <span>Service Tier:</span>
-                                <span id="selectedTier" data-testid="selected-tier">-</span>
-                            </div>
-                            <div class="pricing-row total">
-                                <span>Total Price:</span>
-                                <span id="totalPrice" data-testid="total-price">$0</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="orderNotes">Additional Notes (Optional)</label>
-                    <textarea id="orderNotes" data-testid="order-notes" rows="4" placeholder="Any special instructions or requirements..."></textarea>
-                </div>
-
-                <div id="paypalButtonContainer" data-testid="paypal-button-container" style="display: none;"></div>
-                
-                <div id="orderError" class="error-message" data-testid="order-error"></div>
-            </form>
-        </div>
+    <div class="form-group">
+      <label>Report Type</label>
+      <select id="reportType" required onchange="updatePricing()">
+        <option value="">Select report type</option>
+        <option value="Aerial Square Roof Report">Aerial Square Roof Report</option>
+        <option value="Residential Roof Report">Residential Roof Report</option>
+        <option value="Commercial Roof Report">Commercial Roof Report</option>
+      </select>
     </div>
 
-  
+    <div class="form-group">
+      <label>Service Tier</label>
+      <select id="serviceTier" required onchange="updatePricing()">
+        <option value="">Select service tier</option>
+        <option value="Standard">Standard (≤ 8 hrs)</option>
+        <option value="Express">Express (≤ 6 hrs)</option>
+        <option value="Rush">Rush (2–3 hrs)</option>
+      </select>
+    </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.paypal.com/sdk/js?client-id=ARiAdLTougjptHbODwbDVmc3ehO6osM9KmmGZLJaVHoSOXCOsjo56lVHx8hi78_HdZq5zkjE4DQSgOLQ&currency=USD"></script>
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
-            authDomain: "remoteroofers-51826.firebaseapp.com",
-            projectId: "remoteroofers-51826",
-            storageBucket: "remoteroofers-51826.appspot.com",
-            messagingSenderId: "901240361996",
-            appId: "1:901240361996:web:2a209986f74f15618aca29"
-        };
+    <div class="pricing-card">
+      <h3>Order Summary</h3>
+      <p>Report: <strong id="selectedReport">-</strong></p>
+      <p>Tier: <strong id="selectedTier">-</strong></p>
+      <p>Total: <strong id="totalPrice">$0</strong></p>
+    </div>
 
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+    <div class="form-group">
+      <label>Additional Notes</label>
+      <textarea id="orderNotes" rows="4" placeholder="Any special instructions..."></textarea>
+    </div>
 
-        // Pricing Matrix
-        const pricing = {
-            'Aerial Square Roof Report': { 'Standard': 10, 'Express': 20, 'Rush': 30 },
-            'Residential Roof Report': { 'Standard': 17, 'Express': 25, 'Rush': 30 },
-            'Commercial Roof Report': { 'Standard': 30, 'Express': 35, 'Rush': 45 }
-        };
+    <!-- Simulation Button -->
+    <button type="button" id="submitOrderBtn" class="btn-primary" style="display:none;">Submit Order (Simulation)</button>
 
-        let currentPrice = 0;
-        let currentReportType = '';
-        let currentServiceTier = '';
+    <!-- PayPal Button -->
+    <div id="paypalButtonContainer" style="display:none; margin-top:16px;"></div>
 
-        // Check authentication
-        auth.onAuthStateChanged((user) => {
-            if (!user) {
-                window.location.href = 'login.html';
-                return;
-            }
-            // Set userId from Firebase auth
-            localStorage.setItem('userId', user.uid);
-        });
+    <p id="orderError" class="error-message"></p>
+  </form>
+</div>
 
-        function updatePricing() {
-            const reportType = document.getElementById('reportType').value;
-            const serviceTier = document.getElementById('serviceTier').value;
-            
-            if (reportType && serviceTier) {
-                currentPrice = pricing[reportType][serviceTier];
-                currentReportType = reportType;
-                currentServiceTier = serviceTier;
-                
-                document.getElementById('selectedReport').textContent = reportType;
-                document.getElementById('selectedTier').textContent = serviceTier;
-                document.getElementById('totalPrice').textContent = `$${currentPrice}`;
-                
-                // Show PayPal button
-                document.getElementById('paypalButtonContainer').style.display = 'block';
-                renderPayPalButton();
-            } else {
-               document.getElementById('paypalButtonContainer').style.display = 'none';
-           }
-        }
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-       function renderPayPalButton() {
-           document.getElementById('paypalButtonContainer').innerHTML = '';
-           
-           paypal.Buttons({
-               createOrder: function(data, actions) {
-                   return actions.order.create({
-                      purchase_units: [{
-                           description: `${currentReportType} - ${currentServiceTier}`,
-                            amount: {
-                               value: currentPrice.toFixed(2)
-                           }
-                        }]
-                   });
-               },
-               onApprove: async function(data, actions) {
-                    return actions.order.capture().then(async function(details) {
-                        // Save order to Firebase
-                        await saveOrder(details);
-                   });
-                },
-                onError: function(err) {
-                    document.getElementById('orderError').textContent = 'Payment failed. Please try again.';
-                    console.error('PayPal Error:', err);
-              }
-            }).render('#paypalButtonContainer');
-        }
+<!-- PayPal -->
+<script src="https://www.paypal.com/sdk/js?client-id=ARiAdLTougjptHbODwbDVmc3ehO6osM9KmmGZLJaVHoSOXCOsjo56lVHx8hi78_HdZq5zkjE4DQSgOLQ&currency=USD"></script>
 
-        async function saveOrder(paymentDetails) {
-          const user = auth.currentUser;
-            if (!user) {
-               document.getElementById('orderError').textContent = 'Session expired. Please login again.';
-                return;
-            }
-            
-            const userId = user.uid;
-           const orderNotes = document.getElementById('orderNotes').value;
-           
-          try {
-                await db.collection('orders').add({
-                    userId: userId,
-                   reportType: currentReportType,
-                   serviceTier: currentServiceTier,
-                   price: currentPrice,
-                    notes: orderNotes,
-                   status: 'pending',
-                   paymentId: paymentDetails.id,
-                    paymentStatus: paymentDetails.status,
-                   createdAt: firebase.firestore.FieldValue.serverTimestamp()
-              });
-                
-               alert('Order placed successfully! Redirecting to your portal...');
-               window.location.href = 'client_portal.html';
-           } catch (error) {
-              document.getElementById('orderError').textContent = 'Error saving order: ' + error.message;
-               console.error('Order save error:', error);
-            }
-     }
+<script>
+/* =============================
+   CONFIG: Toggle Mode
+============================= */
+const PAYMENT_MODE = "simulation"; // "simulation" or "live"
 
+/* Firebase Init */
+firebase.initializeApp({
+  apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
+  authDomain: "remoteroofers-51826.firebaseapp.com",
+  projectId: "remoteroofers-51826"
+});
 
-      function logout() {
-            auth.signOut();
-            localStorage.removeItem('userId');
-            localStorage.removeItem('userRole');
-           window.location.href = 'login.html';
-        }
+const auth = firebase.auth();
+const db = firebase.firestore();
 
+/* Auth Guard */
+auth.onAuthStateChanged(user => {
+  if (!user) window.location.href = "login.html";
+});
+
+/* Pricing Matrix */
+const pricing = {
+  "Aerial Square Roof Report": { Standard: 10, Express: 20, Rush: 30 },
+  "Residential Roof Report": { Standard: 17, Express: 25, Rush: 30 },
+  "Commercial Roof Report": { Standard: 30, Express: 35, Rush: 45 }
+};
+
+let currentPrice = 0;
+let currentReport = "";
+let currentTier = "";
+
+/* Update Pricing UI */
+function updatePricing() {
+  currentReport = reportType.value;
+  currentTier = serviceTier.value;
+
+  if (!currentReport || !currentTier) return;
+
+  currentPrice = pricing[currentReport][currentTier];
+
+  selectedReport.textContent = currentReport;
+  selectedTier.textContent = currentTier;
+  totalPrice.textContent = `$${currentPrice}`;
+
+  handlePaymentMode();
+}
+
+/* Payment Mode Toggle */
+function handlePaymentMode() {
+  if (!currentReport || !currentTier) return;
+
+  if (PAYMENT_MODE === "simulation") {
+    submitOrderBtn.style.display = "block";
+    paypalButtonContainer.style.display = "none";
+  } else if (PAYMENT_MODE === "live") {
+    submitOrderBtn.style.display = "none";
+    paypalButtonContainer.style.display = "block";
+    renderPayPal();
+  }
+}
+
+/* Simulation Order Submit */
+submitOrderBtn.addEventListener("click", async () => {
+  const user = auth.currentUser;
+  if (!currentReport || !currentTier) {
+    orderError.textContent = "Please select report and service tier.";
+    return;
+  }
+
+  try {
+    await db.collection("orders").add({
+      userId: user.uid,
+      reportType: currentReport,
+      serviceTier: currentTier,
+      price: currentPrice,
+      notes: orderNotes.value,
+      status: "pending",
+      paymentMode: "simulation",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    alert("✅ Order submitted (simulation)");
+    window.location.href = "client_portal.html";
+
+  } catch (err) {
+    orderError.textContent = err.message;
+  }
+});
+
+/* PayPal Live Payment */
+function renderPayPal() {
+  paypalButtonContainer.innerHTML = "";
+
+  paypal.Buttons({
+    createOrder: (data, actions) => {
+      return actions.order.create({
+        purchase_units: [{
+          amount: { value: currentPrice.toString() }
+        }]
+      });
+    },
+    onApprove: async (data, actions) => {
+      await actions.order.capture();
+
+      await db.collection("orders").add({
+        userId: auth.currentUser.uid,
+        reportType: currentReport,
+        serviceTier: currentTier,
+        price: currentPrice,
+        notes: orderNotes.value,
+        status: "paid",
+        paymentMode: "paypal",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      alert("✅ Payment successful!");
+      window.location.href = "client_portal.html";
+    }
+  }).render("#paypalButtonContainer");
+}
+
+/* Logout */
+function logout() {
+  auth.signOut().then(() => window.location.href = "login.html");
+}
 </script>
 
 </body>
