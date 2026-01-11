@@ -136,82 +136,82 @@
                 document.getElementById('totalPrice').textContent = `$${currentPrice}`;
                 
                 // Show PayPal button
-                document.getElementById('paypalButtonContainer').style.display = 'block';
-                renderPayPalButton();
-            } else {
-                document.getElementById('paypalButtonContainer').style.display = 'none';
-            }
-        }
+//                document.getElementById('paypalButtonContainer').style.display = 'block';
+//                renderPayPalButton();
+  //          } else {
+//                document.getElementById('paypalButtonContainer').style.display = 'none';
+ //           }
+ //       }
 
-        function renderPayPalButton() {
-            document.getElementById('paypalButtonContainer').innerHTML = '';
-            
-            paypal.Buttons({
-                createOrder: function(data, actions) {
-                    return actions.order.create({
-                        purchase_units: [{
-                            description: `${currentReportType} - ${currentServiceTier}`,
-                            amount: {
-                                value: currentPrice.toFixed(2)
-                            }
-                        }]
-                    });
-                },
-                onApprove: async function(data, actions) {
-                    return actions.order.capture().then(async function(details) {
+ //       function renderPayPalButton() {
+ //           document.getElementById('paypalButtonContainer').innerHTML = '';
+ //           
+ //           paypal.Buttons({
+ //               createOrder: function(data, actions) {
+ //                   return actions.order.create({
+ //                       purchase_units: [{
+ //                           description: `${currentReportType} - ${currentServiceTier}`,
+ //                           amount: {
+ //                               value: currentPrice.toFixed(2)
+ //                           }
+ //                       }]
+ //                   });
+ //               },
+ //               onApprove: async function(data, actions) {
+ //                   return actions.order.capture().then(async function(details) {
                         // Save order to Firebase
-                        await saveOrder(details);
-                    });
-                },
-                onError: function(err) {
-                    document.getElementById('orderError').textContent = 'Payment failed. Please try again.';
-                    console.error('PayPal Error:', err);
-                }
-            }).render('#paypalButtonContainer');
-        }
-
-        async function saveOrder(paymentDetails) {
-           const user = auth.currentUser;
-            if (!user) {
-                document.getElementById('orderError').textContent = 'Session expired. Please login again.';
-                return;
-            }
+ //                       await saveOrder(details);
+ //                   });
+ //               },
+ //               onError: function(err) {
+ //                   document.getElementById('orderError').textContent = 'Payment failed. Please try again.';
+ //                   console.error('PayPal Error:', err);
+ //               }
+ //           }).render('#paypalButtonContainer');
+ //       }
+//
+//        async function saveOrder(paymentDetails) {
+ //          const user = auth.currentUser;
+  //          if (!user) {
+ //               document.getElementById('orderError').textContent = 'Session expired. Please login again.';
+  //              return;
+  //          }
             
-            const userId = user.uid;
-            const orderNotes = document.getElementById('orderNotes').value;
-            
-            try {
-                await db.collection('orders').add({
-                    userId: userId,
-                    reportType: currentReportType,
-                    serviceTier: currentServiceTier,
-                    price: currentPrice,
-                    notes: orderNotes,
-                    status: 'pending',
-                    paymentId: paymentDetails.id,
-                    paymentStatus: paymentDetails.status,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                alert('Order placed successfully! Redirecting to your portal...');
-                window.location.href = 'client_portal.html';
-            } catch (error) {
-                document.getElementById('orderError').textContent = 'Error saving order: ' + error.message;
-                console.error('Order save error:', error);
-            }
-        }
+  //          const userId = user.uid;
+  //          const orderNotes = document.getElementById('orderNotes').value;
+   //         
+  //          try {
+  //              await db.collection('orders').add({
+  //                  userId: userId,
+  //                  reportType: currentReportType,
+  //                  serviceTier: currentServiceTier,
+  //                  price: currentPrice,
+  //                  notes: orderNotes,
+  //                  status: 'pending',
+  //                  paymentId: paymentDetails.id,
+  //                  paymentStatus: paymentDetails.status,
+  //                  createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  //              });
+   //             
+   //             alert('Order placed successfully! Redirecting to your portal...');
+   //             window.location.href = 'client_portal.html';
+    //        } catch (error) {
+    //            document.getElementById('orderError').textContent = 'Error saving order: ' + error.message;
+   //             console.error('Order save error:', error);
+   //         }
+   //     }
 
-        function logout() {
-            auth.signOut();
-            localStorage.removeItem('userId');
-            localStorage.removeItem('userRole');
-            window.location.href = 'login.html';
-        }
-    </script>
 
-    
-    
-<script>
+  //      function logout() {
+  //          auth.signOut();
+   //         localStorage.removeItem('userId');
+   //         localStorage.removeItem('userRole');
+   //         window.location.href = 'login.html';
+  //      }
+
+
+
+//testing            
 const auth = firebase.auth();
 const db = firebase.firestore();
 
