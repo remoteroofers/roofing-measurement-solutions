@@ -57,13 +57,7 @@ map.addLayer(drawnItems);
 
 let drawControl = new L.Control.Draw({
   edit: { featureGroup: drawnItems },
-  draw: {
-    polygon: true,
-    rectangle: false,
-    circle: false,
-    marker: false,
-    polyline: false
-  }
+  draw: { polygon: true, rectangle: false, circle: false, marker: false, polyline: false }
 });
 map.addControl(drawControl);
 
@@ -75,27 +69,18 @@ map.on(L.Draw.Event.CREATED, function (e) {
   drawnItems.addLayer(e.layer);
   updateSummary();
 });
-
-map.on(L.Draw.Event.EDITED, function () {
-  updateSummary();
-});
-
-map.on(L.Draw.Event.DELETED, function () {
-  updateSummary();
-});
+map.on(L.Draw.Event.EDITED, updateSummary);
+map.on(L.Draw.Event.DELETED, updateSummary);
 
 // ---------------- AREA CALCULATION ----------------
 function areaSqFt(layer) {
   const latlngs = layer.getLatLngs()[0];
   let areaMeters = 0;
-
   for (let i = 0, j = latlngs.length - 1; i < latlngs.length; j = i++) {
     const p1 = latlngs[i];
     const p2 = latlngs[j];
-    areaMeters += (p2.lng - p1.lng) * Math.PI / 180 *
-      (2 + Math.sin(p1.lat * Math.PI / 180) + Math.sin(p2.lat * Math.PI / 180));
+    areaMeters += (p2.lng - p1.lng) * Math.PI / 180 * (2 + Math.sin(p1.lat * Math.PI/180) + Math.sin(p2.lat * Math.PI/180));
   }
-
   areaMeters = areaMeters * 6378137 * 6378137 / 2;
   return Math.abs(areaMeters) * 10.7639;
 }
@@ -104,23 +89,18 @@ function areaSqFt(layer) {
 function updateSummary() {
   let total = 0;
   let pitchAreas = {};
-
   drawnItems.eachLayer(layer => {
     const area = areaSqFt(layer);
     total += area;
     const pitch = layer.options.pitch || 0;
     pitchAreas[pitch] = (pitchAreas[pitch] || 0) + area;
   });
-
   let predominantPitch = 'N/A';
   if (Object.keys(pitchAreas).length) {
-    predominantPitch = Object.keys(pitchAreas)
-      .sort((a, b) => pitchAreas[b] - pitchAreas[a])[0];
+    predominantPitch = Object.keys(pitchAreas).sort((a,b)=>pitchAreas[b]-pitchAreas[a])[0];
   }
-
   const squares = total / 100;
-  const bundles = Math.ceil((total * 1.1) / 33);
-
+  const bundles = Math.ceil((total * 1.1)/33);
   document.getElementById('summary').innerHTML = `
     <b>Facets:</b> ${drawnItems.getLayers().length}<br>
     <b>Total Roof Area:</b> ${total.toFixed(0)} sqft<br>
@@ -134,104 +114,39 @@ function updateSummary() {
 }
 
 // ---------------- LOCATE ----------------
-// ---------------- LOCATE ----------------
 let locateMarker = null;
-
 function locate() {
   const query = document.getElementById('address').value.trim();
-  if (!query) {
-    alert('Enter an address');
-    return;
-  }
-
-  const geocoder = L.Control.Geocoder.nominatim({
-    serviceUrl: 'https://nominatim.openstreetmap.org/'
-  });
-
+  if (!query) { alert('Enter an address'); return; }
+  const geocoder = L.Control.Geocoder.nominatim({ serviceUrl: 'https://nominatim.openstreetmap.org/' });
   geocoder.geocode(query, function(results) {
-    if (!results || !results.length) {
-      alert('Address not found');
-      return;
-    }
-
+    if (!results || !results.length) { alert('Address not found'); return; }
     const r = results[0];
-
-    if (r.bbox) {
-      map.fitBounds(r.bbox);
-    } else {
-      map.setView(r.center, 20);
-    }
-
+    if (r.bbox) { map.fitBounds(r.bbox); } else { map.setView(r.center, 20); }
     if (locateMarker) map.removeLayer(locateMarker);
-    locateMarker = L.marker(r.center)
-      .addTo(map)
-      .bindPopup(r.name || query)
-      .openPopup();
-  });
-}
-
-
-    // Zoom accurately to result bounds if available
-    if (r.bbox) {
-      map.fitBounds(r.bbox);
-    } else {
-      map.setView(r.center, 20);
-    }
-
-    // Drop / move marker so user can visually confirm location
-    if (locateMarker) map.removeLayer(locateMarker);
-    locateMarker = L.marker(r.center).addTo(map)
-      .bindPopup(r.name || query)
-      .openPopup();
-  });
-}
-
-  L.Control.Geocoder.nominatim().geocode(query, function(results) {
-    if (!results || !results.length) {
-      alert('Address not found');
-      return;
-    }
-    map.setView(results[0].center, 20);
+    locateMarker = L.marker(r.center).addTo(map).bindPopup(r.name || query).openPopup();
   });
 }
 
 // ---------------- PDF ----------------
 async function generatePDF() {
   const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF('p', 'pt', 'a4');
-
+  const pdf = new jsPDF('p','pt','a4');
   const canvas = await html2canvas(document.getElementById('map'));
   const img = canvas.toDataURL('image/png');
-
   pdf.setFontSize(18);
-  pdf.text('Roof Measurement Report', 40, 40);
-
-  pdf.addImage(img, 'PNG', 40, 60, 520, 300);
-
+  pdf.text('Roof Measurement Report',40,40);
+  pdf.addImage(img,'PNG',40,60,520,300);
   pdf.setFontSize(12);
-  pdf.text('Measurement Summary', 40, 380);
-  pdf.text(document.getElementById('summary').innerText, 40, 400);
-
+  pdf.text('Measurement Summary',40,380);
+  pdf.text(document.getElementById('summary').innerText,40,400);
   pdf.addPage();
-  pdf.text('Material Calculations (10% Waste)', 40, 40);
-  pdf.text(document.getElementById('summary').innerText, 40, 70);
-
+  pdf.text('Material Calculations (10% Waste)',40,40);
+  pdf.text(document.getElementById('summary').innerText,40,70);
   pdf.setFontSize(10);
-  pdf.text('Disclaimer:', 40, 740);
-  pdf.text(
-    'These calculations are estimates and are not guaranteed. Always double check calculations before ordering materials. Estimates are based off of the total pitched area.',
-    40,
-    755,
-    { maxWidth: 520 }
-  );
-
-  pdf.text(
-    'This report was prepared by Remote Roofers Measurement Solutions. Copyright © 2026 | All rights reserved.',
-    40,
-    790,
-    { maxWidth: 520 }
-  );
-
+  pdf.text('Disclaimer:',40,740);
+  pdf.text('These calculations are estimates and are not guaranteed. Always double check calculations before ordering materials. Estimates are based off of the total pitched area.',40,755,{maxWidth:520});
+  pdf.text('This report was prepared by Remote Roofers Measurement Solutions. Copyright © 2026 | All rights reserved.',40,790,{maxWidth:520});
   pdf.save('roof-report.pdf');
 }
 </script>
