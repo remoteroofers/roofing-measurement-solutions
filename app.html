@@ -4,12 +4,17 @@
 <meta charset="UTF-8" />
 <title>Remote Roofers Measurement App</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <style>
 body { margin:0; font-family:Arial, sans-serif; }
 #map { height: 70vh; }
@@ -21,27 +26,30 @@ button { padding:8px 14px; margin:4px; }
 <body>
 
 <div class="panel">
-<input id="address" placeholder="Enter property address" size="40" />
-<button onclick="locate()">Locate</button>
-<select id="defaultPitch">
-  <option value="0">Flat</option>
-  <option value="3">3/12</option>
-  <option value="4">4/12</option>
-  <option value="6" selected>6/12</option>
-  <option value="8">8/12</option>
-</select>
-<button onclick="generatePDF()">Generate PDF</button>
-<div class="summary" id="summary"></div>
-</div>
+  <input id="address" placeholder="Enter property address" size="40" />
+  <button onclick="locate()">Locate</button>
+
+  <select id="defaultPitch">
+    <option value="0">Flat</option>
+    <option value="3">3/12</option>
+    <option value="4">4/12</option>
+    <option value="6" selected>6/12</option>
+    <option value="8">8/12</option>
+  </select>
+
+  <button onclick="generatePDF()">Generate PDF</button>
+  <div class="summary" id="summary"></div>
 </div>
 
 <div id="map"></div>
 
 <script>
+// ---------------- MAP SETUP ----------------
 let map = L.map('map').setView([37.7749, -122.4194], 19);
-L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+
+L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
   maxZoom: 21,
-  subdomains:['mt0','mt1','mt2','mt3']
+  subdomains: ['mt0','mt1','mt2','mt3']
 }).addTo(map);
 
 let drawnItems = new L.FeatureGroup();
@@ -49,114 +57,136 @@ map.addLayer(drawnItems);
 
 let drawControl = new L.Control.Draw({
   edit: { featureGroup: drawnItems },
-  draw: { polygon: true, rectangle:false, circle:false, marker:false, polyline:false }
+  draw: {
+    polygon: true,
+    rectangle: false,
+    circle: false,
+    marker: false,
+    polyline: false
+  }
 });
 map.addControl(drawControl);
 
+// ---------------- DRAW EVENTS ----------------
 map.on(L.Draw.Event.CREATED, function (e) {
   const pitch = document.getElementById('defaultPitch').value;
   e.layer.options.pitch = pitch;
-  e.layer.bindTooltip(`${pitch}/12`, {permanent:true});
+  e.layer.bindTooltip(`${pitch}/12`, { permanent: true });
   drawnItems.addLayer(e.layer);
   updateSummary();
 });
+
+map.on(L.Draw.Event.EDITED, function () {
   updateSummary();
 });
 
-map.on(L.Draw.Event.EDITED, updateSummary);
-map.on(L.Draw.Event.DELETED, updateSummary);
+map.on(L.Draw.Event.DELETED, function () {
+  updateSummary();
+});
 
+// ---------------- AREA CALCULATION ----------------
 function areaSqFt(layer) {
   const latlngs = layer.getLatLngs()[0];
   let areaMeters = 0;
+
   for (let i = 0, j = latlngs.length - 1; i < latlngs.length; j = i++) {
     const p1 = latlngs[i];
     const p2 = latlngs[j];
-    areaMeters += (p2.lng - p1.lng) * Math.PI/180 *
-      (2 + Math.sin(p1.lat * Math.PI/180) + Math.sin(p2.lat * Math.PI/180));
+    areaMeters += (p2.lng - p1.lng) * Math.PI / 180 *
+      (2 + Math.sin(p1.lat * Math.PI / 180) + Math.sin(p2.lat * Math.PI / 180));
   }
+
   areaMeters = areaMeters * 6378137 * 6378137 / 2;
-  const areaSqFt = Math.abs(areaMeters) * 10.7639;
-  return areaSqFt;
-}
-  return Math.abs(area * 12365.1613); // approx sqft
+  return Math.abs(areaMeters) * 10.7639;
 }
 
+// ---------------- SUMMARY ----------------
 function updateSummary() {
   let total = 0;
   let pitchAreas = {};
-  drawnItems.eachLayer(l => {
-    const a = areaSqFt(l);
-    total += a;
-    const p = l.options.pitch || 0;
-    pitchAreas[p] = (pitchAreas[p] || 0) + a;
-  });
-  let predominantPitch = Object.keys(pitchAreas).sort((a,b)=>pitchAreas[b]-pitchAreas[a])[0] || 'N/A';
 
-  const squares = total/100;
-  const bundles = Math.ceil((total*1.1)/33);
+  drawnItems.eachLayer(layer => {
+    const area = areaSqFt(layer);
+    total += area;
+    const pitch = layer.options.pitch || 0;
+    pitchAreas[pitch] = (pitchAreas[pitch] || 0) + area;
+  });
+
+  let predominantPitch = 'N/A';
+  if (Object.keys(pitchAreas).length) {
+    predominantPitch = Object.keys(pitchAreas)
+      .sort((a, b) => pitchAreas[b] - pitchAreas[a])[0];
+  }
+
+  const squares = total / 100;
+  const bundles = Math.ceil((total * 1.1) / 33);
 
   document.getElementById('summary').innerHTML = `
     <b>Facets:</b> ${drawnItems.getLayers().length}<br>
     <b>Total Roof Area:</b> ${total.toFixed(0)} sqft<br>
     <b>Squares:</b> ${squares.toFixed(2)}<br>
     <b>Predominant Pitch:</b> ${predominantPitch}/12<br><br>
-    <b>Material Estimate (10% waste)</b><br>
+    <b>Material Estimate (10% Waste)</b><br>
     IKO Cambridge: ${bundles} bundles<br>
     GAF Timberline: ${bundles} bundles<br>
     Owens Corning Duration: ${bundles} bundles
   `;
-}<br>
-    <b>Total Roof Area:</b> ${total.toFixed(0)} sqft<br>
-    <b>Squares:</b> ${(total/100).toFixed(2)}
-  `;
 }
 
+// ---------------- LOCATE ----------------
 function locate() {
-  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${address.value}`)
-    .then(r => r.json())
-    .then(d => {
-      if(d[0]) map.setView([d[0].lat, d[0].lon], 20);
-    });
+  const query = document.getElementById('address').value.trim();
+  if (!query) {
+    alert('Enter an address');
+    return;
+  }
+
+  L.Control.Geocoder.nominatim().geocode(query, function(results) {
+    if (!results || !results.length) {
+      alert('Address not found');
+      return;
+    }
+    map.setView(results[0].center, 20);
+  });
 }
 
+// ---------------- PDF ----------------
 async function generatePDF() {
   const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF('p','pt','a4');
+  const pdf = new jsPDF('p', 'pt', 'a4');
 
-  let canvas = await html2canvas(document.getElementById('map'));
-  let img = canvas.toDataURL('image/png');
+  const canvas = await html2canvas(document.getElementById('map'));
+  const img = canvas.toDataURL('image/png');
 
   pdf.setFontSize(18);
-  pdf.text('Roof Measurement Report',40,40);
+  pdf.text('Roof Measurement Report', 40, 40);
 
-  pdf.addImage(img,'PNG',40,60,520,300);
+  pdf.addImage(img, 'PNG', 40, 60, 520, 300);
 
   pdf.setFontSize(12);
-  pdf.text('Measurement Summary',40,380);
-  pdf.text(document.getElementById('summary').innerText,40,400);
+  pdf.text('Measurement Summary', 40, 380);
+  pdf.text(document.getElementById('summary').innerText, 40, 400);
 
   pdf.addPage();
-  pdf.text('Material Calculations (10% Waste)',40,40);
-  pdf.text(document.getElementById('summary').innerText,40,70);
+  pdf.text('Material Calculations (10% Waste)', 40, 40);
+  pdf.text(document.getElementById('summary').innerText, 40, 70);
 
   pdf.setFontSize(10);
-  pdf.text('Disclaimer:',40,740);
-  pdf.text('These calculations are estimates and are not guaranteed. Always double check calculations before ordering materials. Estimates are based off of the total pitched area.',40,755,{maxWidth:520});
+  pdf.text('Disclaimer:', 40, 740);
+  pdf.text(
+    'These calculations are estimates and are not guaranteed. Always double check calculations before ordering materials. Estimates are based off of the total pitched area.',
+    40,
+    755,
+    { maxWidth: 520 }
+  );
 
-  pdf.text('This report was prepared by Remote Roofers Measurement Solutions. Copyright © 2026 | All rights reserved.',40,790,{maxWidth:520});
+  pdf.text(
+    'This report was prepared by Remote Roofers Measurement Solutions. Copyright © 2026 | All rights reserved.',
+    40,
+    790,
+    { maxWidth: 520 }
+  );
 
-  pdf.save('roof-report.pdf');
-}() {
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF('p','pt','a4');
-  let canvas = await html2canvas(document.getElementById('map'));
-  let img = canvas.toDataURL('image/png');
-  pdf.text('Roof Measurement Report',40,40);
-  pdf.addImage(img,'PNG',40,60,500,300);
-  pdf.text(document.getElementById('summary').innerText,40,380);
-  pdf.text('These calculations are estimates and are not guaranteed.',40,760);
-  pdf.text('Remote Roofers Measurement Solutions © 2026',40,790);
   pdf.save('roof-report.pdf');
 }
 </script>
