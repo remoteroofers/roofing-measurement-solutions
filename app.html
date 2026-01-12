@@ -134,12 +134,41 @@ function updateSummary() {
 }
 
 // ---------------- LOCATE ----------------
+let locateMarker = null;
+
 function locate() {
   const query = document.getElementById('address').value.trim();
   if (!query) {
     alert('Enter an address');
     return;
   }
+
+  const geocoder = L.Control.Geocoder.nominatim({
+    serviceUrl: 'https://nominatim.openstreetmap.org/'
+  });
+
+  geocoder.geocode(query, function(results) {
+    if (!results || !results.length) {
+      alert('Address not found');
+      return;
+    }
+
+    const r = results[0];
+
+    // Zoom accurately to result bounds if available
+    if (r.bbox) {
+      map.fitBounds(r.bbox);
+    } else {
+      map.setView(r.center, 20);
+    }
+
+    // Drop / move marker so user can visually confirm location
+    if (locateMarker) map.removeLayer(locateMarker);
+    locateMarker = L.marker(r.center).addTo(map)
+      .bindPopup(r.name || query)
+      .openPopup();
+  });
+}
 
   L.Control.Geocoder.nominatim().geocode(query, function(results) {
     if (!results || !results.length) {
