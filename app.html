@@ -23,8 +23,16 @@ button { padding:8px 14px; margin:4px; }
 <div class="panel">
 <input id="address" placeholder="Enter property address" size="40" />
 <button onclick="locate()">Locate</button>
+<select id="defaultPitch">
+  <option value="0">Flat</option>
+  <option value="3">3/12</option>
+  <option value="4">4/12</option>
+  <option value="6" selected>6/12</option>
+  <option value="8">8/12</option>
+</select>
 <button onclick="generatePDF()">Generate PDF</button>
 <div class="summary" id="summary"></div>
+</div>
 </div>
 
 <div id="map"></div>
@@ -46,7 +54,12 @@ let drawControl = new L.Control.Draw({
 map.addControl(drawControl);
 
 map.on(L.Draw.Event.CREATED, function (e) {
+  const pitch = document.getElementById('defaultPitch').value;
+  e.layer.options.pitch = pitch;
+  e.layer.bindTooltip(`${pitch}/12`, {permanent:true});
   drawnItems.addLayer(e.layer);
+  updateSummary();
+});
   updateSummary();
 });
 
@@ -54,21 +67,46 @@ map.on(L.Draw.Event.EDITED, updateSummary);
 map.on(L.Draw.Event.DELETED, updateSummary);
 
 function areaSqFt(layer) {
-  let latlngs = layer.getLatLngs()[0];
-  let area = 0;
-  for (let i = 0; i < latlngs.length; i++) {
-    let p1 = latlngs[i];
-    let p2 = latlngs[(i + 1) % latlngs.length];
-    area += (p2.lng - p1.lng) * (p2.lat + p1.lat);
+  const latlngs = layer.getLatLngs()[0];
+  let areaMeters = 0;
+  for (let i = 0, j = latlngs.length - 1; i < latlngs.length; j = i++) {
+    const p1 = latlngs[i];
+    const p2 = latlngs[j];
+    areaMeters += (p2.lng - p1.lng) * Math.PI/180 *
+      (2 + Math.sin(p1.lat * Math.PI/180) + Math.sin(p2.lat * Math.PI/180));
   }
+  areaMeters = areaMeters * 6378137 * 6378137 / 2;
+  const areaSqFt = Math.abs(areaMeters) * 10.7639;
+  return areaSqFt;
+}
   return Math.abs(area * 12365.1613); // approx sqft
 }
 
 function updateSummary() {
   let total = 0;
-  drawnItems.eachLayer(l => total += areaSqFt(l));
+  let pitchAreas = {};
+  drawnItems.eachLayer(l => {
+    const a = areaSqFt(l);
+    total += a;
+    const p = l.options.pitch || 0;
+    pitchAreas[p] = (pitchAreas[p] || 0) + a;
+  });
+  let predominantPitch = Object.keys(pitchAreas).sort((a,b)=>pitchAreas[b]-pitchAreas[a])[0] || 'N/A';
+
+  const squares = total/100;
+  const bundles = Math.ceil((total*1.1)/33);
+
   document.getElementById('summary').innerHTML = `
     <b>Facets:</b> ${drawnItems.getLayers().length}<br>
+    <b>Total Roof Area:</b> ${total.toFixed(0)} sqft<br>
+    <b>Squares:</b> ${squares.toFixed(2)}<br>
+    <b>Predominant Pitch:</b> ${predominantPitch}/12<br><br>
+    <b>Material Estimate (10% waste)</b><br>
+    IKO Cambridge: ${bundles} bundles<br>
+    GAF Timberline: ${bundles} bundles<br>
+    Owens Corning Duration: ${bundles} bundles
+  `;
+}<br>
     <b>Total Roof Area:</b> ${total.toFixed(0)} sqft<br>
     <b>Squares:</b> ${(total/100).toFixed(2)}
   `;
@@ -83,6 +121,33 @@ function locate() {
 }
 
 async function generatePDF() {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF('p','pt','a4');
+
+  let canvas = await html2canvas(document.getElementById('map'));
+  let img = canvas.toDataURL('image/png');
+
+  pdf.setFontSize(18);
+  pdf.text('Roof Measurement Report',40,40);
+
+  pdf.addImage(img,'PNG',40,60,520,300);
+
+  pdf.setFontSize(12);
+  pdf.text('Measurement Summary',40,380);
+  pdf.text(document.getElementById('summary').innerText,40,400);
+
+  pdf.addPage();
+  pdf.text('Material Calculations (10% Waste)',40,40);
+  pdf.text(document.getElementById('summary').innerText,40,70);
+
+  pdf.setFontSize(10);
+  pdf.text('Disclaimer:',40,740);
+  pdf.text('These calculations are estimates and are not guaranteed. Always double check calculations before ordering materials. Estimates are based off of the total pitched area.',40,755,{maxWidth:520});
+
+  pdf.text('This report was prepared by Remote Roofers Measurement Solutions. Copyright © 2026 | All rights reserved.',40,790,{maxWidth:520});
+
+  pdf.save('roof-report.pdf');
+}() {
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF('p','pt','a4');
   let canvas = await html2canvas(document.getElementById('map'));
