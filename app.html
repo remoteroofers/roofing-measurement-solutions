@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Remote Roofers Measurement App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+body { margin:0; font-family:Arial, sans-serif; }
+#map { height: 70vh; }
+.panel { padding:10px; background:#f5f5f5; }
+button { padding:8px 14px; margin:4px; }
+.summary { font-size:14px; }
+</style>
+</head>
+<body>
+
+<div class="panel">
+<input id="address" placeholder="Enter property address" size="40" />
+<button onclick="locate()">Locate</button>
+<button onclick="generatePDF()">Generate PDF</button>
+<div class="summary" id="summary"></div>
+</div>
+
+<div id="map"></div>
+
+<script>
+let map = L.map('map').setView([37.7749, -122.4194], 19);
+L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+  maxZoom: 21,
+  subdomains:['mt0','mt1','mt2','mt3']
+}).addTo(map);
+
+let drawnItems = new L.FeatureGroup();
+map.addLayer(drawnItems);
+
+let drawControl = new L.Control.Draw({
+  edit: { featureGroup: drawnItems },
+  draw: { polygon: true, rectangle:false, circle:false, marker:false, polyline:false }
+});
+map.addControl(drawControl);
+
+map.on(L.Draw.Event.CREATED, function (e) {
+  drawnItems.addLayer(e.layer);
+  updateSummary();
+});
+
+map.on(L.Draw.Event.EDITED, updateSummary);
+map.on(L.Draw.Event.DELETED, updateSummary);
+
+function areaSqFt(layer) {
+  let latlngs = layer.getLatLngs()[0];
+  let area = 0;
+  for (let i = 0; i < latlngs.length; i++) {
+    let p1 = latlngs[i];
+    let p2 = latlngs[(i + 1) % latlngs.length];
+    area += (p2.lng - p1.lng) * (p2.lat + p1.lat);
+  }
+  return Math.abs(area * 12365.1613); // approx sqft
+}
+
+function updateSummary() {
+  let total = 0;
+  drawnItems.eachLayer(l => total += areaSqFt(l));
+  document.getElementById('summary').innerHTML = `
+    <b>Facets:</b> ${drawnItems.getLayers().length}<br>
+    <b>Total Roof Area:</b> ${total.toFixed(0)} sqft<br>
+    <b>Squares:</b> ${(total/100).toFixed(2)}
+  `;
+}
+
+function locate() {
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${address.value}`)
+    .then(r => r.json())
+    .then(d => {
+      if(d[0]) map.setView([d[0].lat, d[0].lon], 20);
+    });
+}
+
+async function generatePDF() {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF('p','pt','a4');
+  let canvas = await html2canvas(document.getElementById('map'));
+  let img = canvas.toDataURL('image/png');
+  pdf.text('Roof Measurement Report',40,40);
+  pdf.addImage(img,'PNG',40,60,500,300);
+  pdf.text(document.getElementById('summary').innerText,40,380);
+  pdf.text('These calculations are estimates and are not guaranteed.',40,760);
+  pdf.text('Remote Roofers Measurement Solutions © 2026',40,790);
+  pdf.save('roof-report.pdf');
+}
+</script>
+</body>
+</html>
