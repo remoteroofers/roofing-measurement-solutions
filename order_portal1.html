@@ -129,13 +129,11 @@
             color: #666;
         }
 
-        .[summary-row.total](http://summary-row.total) {
-            border-top: 2px solid #ddd;
-            margin-top: 10px;
-            padding-top: 15px;
-            font-weight: bold;
-            color: #333;
-            font-size: 18px;
+     .summary-row.total {
+  border-top: 2px solid #ddd;
+  margin-top: 10px;
+  padding-top: 15px;
+  font-weight: bold;
         }
 
         .total-amount {
@@ -193,17 +191,17 @@
 
   <div class="form-group">
     <label>Service Tier *</label>
-    <select id="serviceTier" onchange="updatePricing()" required>
-      <option value="">Select</option>
-      <option>Standard - Regular Processing 8 hrs or Less</option>
-      <option>Express - Faster Turnaround 6 hrs or less </option>
-      <option>Rush - Priority Processing 2-3 hrs </option>
-    </select>
+  <select id="serviceTier" onchange="updatePricing()" required>
+  <option value="">Select</option>
+  <option value="Standard">Standard - Regular Processing (8 hrs or less)</option>
+  <option value="Express">Express - Faster Turnaround (6 hrs or less)</option>
+  <option value="Rush">Rush - Priority Processing (2–3 hrs)</option>
+  </select>
   </div>
 
   <div>
     <h3>Order Summary</h3>
-    <p>Property Address: <span id="propertyAddress">-</span></p>
+    <p>Property Address: <span id="summaryAddress">-</span></p>
     <p>Report: <span id="selectedReport">-</span></p>
     <p>Tier: <span id="selectedTier">-</span></p>
     <p><strong>Total: <span id="totalPrice">$0</span></strong></p>
@@ -250,6 +248,7 @@ window.updatePricing = function () {
   if (!report || !tier) return;
 
   currentPrice = pricing[report][tier];
+  summaryAddress.textContent = propertyAddress.value || "-";
   selectedReport.textContent = report;
   selectedTier.textContent = tier;
   totalPrice.textContent = `$${currentPrice}`;
@@ -263,10 +262,14 @@ function renderPayPal() {
   if (paypalRendered) return;
   paypalRendered = true;
 
+  document.getElementById("paypal-button-container").innerHTML = "";
+
   paypal.Buttons({
     createOrder: (_, actions) =>
       actions.order.create({
-        purchase_units: [{ amount: { value: currentPrice.toFixed(2) } }]
+        purchase_units: [{
+          amount: { value: currentPrice.toFixed(2) }
+        }]
       }),
     onApprove: async (_, actions) => {
       const order = await actions.order.capture();
@@ -274,6 +277,7 @@ function renderPayPal() {
     }
   }).render("#paypal-button-container");
 }
+
 
 async function saveOrder(paypalId) {
   const userSnap = await getDoc(doc(db, "users", userId));
