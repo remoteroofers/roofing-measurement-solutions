@@ -175,26 +175,25 @@
 
                 <div class="form-group">
                     <label>Report Type *</label>
-                    <select id="reportType" required>
-                        <option value="">Select Report Type</option>
-                        <option value="Aerial Report">Aerial Report</option>
-                        <option value="Residential Report">Residential Report</option>
-                        <option value="Commercial Report">Commercial Report</option>
-                        <option value="Detailed Analysis">Detailed Analysis</option>
+                      <label for="reportType">Report Type</label>
+                        <select id="reportType" data-testid="report-type" required onchange="updatePricing()">
+                        <option value="">Select a report type</option>
+                        <option value="Aerial Square Roof Report">Aerial Square Roof Report</option>
+                        <option value="Residential Roof Report">Residential Roof Report</option>
+                        <option value="Commercial Roof Report">Commercial Roof Report</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label>Service Tier *</label>
-                    <select id="serviceTier" required>
-                        <option value="">Select Service Tier</option>
-                        <option value="Basic" data-price="99">Basic - $99</option>
-                        <option value="Standard" data-price="149">Standard - $149</option>
-                        <option value="Premium" data-price="249">Premium - $249</option>
-                        <option value="Enterprise" data-price="399">Enterprise - $399</option>
+                    <label for="serviceTier">Service Tier</label>
+                    <select id="serviceTier" data-testid="service-tier" required onchange="updatePricing()">
+                        <option value="">Select a service tier</option>
+                        <option value="Standard">Standard - Regular Processing 8 hrs or Less</option>
+                        <option value="Express">Express - Faster Turnaround 6 hrs or less </option>
+                        <option value="Rush">Rush - Priority Processing 2-3 hrs </option>
                     </select>
-                    <small>Higher tiers include more detailed measurements and faster turnaround</small>
                 </div>
+
 
                 <div class="order-summary">
                     <h3>Order Summary</h3>
@@ -250,6 +249,24 @@
         let orderData = {};
         let currentPrice = 0;
 
+              // Pricing Matrix
+        const pricing = {
+            'Aerial Square Roof Report': { 'Standard': 10, 'Express': 20, 'Rush': 30 },
+            'Residential Roof Report': { 'Standard': 17, 'Express': 25, 'Rush': 30 },
+            'Commercial Roof Report': { 'Standard': 30, 'Express': 35, 'Rush': 45 }
+        };
+
+        let currentPrice = 0;
+        let currentReportType = '';
+        let currentServiceTier = '';
+
+ 
+
+
+
+
+
+        
         // Update order summary
         document.getElementById('propertyAddress').addEventListener('input', updateSummary);
         document.getElementById('reportType').addEventListener('change', updateSummary);
@@ -327,6 +344,19 @@
                     paypalOrderId: paypalOrder.id,
                     createdAt: new Date().toISOString()
                 });
+
+            function updatePricing() {
+            const reportType = document.getElementById('reportType').value;
+            const serviceTier = document.getElementById('serviceTier').value;
+            
+            if (reportType && serviceTier) {
+                currentPrice = pricing[reportType][serviceTier];
+                currentReportType = reportType;
+                currentServiceTier = serviceTier;
+                
+                document.getElementById('selectedReport').textContent = reportType;
+                document.getElementById('selectedTier').textContent = serviceTier;
+                document.getElementById('totalPrice').textContent = `$${currentPrice}`;
 
                 // Send confirmation email (you'll need to implement with a backend service)
                 sendConfirmationEmail(userData.email, userData.name, orderRef.id);
