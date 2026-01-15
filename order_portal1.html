@@ -195,23 +195,23 @@
                 </div>
 
 
-                <div class="order-summary">
-                    <h3>Order Summary</h3>
-                    <div class="summary-row">
-                        <span>Property:</span>
-                        <span id="summaryAddress">-</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Report Type:</span>
-                        <span id="summaryReport">-</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Service Tier:</span>
-                        <span id="summaryTier">-</span>
-                    </div>
-                    <div class="summary-row total">
-                        <span>Total Price:</span>
-                        <span class="total-amount" id="totalPrice">$0.00</span>
+        <div class="pricing-display" id="pricingDisplay" data-testid="pricing-display">
+                    <div class="pricing-card">
+                        <h3>Order Summary</h3>
+                        <div class="pricing-details">
+                            <div class="pricing-row">
+                                <span>Report Type:</span>
+                                <span id="selectedReport" data-testid="selected-report">-</span>
+                            </div>
+                            <div class="pricing-row">
+                                <span>Service Tier:</span>
+                                <span id="selectedTier" data-testid="selected-tier">-</span>
+                            </div>
+                            <div class="pricing-row total">
+                                <span>Total Price:</span>
+                                <span id="totalPrice" data-testid="total-price">$0</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
