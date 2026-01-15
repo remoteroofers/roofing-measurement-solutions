@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Create Order</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Tailwind CDN (since your JSX uses Tailwind classes) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#F8FAFC]">
+
+  <div class="max-w-3xl mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-6">Create New Order</h1>
+
+    <form id="orderForm" class="bg-white p-6 rounded-lg shadow space-y-5">
+
+      <input id="address" required placeholder="Property Address"
+        class="w-full p-3 border rounded" />
+
+      <div class="grid grid-cols-3 gap-4">
+        <input id="city" placeholder="City" class="p-3 border rounded" />
+        <input id="state" placeholder="State" class="p-3 border rounded" />
+        <input id="zip" placeholder="ZIP" class="p-3 border rounded" />
+      </div>
+
+      <div>
+        <p class="font-medium mb-2">Report Type</p>
+
+        <label class="block">
+          <input type="radio" name="report" value="Basic Measurement" checked />
+          Basic Measurement ($50)
+        </label>
+
+        <label class="block">
+          <input type="radio" name="report" value="Detailed Report" />
+          Detailed Report ($100)
+        </label>
+
+        <label class="block">
+          <input type="radio" name="report" value="Premium Analysis" />
+          Premium Analysis ($150)
+        </label>
+      </div>
+
+      <div>
+        <p class="font-medium mb-2">Service Tier</p>
+
+        <label class="block">
+          <input type="radio" name="tier" value="Standard" checked />
+          Standard (3–5 days)
+        </label>
+
+        <label class="block">
+          <input type="radio" name="tier" value="Express" />
+          Express (1–2 days)
+        </label>
+
+        <label class="block">
+          <input type="radio" name="tier" value="Rush" />
+          Rush (24 hours)
+        </label>
+      </div>
+
+      <div class="text-lg font-bold">
+        Total: $<span id="price">50.00</span>
+      </div>
+
+      <button class="w-full bg-blue-800 text-white py-3 rounded">
+        Proceed to Payment
+      </button>
+    </form>
+  </div>
+
+  <script src="order.js"></script>
+</body>
+</html>
