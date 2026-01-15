@@ -195,14 +195,15 @@
     <label>Service Tier *</label>
     <select id="serviceTier" onchange="updatePricing()" required>
       <option value="">Select</option>
-      <option>Standard</option>
-      <option>Express</option>
-      <option>Rush</option>
+      <option>Standard - Regular Processing 8 hrs or Less</option>
+      <option>Express - Faster Turnaround 6 hrs or less </option>
+      <option>Rush - Priority Processing 2-3 hrs </option>
     </select>
   </div>
 
   <div>
     <h3>Order Summary</h3>
+    <p>Property Address: <span id="propertyAddress">-</span></p>
     <p>Report: <span id="selectedReport">-</span></p>
     <p>Tier: <span id="selectedTier">-</span></p>
     <p><strong>Total: <span id="totalPrice">$0</span></strong></p>
