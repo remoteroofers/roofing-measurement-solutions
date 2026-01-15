@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Order - Remote Roofers</title>
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 24px;
+        }
+
+        .btn-back {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-back:hover {
+            background: white;
+            color: #2a5298;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .order-form {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .form-title {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #2a5298;
+        }
+
+        .form-group small {
+            color: #666;
+            font-size: 12px;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .order-summary {
+            background: #f5f7fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .order-summary h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            color: #666;
+        }
+
+        .summary-row.total {
+            border-top: 2px solid #ddd;
+            margin-top: 10px;
+            padding-top: 15px;
+            font-weight: bold;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .total-amount {
+            color: #2a5298;
+            font-size: 24px;
+        }
+
+        .payment-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .payment-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #paypal-button-container {
+            max-width: 400px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏠 Create New Order</h1>
+        <a href="client_portal1.html" class="btn-back">← Back to Portal</a>
+    </div>
+
+    <div class="container">
+        <div class="order-form">
+            <h2 class="form-title">Order Details</h2>
+            
+            <form id="orderForm">
+                <div class="form-group">
+                    <label>Property Address *</label>
+                    <input type="text" id="propertyAddress" required placeholder="123 Main St, City, State ZIP">
+                    <small>Enter the complete property address for roof measurement</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Report Type *</label>
+                    <select id="reportType" required>
+                        <option value="">Select Report Type</option>
+                        <option value="Aerial Report">Aerial Report</option>
+                        <option value="Residential Report">Residential Report</option>
+                        <option value="Commercial Report">Commercial Report</option>
+                        <option value="Detailed Analysis">Detailed Analysis</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Service Tier *</label>
+                    <select id="serviceTier" required>
+                        <option value="">Select Service Tier</option>
+                        <option value="Basic" data-price="99">Basic - $99</option>
+                        <option value="Standard" data-price="149">Standard - $149</option>
+                        <option value="Premium" data-price="249">Premium - $249</option>
+                        <option value="Enterprise" data-price="399">Enterprise - $399</option>
+                    </select>
+                    <small>Higher tiers include more detailed measurements and faster turnaround</small>
+                </div>
+
+                <div class="order-summary">
+                    <h3>Order Summary</h3>
+                    <div class="summary-row">
+                        <span>Property:</span>
+                        <span id="summaryAddress">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Report Type:</span>
+                        <span id="summaryReport">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Service Tier:</span>
+                        <span id="summaryTier">-</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total Price:</span>
+                        <span class="total-amount" id="totalPrice">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="payment-section" id="paymentSection" class="hidden">
+                    <h3>Payment</h3>
+                    <p style="color: #666; margin-bottom: 20px;">Complete your payment to submit the order</p>
+                    <div id="paypal-button-container"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
+            authDomain: "remoteroofers-51826.firebaseapp.com",
+            projectId: "remoteroofers-51826",
+            storageBucket: "remoteroofers-51826.appspot.com",
+            messagingSenderId: "901240361996",
+            appId: "1:901240361996:web:2a209986f74f15618aca29"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Auth guard
+        const userId = sessionStorage.getItem('userId');
+        if (!userId) {
+            window.location.href = 'login.html';
+        }
+
+        let orderData = {};
+        let currentPrice = 0;
+
+        // Update order summary
+        document.getElementById('propertyAddress').addEventListener('input', updateSummary);
+        document.getElementById('reportType').addEventListener('change', updateSummary);
+        document.getElementById('serviceTier').addEventListener('change', updateSummary);
+
+        function updateSummary() {
+            const address = document.getElementById('propertyAddress').value;
+            const report = document.getElementById('reportType').value;
+            const tierSelect = document.getElementById('serviceTier');
+            const tier = tierSelect.value;
+            const price = tierSelect.options[tierSelect.selectedIndex]?.dataset.price || 0;
+
+            document.getElementById('summaryAddress').textContent = address || '-';
+            document.getElementById('summaryReport').textContent = report || '-';
+            document.getElementById('summaryTier').textContent = tier || '-';
+            document.getElementById('totalPrice').textContent = `$${parseFloat(price).toFixed(2)}`;
+
+            currentPrice = parseFloat(price);
+
+            // Show PayPal button if all fields are filled
+            if (address && report && tier && price > 0) {
+                document.getElementById('paymentSection').classList.remove('hidden');
+                renderPayPalButton();
+            } else {
+                document.getElementById('paymentSection').classList.add('hidden');
+            }
+        }
+
+        let paypalRendered = false;
+
+        async function renderPayPalButton() {
+            if (paypalRendered) return;
+            paypalRendered = true;
+
+            const container = document.getElementById('paypal-button-container');
+            container.innerHTML = '';
+
+            paypal.Buttons({
+                createOrder: function(data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: currentPrice.toFixed(2)
+                            }
+                        }]
+                    });
+                },
+                onApprove: async function(data, actions) {
+                    const order = await actions.order.capture();
+                    await processOrder(order);
+                },
+                onError: function(err) {
+                    console.error('PayPal error:', err);
+                    alert('Payment failed. Please try again.');
+                }
+            }).render('#paypal-button-container');
+        }
+
+        async function processOrder(paypalOrder) {
+            try {
+                // Get user data
+                const userDoc = await getDoc(doc(db, 'users', userId));
+                const userData = userDoc.data();
+
+                // Create order in Firestore
+                const orderRef = await addDoc(collection(db, 'orders'), {
+                    userId: userId,
+                    clientName: userData.name,
+                    clientEmail: userData.email,
+                    propertyAddress: document.getElementById('propertyAddress').value,
+                    reportType: document.getElementById('reportType').value,
+                    serviceTier: document.getElementById('serviceTier').value,
+                    amount: currentPrice,
+                    status: 'pending',
+                    paypalOrderId: paypalOrder.id,
+                    createdAt: new Date().toISOString()
+                });
+
+                // Send confirmation email (you'll need to implement with a backend service)
+                sendConfirmationEmail(userData.email, userData.name, orderRef.id);
+
+                alert('Order placed successfully! You will receive a confirmation email shortly.');
+                window.location.href = 'client_portal1.html';
+            } catch (error) {
+                console.error('Error processing order:', error);
+                alert('Failed to process order. Please contact support.');
+            }
+        }
+
+        function sendConfirmationEmail(email, name, orderId) {
+            // Implement email sending with backend service (SendGrid, EmailJS, etc.)
+            console.log(`Confirmation email sent to ${email} for order ${orderId}`);
+        }
+    </script>
+</body>
+</html>
