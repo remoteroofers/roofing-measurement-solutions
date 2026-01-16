@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Create Order - Remote Roofers</title>
 
-<script src="https://www.paypal.com/sdk/js?client-id=ARiAdLTougjptHbODwbDVmc3ehO6osM9KmmGZLJaVHoSOXCOsjo56lVHx8hi78_HdZq5zkjE4DQSgOLQ&currency=USD"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=AQiwCgvuiWPWJYtAiSZrPd19lZC0kgGlENQ7Z-1r2xvwkmJS7ovaRIakrE3Yng1fVdqZZKCgR88XGX_D&currency=USD&intent=capture"></script>
+
 
   <style>
     /* 🔒 CSS UNCHANGED */
@@ -292,6 +293,7 @@ async function saveOrder(paypalId) {
     serviceTier: serviceTier.value,
     amount: currentPrice,
     paypalId,
+    status: "paid", // ✅ new
     createdAt: new Date().toISOString()
   });
 
