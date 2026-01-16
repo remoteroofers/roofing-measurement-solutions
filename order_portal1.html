@@ -1,225 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Create Order - Remote Roofers</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Create Order - Remote Roofers</title>
 
-<script src="https://www.paypal.com/sdk/js?client-id=AQiwCgvuiWPWJYtAiSZrPd19lZC0kgGlENQ7Z-1r2xvwkmJS7ovaRIakrE3Yng1fVdqZZKCgR88XGX_D&currency=USD&intent=capture"></script>
-
-
-  <style>
-    /* 🔒 CSS UNCHANGED */
-
-
-
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .header h1 {
-            font-size: 24px;
-        }
-
-        .btn-back {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 2px solid white;
-            padding: 8px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            text-decoration: none;
-        }
-
-        .btn-back:hover {
-            background: white;
-            color: #2a5298;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        .order-form {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .form-title {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #2a5298;
-        }
-
-        .form-group small {
-            color: #666;
-            font-size: 12px;
-            margin-top: 5px;
-            display: block;
-        }
-
-        .order-summary {
-            background: #f5f7fa;
-            padding: 25px;
-            border-radius: 8px;
-            margin-top: 30px;
-        }
-
-        .order-summary h3 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            color: #666;
-        }
-
-     .summary-row.total {
-  border-top: 2px solid #ddd;
-  margin-top: 10px;
-  padding-top: 15px;
-  font-weight: bold;
-        }
-
-        .total-amount {
-            color: #2a5298;
-            font-size: 24px;
-        }
-
-        .payment-section {
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 2px solid #e0e0e0;
-        }
-
-        .payment-section h3 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        #paypal-button-container {
-            max-width: 400px;
-        }
-
-        .hidden {
-            display: none;
-        }
- 
-  </style>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif;background:#f5f7fa}
+.header{background:linear-gradient(135deg,#1e3c72,#2a5298);color:#fff;padding:20px 40px;display:flex;justify-content:space-between;align-items:center}
+.btn-back{background:rgba(255,255,255,.2);color:#fff;border:2px solid #fff;padding:8px 20px;border-radius:6px;text-decoration:none;font-weight:600}
+.container{max-width:900px;margin:auto;padding:40px 20px}
+.order-form{background:#fff;padding:40px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.form-group{margin-bottom:20px}
+label{font-weight:600;display:block;margin-bottom:6px}
+input,select{width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:8px}
+.order-summary{background:#f5f7fa;padding:20px;border-radius:8px;margin-top:20px}
+.payment-section{margin-top:30px;border-top:2px solid #e0e0e0;padding-top:20px}
+.hidden{display:none}
+</style>
 </head>
 
 <body>
 <div class="header">
-  <h1>🏠 Create New Order</h1>
-  <a href="client_portal1.html" class="btn-back">← Back to Portal</a>
+  <h2>🏠 Create New Order</h2>
+  <a href="client_portal1.html" class="btn-back">← Back</a>
 </div>
 
 <div class="container">
 <div class="order-form">
-<h2 class="form-title">Order Details</h2>
 
-<form>
-  <div class="form-group">
-    <label>Property Address *</label>
-    <input id="propertyAddress" required />
-  </div>
+<div class="form-group">
+  <label>Property Address *</label>
+  <input id="propertyAddress" required>
+</div>
 
-  <div class="form-group">
-    <label>Report Type *</label>
-    <select id="reportType" onchange="updatePricing()" required>
-      <option value="">Select</option>
-      <option>Aerial Square Roof Report</option>
-      <option>Residential Roof Report</option>
-      <option>Commercial Roof Report</option>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label>Service Tier *</label>
-  <select id="serviceTier" onchange="updatePricing()" required>
-  <option value="">Select</option>
-  <option value="Standard">Standard - Regular Processing (8 hrs or less)</option>
-  <option value="Express">Express - Faster Turnaround (6 hrs or less)</option>
-  <option value="Rush">Rush - Priority Processing (2–3 hrs)</option>
+<div class="form-group">
+  <label>Report Type *</label>
+  <select id="reportType" onchange="updatePricing()" required>
+    <option value="">Select</option>
+    <option value="Aerial Square Roof Report">Aerial Square Roof Report</option>
+    <option value="Residential Roof Report">Residential Roof Report</option>
+    <option value="Commercial Roof Report">Commercial Roof Report</option>
   </select>
-  </div>
+</div>
 
-  <div>
-    <h3>Order Summary</h3>
-    <p>Property Address: <span id="summaryAddress">-</span></p>
-    <p>Report: <span id="selectedReport">-</span></p>
-    <p>Tier: <span id="selectedTier">-</span></p>
-    <p><strong>Total: <span id="totalPrice">$0</span></strong></p>
-  </div>
+<div class="form-group">
+  <label>Service Tier *</label>
+  <select id="serviceTier" onchange="updatePricing()" required>
+    <option value="">Select</option>
+    <option value="Standard">Standard (≤ 8 hrs)</option>
+    <option value="Express">Express (≤ 6 hrs)</option>
+    <option value="Rush">Rush (2–3 hrs)</option>
+  </select>
+</div>
 
-  <div id="paymentSection" class="payment-section hidden">
-    <h3>Payment</h3>
-    <div id="paypal-button-container"></div>
-  </div>
-</form>
+<div class="order-summary">
+  <p><strong>Address:</strong> <span id="summaryAddress">-</span></p>
+  <p><strong>Report:</strong> <span id="selectedReport">-</span></p>
+  <p><strong>Tier:</strong> <span id="selectedTier">-</span></p>
+  <p><strong>Total:</strong> <span id="totalPrice">$0</span></p>
+</div>
+
+<!-- PAYMENT -->
+<div id="paymentSection" class="payment-section hidden">
+  <h3>Payment</h3>
+  <div id="paypal-button-container"></div>
+
+  <!-- Mock payment (TEST only) -->
+  <button id="mockPayBtn" type="button"
+    style="display:none;margin-top:15px;padding:12px 20px;
+    background:#28a745;color:white;border:none;border-radius:6px;font-weight:600">
+    🧪 Mock Pay (Test Mode)
+  </button>
+</div>
+
 </div>
 </div>
 
+<!-- ================= FIREBASE ================= -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, doc, getDoc }
-  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* ================= CONFIG ================= */
+const APP_MODE = "TEST"; // 🔁 CHANGE TO "LIVE" WHEN READY
+
+const PAYPAL_CLIENT_ID = {
+  TEST: "SANDBOX_CLIENT_ID_HERE",
+  LIVE: "LIVE_CLIENT_ID_HERE"
+};
 
 const firebaseConfig = {
   apiKey: "AIzaSyDmBLEUz5EWtv1si_UgfKgOiRS8P-wWOnc",
@@ -233,6 +104,7 @@ const db = getFirestore(app);
 const userId = sessionStorage.getItem("userId");
 if (!userId) location.href = "login.html";
 
+/* ================= PRICING ================= */
 const pricing = {
   "Aerial Square Roof Report": { Standard:10, Express:20, Rush:30 },
   "Residential Roof Report": { Standard:17, Express:25, Rush:30 },
@@ -242,45 +114,61 @@ const pricing = {
 let currentPrice = 0;
 let paypalRendered = false;
 
+/* ================= UPDATE PRICING ================= */
 window.updatePricing = function () {
-  const report = reportType.value;
-  const tier = serviceTier.value;
+  if (!reportType.value || !serviceTier.value) return;
 
-  if (!report || !tier) return;
+  currentPrice = pricing[reportType.value][serviceTier.value];
 
-  currentPrice = pricing[report][tier];
   summaryAddress.textContent = propertyAddress.value || "-";
-  selectedReport.textContent = report;
-  selectedTier.textContent = tier;
+  selectedReport.textContent = reportType.value;
+  selectedTier.textContent = serviceTier.value;
   totalPrice.textContent = `$${currentPrice}`;
 
   paymentSection.classList.remove("hidden");
-  paypalRendered = false;
-  renderPayPal();
+
+  if (APP_MODE === "TEST") mockPayBtn.style.display = "inline-block";
+  loadPayPal();
 };
 
+/* ================= PAYPAL LOADER ================= */
+function loadPayPal() {
+  if (window.paypal) return renderPayPal();
+
+  const script = document.createElement("script");
+  script.src =
+    APP_MODE === "LIVE"
+      ? `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID.LIVE}&currency=USD`
+      : `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID.TEST}&currency=USD`;
+
+  script.onload = renderPayPal;
+  document.body.appendChild(script);
+}
+
+/* ================= PAYPAL ================= */
 function renderPayPal() {
   if (paypalRendered) return;
   paypalRendered = true;
 
-  document.getElementById("paypal-button-container").innerHTML = "";
-
   paypal.Buttons({
     createOrder: (_, actions) =>
       actions.order.create({
-        purchase_units: [{
-          amount: { value: currentPrice.toFixed(2) }
-        }]
+        purchase_units: [{ amount: { value: currentPrice.toFixed(2) } }]
       }),
     onApprove: async (_, actions) => {
       const order = await actions.order.capture();
-      await saveOrder(order.id);
+      await saveOrder(order.id, "paypal");
     }
   }).render("#paypal-button-container");
 }
 
+/* ================= MOCK PAYMENT ================= */
+mockPayBtn.onclick = async () => {
+  await saveOrder("MOCK-" + Date.now(), "mock");
+};
 
-async function saveOrder(paypalId) {
+/* ================= SAVE ORDER ================= */
+async function saveOrder(paymentId, method) {
   const userSnap = await getDoc(doc(db, "users", userId));
   const user = userSnap.data();
 
@@ -292,12 +180,14 @@ async function saveOrder(paypalId) {
     reportType: reportType.value,
     serviceTier: serviceTier.value,
     amount: currentPrice,
-    paypalId,
-    status: "paid", // ✅ new
-    createdAt: new Date().toISOString()
+    status: "paid",
+    paymentMethod: method,
+    paypalId: paymentId,
+    mode: APP_MODE,
+    createdAt: new Date()
   });
 
-  alert("Order placed successfully!");
+  alert("✅ Order Successful");
   location.href = "client_portal1.html";
 }
 </script>
