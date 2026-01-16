@@ -326,33 +326,56 @@
             });
         }
 
-        function displayOrders(orders) {
-            const container = document.getElementById('ordersContainer');
-            
-            if (orders.length === 0) {
-                container.innerHTML = '<div class="no-orders">No orders yet. Create your first order!</div>';
-                return;
-            }
+function displayOrders(orders) {
+    const container = document.getElementById('ordersContainer');
 
-            // Sort by date (newest first)
-            orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    if (!orders || orders.length === 0) {
+        container.innerHTML = '<div class="no-orders">No orders yet. Create your first order!</div>';
+        return;
+    }
 
-            container.innerHTML = orders.map(order => `
-                <div class="order-card">
-                    <div class="order-header">
-                        <div class="order-id">Order #${order.id.substring(0, 8)}</div>
-                        <span class="status-badge status-${order.status}">${order.status.toUpperCase()}</span>
-                    </div>
-                    <div class="order-info">
-                        <strong>Property:</strong> ${order.propertyAddress}<br>
-                        <strong>Report Type:</strong> ${order.reportType}<br>
-                        <strong>Service Tier:</strong> ${order.serviceTier}<br>
-                        <strong>Amount:</strong> $${parseFloat(order.amount).toFixed(2)}<br>
-                        <strong>Date:</strong> ${new Date(order.createdAt).toLocaleDateString()}
-                    </div>
+    // Sort by createdAt (newest first), safely handling Firestore Timestamp or string
+    orders.sort((a, b) => {
+        const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
+        const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
+        return dateB - dateA;
+    });
+
+    container.innerHTML = orders.map(order => {
+        // Safe defaults if fields are missing
+        const id = order.id?.substring(0, 8) || 'N/A';
+        const property = order.propertyAddress || 'N/A';
+        const reportType = order.reportType || 'N/A';
+        const serviceTier = order.serviceTier || 'N/A';
+        const amount = order.amount ? parseFloat(order.amount).toFixed(2) : '0.00';
+
+        // Handle Firestore timestamp or string
+        const createdAt = order.createdAt?.toDate ? order.createdAt.toDate() : new Date(order.createdAt);
+        const formattedDate = createdAt.toLocaleDateString();
+
+        // Determine badge class safely
+        const status = order.status?.toLowerCase() || 'pending'; // default to 'pending'
+        const statusClass = status === 'completed' ? 'status-completed' : 'status-pending';
+        const statusText = status.toUpperCase();
+
+        return `
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-id">Order #${id}</div>
+                    <span class="status-badge ${statusClass}">${statusText}</span>
                 </div>
-            `).join('');
-        }
+                <div class="order-info">
+                    <strong>Property:</strong> ${property}<br>
+                    <strong>Report Type:</strong> ${reportType}<br>
+                    <strong>Service Tier:</strong> ${serviceTier}<br>
+                    <strong>Amount:</strong> $${amount}<br>
+                    <strong>Date:</strong> ${formattedDate}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
 
         // Save profile
         document.getElementById('profileForm').addEventListener('submit', async (e) => {
