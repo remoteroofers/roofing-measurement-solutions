@@ -68,11 +68,22 @@ input,select{width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:8px}
   <div id="paypal-button-container"></div>
 
   <!-- Mock payment (TEST only) -->
-  <button id="mockPayBtn" type="button"
-    style="display:none;margin-top:15px;padding:12px 20px;
-    background:#28a745;color:white;border:none;border-radius:6px;font-weight:600">
-    🧪 Mock Pay (Test Mode)
-  </button>
+ <button id="mockPayBtn" type="button"
+  style="
+    display:none;
+    margin-top:15px;
+    padding:12px 20px;
+    background:#28a745;
+    color:white;
+    border:none;
+    border-radius:6px;
+    font-weight:600;
+    cursor:pointer;
+    position:relative;
+    z-index:10;
+  ">
+  🧪 Mock Pay (Test Mode)
+</button>
 </div>
 
 </div>
@@ -146,14 +157,22 @@ window.updatePricing = function () {
   paypalRendered = false;
   document.getElementById("paypal-button-container").innerHTML = "";
 
-  if (APP_MODE === "TEST") {
-    mockPayBtn.style.display = "inline-block";
-    document.getElementById("paypal-button-container").style.display = "none";
-  } else {
-    mockPayBtn.style.display = "none";
-    document.getElementById("paypal-button-container").style.display = "block";
-    loadPayPal();
-  }
+if (APP_MODE === "TEST") {
+  mockPayBtn.style.display = "inline-block";
+
+  const paypalContainer = document.getElementById("paypal-button-container");
+  paypalContainer.style.display = "none";
+  paypalContainer.style.pointerEvents = "none"; // 🔑 KEY FIX
+} else {
+  mockPayBtn.style.display = "none";
+
+  const paypalContainer = document.getElementById("paypal-button-container");
+  paypalContainer.style.display = "block";
+  paypalContainer.style.pointerEvents = "auto";
+
+  loadPayPal();
+}
+
 };
 
 
