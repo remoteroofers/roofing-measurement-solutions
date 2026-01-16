@@ -65,6 +65,7 @@ input,select{width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:8px}
 <!-- PAYMENT -->
 <div id="paymentSection" class="payment-section hidden">
   <h3>Payment</h3>
+  
   <div id="paypal-button-container"></div>
 
   <!-- Mock payment (TEST only) -->
@@ -145,9 +146,15 @@ let paypalRendered = false;
 window.updatePricing = function () {
   if (!reportType.value || !serviceTier.value) return;
 
+  if (!propertyAddress.value.trim()) {
+    alert("Please enter a property address.");
+    paymentSection.classList.add("hidden");
+    return;
+  }
+
   currentPrice = pricing[reportType.value][serviceTier.value];
 
-  summaryAddress.textContent = propertyAddress.value || "-";
+  summaryAddress.textContent = propertyAddress.value;
   selectedReport.textContent = reportType.value;
   selectedTier.textContent = serviceTier.value;
   totalPrice.textContent = `$${currentPrice}`;
@@ -155,34 +162,28 @@ window.updatePricing = function () {
   paymentSection.classList.remove("hidden");
 
   paypalRendered = false;
-  document.getElementById("paypal-button-container").innerHTML = "";
-
-if (APP_MODE === "TEST") {
-  mockPayBtn.style.display = "inline-block";
 
   const paypalContainer = document.getElementById("paypal-button-container");
 
-  if (paypalContainer) {
-    paypalContainer.remove(); // 🔥 HARD REMOVE — THIS IS THE KEY
+  if (APP_MODE === "TEST") {
+    mockPayBtn.style.display = "inline-block";
+
+    if (paypalContainer) {
+      paypalContainer.style.display = "none";
+    }
+
+  } else {
+    mockPayBtn.style.display = "none";
+
+    if (paypalContainer) {
+      paypalContainer.style.display = "block";
+      paypalContainer.innerHTML = "";
+    }
+
+    loadPayPal();
   }
-
-} else {
-  mockPayBtn.style.display = "none";
-
-  let paypalContainer = document.getElementById("paypal-button-container");
-
-  // Recreate PayPal container if missing
-  if (!paypalContainer) {
-    paypalContainer = document.createElement("div");
-    paypalContainer.id = "paypal-button-container";
-    document.querySelector(".payment-section").prepend(paypalContainer);
-  }
-
-  loadPayPal();
-}
-
-
 };
+
 
 
 
