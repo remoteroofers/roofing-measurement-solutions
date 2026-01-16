@@ -161,17 +161,26 @@ if (APP_MODE === "TEST") {
   mockPayBtn.style.display = "inline-block";
 
   const paypalContainer = document.getElementById("paypal-button-container");
-  paypalContainer.style.display = "none";
-  paypalContainer.style.pointerEvents = "none"; // 🔑 KEY FIX
+
+  if (paypalContainer) {
+    paypalContainer.remove(); // 🔥 HARD REMOVE — THIS IS THE KEY
+  }
+
 } else {
   mockPayBtn.style.display = "none";
 
-  const paypalContainer = document.getElementById("paypal-button-container");
-  paypalContainer.style.display = "block";
-  paypalContainer.style.pointerEvents = "auto";
+  let paypalContainer = document.getElementById("paypal-button-container");
+
+  // Recreate PayPal container if missing
+  if (!paypalContainer) {
+    paypalContainer = document.createElement("div");
+    paypalContainer.id = "paypal-button-container";
+    document.querySelector(".payment-section").prepend(paypalContainer);
+  }
 
   loadPayPal();
 }
+
 
 };
 
