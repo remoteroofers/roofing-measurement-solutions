@@ -78,7 +78,7 @@ input,select{width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:8px}
 </div>
 </div>
 
-<!-- ================= FIREBASE ================= -->
+<!-- ================= FIREBASE + LOGIC ================= -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, doc, getDoc }
@@ -127,15 +127,22 @@ window.updatePricing = function () {
 
   paymentSection.classList.remove("hidden");
 
+  // 🔧 FIXES
+  paypalRendered = false;
+  document.getElementById("paypal-button-container").innerHTML = "";
+
   if (APP_MODE === "TEST") mockPayBtn.style.display = "inline-block";
   loadPayPal();
 };
 
 /* ================= PAYPAL LOADER ================= */
 function loadPayPal() {
-  if (window.paypal) return renderPayPal();
+  if (window.paypal || document.getElementById("paypal-sdk")) {
+    return renderPayPal();
+  }
 
   const script = document.createElement("script");
+  script.id = "paypal-sdk";
   script.src =
     APP_MODE === "LIVE"
       ? `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID.LIVE}&currency=USD`
@@ -164,6 +171,7 @@ function renderPayPal() {
 
 /* ================= MOCK PAYMENT ================= */
 mockPayBtn.onclick = async () => {
+  if (APP_MODE !== "TEST") return alert("Mock payments disabled");
   await saveOrder("MOCK-" + Date.now(), "mock");
 };
 
