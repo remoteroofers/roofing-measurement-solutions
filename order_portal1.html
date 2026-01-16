@@ -81,11 +81,17 @@ input,select{width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:8px}
 <!-- ================= FIREBASE + LOGIC ================= -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, doc, getDoc }
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  doc,
+  getDoc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* ================= CONFIG ================= */
-const APP_MODE = "TEST"; // 🔁 CHANGE TO "LIVE" WHEN READY
+const APP_MODE = "TEST"; // TEST | LIVE
 
 const PAYPAL_CLIENT_ID = {
   TEST: "AQiwCgvuiWPWJYtAiSZrPd19lZC0kgGlENQ7Z-1r2xvwkmJS7ovaRIakrE3Yng1fVdqZZKCgR88XGX_D",
@@ -101,21 +107,35 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+/* ================= DOM ================= */
+const propertyAddress = document.getElementById("propertyAddress");
+const reportType = document.getElementById("reportType");
+const serviceTier = document.getElementById("serviceTier");
+const paymentSection = document.getElementById("paymentSection");
+const mockPayBtn = document.getElementById("mockPayBtn");
+
+const summaryAddress = document.getElementById("summaryAddress");
+const selectedReport = document.getElementById("selectedReport");
+const selectedTier = document.getElementById("selectedTier");
+const totalPrice = document.getElementById("totalPrice");
+
+/* ================= AUTH ================= */
 const userId = sessionStorage.getItem("userId");
 if (!userId) location.href = "login.html";
 
 /* ================= PRICING ================= */
 const pricing = {
-  "Aerial Square Roof Report": { Standard:10, Express:20, Rush:30 },
-  "Residential Roof Report": { Standard:17, Express:25, Rush:30 },
-  "Commercial Roof Report": { Standard:30, Express:35, Rush:45 }
+  "Aerial Square Roof Report": { Standard: 10, Express: 20, Rush: 30 },
+  "Residential Roof Report": { Standard: 17, Express: 25, Rush: 30 },
+  "Commercial Roof Report": { Standard: 30, Express: 35, Rush: 45 }
 };
 
 let currentPrice = 0;
 let paypalRendered = false;
+let orderRef = null;
 
 /* ================= UPDATE PRICING ================= */
-window.updatePricing = function () {
+window.updatePricing = async function () {
   if (!reportType.value || !serviceTier.value) return;
 
   currentPrice = pricing[reportType.value][serviceTier.value];
@@ -127,11 +147,35 @@ window.updatePricing = function () {
 
   paymentSection.classList.remove("hidden");
 
-  // 🔧 FIXES
   paypalRendered = false;
   document.getElementById("paypal-button-container").innerHTML = "";
 
   if (APP_MODE === "TEST") mockPayBtn.style.display = "inline-block";
+
+  // Create unpaid order
+  if (!orderRef) {
+    const userSnap = await getDoc(doc(db, "users", userId));
+    if (!userSnap.exists()) {
+      alert("User profile not found.");
+      return;
+    }
+
+    const user = userSnap.data();
+
+    orderRef = await addDoc(collection(db, "orders"), {
+      userId,
+      name: user.name,
+      email: user.email,
+      address: propertyAddress.value,
+      reportType: reportType.value,
+      serviceTier: serviceTier.value,
+      amount: currentPrice,
+      status: "unpaid",
+      mode: APP_MODE,
+      createdAt: new Date()
+    });
+  }
+
   loadPayPal();
 };
 
@@ -143,11 +187,7 @@ function loadPayPal() {
 
   const script = document.createElement("script");
   script.id = "paypal-sdk";
-  script.src =
-    APP_MODE === "LIVE"
-      ? `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID.LIVE}&currency=USD`
-      : `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID.TEST}&currency=USD`;
-
+  script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID[APP_MODE]}&currency=USD`;
   script.onload = renderPayPal;
   document.body.appendChild(script);
 }
@@ -164,40 +204,30 @@ function renderPayPal() {
       }),
     onApprove: async (_, actions) => {
       const order = await actions.order.capture();
-      await saveOrder(order.id, "paypal");
+      await finalizeOrder(order.id, "paypal");
     }
   }).render("#paypal-button-container");
 }
 
 /* ================= MOCK PAYMENT ================= */
 mockPayBtn.onclick = async () => {
-  if (APP_MODE !== "TEST") return alert("Mock payments disabled");
-  await saveOrder("MOCK-" + Date.now(), "mock");
+  if (APP_MODE !== "TEST") return alert("Mock disabled");
+  await finalizeOrder("MOCK-" + Date.now(), "mock");
 };
 
-/* ================= SAVE ORDER ================= */
-async function saveOrder(paymentId, method) {
-  const userSnap = await getDoc(doc(db, "users", userId));
-  const user = userSnap.data();
-
-  await addDoc(collection(db, "orders"), {
-    userId,
-    name: user.name,
-    email: user.email,
-    address: propertyAddress.value,
-    reportType: reportType.value,
-    serviceTier: serviceTier.value,
-    amount: currentPrice,
+/* ================= FINALIZE ================= */
+async function finalizeOrder(paymentId, method) {
+  await updateDoc(orderRef, {
     status: "paid",
     paymentMethod: method,
     paypalId: paymentId,
-    mode: APP_MODE,
-    createdAt: new Date()
+    paidAt: new Date()
   });
 
   alert("✅ Order Successful");
   location.href = "client_portal1.html";
 }
 </script>
+
 </body>
 </html>
