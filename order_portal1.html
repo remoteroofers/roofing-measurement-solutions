@@ -143,19 +143,22 @@ window.updatePricing = function () {
 
   paymentSection.classList.remove("hidden");
 
-  // 🔧 FIXES
   paypalRendered = false;
   document.getElementById("paypal-button-container").innerHTML = "";
 
-if (APP_MODE === "TEST") {
-  mockPayBtn.style.display = "inline-block";
-  document.getElementById("paypal-button-container").style.display = "none";
-} else {
-  document.getElementById("paypal-button-container").style.display = "block";
-  //loadPayPal();
-
-
+  if (APP_MODE === "TEST") {
+    mockPayBtn.style.display = "inline-block";
+    document.getElementById("paypal-button-container").style.display = "none";
+  } else {
+    mockPayBtn.style.display = "none";
+    document.getElementById("paypal-button-container").style.display = "block";
+    loadPayPal();
+  }
 };
+
+
+
+
 
 /* ================= PAYPAL LOADER ================= */
 function loadPayPal() {
