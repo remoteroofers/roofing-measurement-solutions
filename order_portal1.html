@@ -170,10 +170,20 @@ function renderPayPal() {
 }
 
 /* ================= MOCK PAYMENT ================= */
-mockPayBtn.onclick = async () => {
-  if (APP_MODE !== "TEST") return alert("Mock payments disabled");
+mockPayBtn.addEventListener("click", async () => {
+  if (APP_MODE !== "TEST") {
+    alert("Mock payments are disabled in LIVE mode");
+    return;
+  }
+
+  if (currentPrice <= 0) {
+    alert("Invalid order price");
+    return;
+  }
+
   await saveOrder("MOCK-" + Date.now(), "mock");
-};
+});
+
 
 /* ================= SAVE ORDER ================= */
 async function saveOrder(paymentId, method) {
